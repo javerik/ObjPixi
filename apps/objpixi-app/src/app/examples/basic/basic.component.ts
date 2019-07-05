@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import * as PIXI from 'pixi.js';
 import {Rect} from '../../geometries/Rect/rect';
+import {GeoEvent} from '../../geometries/base-geo';
+import InteractionEventTypes = PIXI.interaction.InteractionEventTypes;
 
 
 @Component({
@@ -43,10 +45,26 @@ export class BasicComponent implements OnInit, AfterViewInit {
         this.onAddObject(value);
       }
     });
+    this.myRect.OnInteraction.subscribe({
+      next: value => {
+        this.onObjectEvent(value);
+      }
+    });
     this.myRect.Init();
   }
 
   onAddObject(obj: PIXI.DisplayObject) {
     this.App.stage.addChild(obj);
   }
+
+  onObjectEvent(event: GeoEvent) {
+    console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);
+
+    switch (event.event.type) {
+      case 'click':
+        console.log('Clicked');
+        break;
+    }
+  }
+
 }
