@@ -2,9 +2,10 @@ import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/
 import * as PIXI from 'pixi.js';
 import {Rect} from '../../geometries/Rect/rect';
 import {GeoEvent} from '../../geometries/base-geo';
-import {ScaleArrow, ScaleDirection} from '../../interaction/scaling/objects/scale-arrow';
+import {ScaleArrow} from '../../interaction/scaling/objects/scale-arrow';
 import {MatGridTile} from '@angular/material';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
+import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 
 
 @Component({

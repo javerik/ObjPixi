@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js';
-import {ScaleArrow, ScaleDirection} from './objects/scale-arrow';
+import {ScaleArrow} from './objects/scale-arrow';
 import {Subject} from 'rxjs';
+import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
+import {ScalingEvent} from '../../interface/events/scaling-event';
 
 
 export interface ScalingArrows {
@@ -22,10 +24,6 @@ interface ArrowPositions {
   Bottom: PositionPoint;
 }
 
-export interface ScalingEvent {
-  direction: ScaleDirection;
-  delta: PIXI.Point;
-}
 
 export class BasicScaler {
 

@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import {ScaleDirection} from '../../../interface/enums/scale-direction.enum';
 
 
 export class ScaleArrow {
@@ -42,9 +43,3 @@ export class ScaleArrow {
 
 }
 
-export enum ScaleDirection {
-  Up,
-  Down,
-  Left,
-  Right
-}
