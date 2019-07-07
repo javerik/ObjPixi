@@ -45,8 +45,9 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.pixiContainer.nativeElement.appendChild(this.App.view);
-    this.App.stage.addChild(this.Stage);
+    this.pixiContainer.nativeElement.appendChild(this.Renderer.view);
+    this.Renderer.render(this.Stage);
+    // this.App.stage.addChild(this.Stage);
   }
 
   onTileResize(event) {
@@ -76,12 +77,12 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const fY = BasicComponent.mapRange(this.winHeight / (600 / 100), 0, 100, -1, 1);
     console.log('W: %d H:%d fX: %f fY: %f', this.winWidth, this.winHeight, fX, fY);
     this.App.renderer.resize(this.winWidth, this.winHeight);
-    this.Stage.children.forEach(value => {
-      value.scale.set(fX, fY);
-    });
     // this.Stage.scale.set(fX, fY);
     console.log('Stage: x: %d y: %d', this.Stage.x, this.Stage.y);
-    this.App.render();
+    this.Renderer.view.style.width = this.winWidth + 'px';
+    this.Renderer.view.style.height = this.winHeight + 'px';
+    this.Renderer.render(this.Stage);
+    // this.App.render();
   }
 
   onAddRect() {
@@ -116,6 +117,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   onAddObject(obj: PIXI.DisplayObject) {
     this.Stage.addChild(obj);
+    this.Renderer.render(this.Stage);
   }
 
   onObjectEvent(event: GeoEvent) {

@@ -2,7 +2,8 @@ import * as PIXI from 'pixi.js';
 
 
 export class ScaleArrow {
-  private readonly Icon = 'assets/right-arrow.png';
+  // private readonly Icon = 'assets/right-arrow.png';
+  private readonly Icon = 'assets/arrow_down.png';
   // private readonly Icon = 'assets/bunny.png';
   private direction: ScaleArrowDirection;
 
@@ -15,7 +16,6 @@ export class ScaleArrow {
   public Init(posX, posY) {
     const sp = PIXI.Sprite.from(this.Icon);
     sp.anchor.set(0.5);
-    sp.scale.set(0.1, 0.1);
     sp.x = posX;
     sp.y = posY;
 
