@@ -2,10 +2,10 @@ import * as PIXI from 'pixi.js';
 
 
 export class ScaleArrow {
-  // private readonly Icon = 'assets/right-arrow.png';
+  private static Texture: PIXI.Texture;
+  private static TextureLoader: PIXI.Loader;
   private readonly Icon = 'assets/arrow_down.png';
-  // private readonly Icon = 'assets/bunny.png';
-  private direction: ScaleArrowDirection;
+  private readonly direction: ScaleArrowDirection;
 
   public DispObj: PIXI.DisplayObject;
 
@@ -14,7 +14,10 @@ export class ScaleArrow {
   }
 
   public Init(posX, posY) {
-    const sp = PIXI.Sprite.from(this.Icon);
+    if (ScaleArrow.Texture === undefined) {
+      ScaleArrow.Texture = PIXI.Texture.from(this.Icon);
+    }
+    const sp = new PIXI.Sprite(ScaleArrow.Texture);
     sp.anchor.set(0.5);
     sp.x = posX;
     sp.y = posY;
@@ -33,6 +36,8 @@ export class ScaleArrow {
         break;
     }
     this.DispObj = sp;
+    this.DispObj.interactive = true;
+    this.DispObj.buttonMode = true;
   }
 
 }

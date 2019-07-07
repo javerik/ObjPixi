@@ -122,7 +122,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
     setTimeout(() => {
       this.Renderer.render(this.Stage);
-    }, 200);
+    }, 10);
   }
 
   onAddScalingRect() {
@@ -130,13 +130,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
       this.onAddRect();
     }
     this.ScalingRect = new BasicScaler();
-    this.ScalingRect.FromBounding(this.myRect.MainDisObject.getBounds(), 30);
-    setTimeout(() => {
-      this.onAddObject(this.ScalingRect.Arrows.Right.DispObj);
-      this.onAddObject(this.ScalingRect.Arrows.Left.DispObj);
-      this.onAddObject(this.ScalingRect.Arrows.Bottom.DispObj);
-      this.onAddObject(this.ScalingRect.Arrows.Top.DispObj);
-    }, 200);
+    this.ScalingRect.FromBounding(this.myRect.MainDisObject.getBounds(), 15);
+    this.onAddObject(this.ScalingRect.Container);
   }
 
   onObjectEvent(event: GeoEvent) {
