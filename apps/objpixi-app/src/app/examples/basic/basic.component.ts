@@ -4,6 +4,7 @@ import {Rect} from '../../geometries/Rect/rect';
 import {GeoEvent} from '../../geometries/base-geo';
 import {ScaleArrow, ScaleArrowDirection} from '../../interaction/scaling/objects/scale-arrow';
 import {MatGridTile} from '@angular/material';
+import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   myRect: Rect;
   myArrow: ScaleArrow;
   ScaleValue: number;
+  ScalingRect: BasicScaler = new BasicScaler();
 
   private ratio: number;
   private winWidth = 800;
@@ -75,7 +77,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
     const fX = BasicComponent.mapRange(this.winWidth / (800 / 100), 0, 100, -1, 1);
     const fY = BasicComponent.mapRange(this.winHeight / (600 / 100), 0, 100, -1, 1);
-    console.log('W: %d H:%d fX: %f fY: %f', this.winWidth, this.winHeight, fX, fY);
+    // console.log('W: %d H:%d fX: %f fY: %f', this.winWidth, this.winHeight, fX, fY);
     this.App.renderer.resize(this.winWidth, this.winHeight);
     // this.Stage.scale.set(fX, fY);
     console.log('Stage: x: %d y: %d', this.Stage.x, this.Stage.y);
@@ -106,7 +108,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddArrow() {
-    this.myArrow = new ScaleArrow(ScaleArrowDirection.Up);
+    this.myArrow = new ScaleArrow(ScaleArrowDirection.Left);
     this.myArrow.Init(100, 100);
     this.onAddObject(this.myArrow.DispObj);
   }
@@ -118,6 +120,23 @@ export class BasicComponent implements OnInit, AfterViewInit {
   onAddObject(obj: PIXI.DisplayObject) {
     this.Stage.addChild(obj);
     this.Renderer.render(this.Stage);
+    setTimeout(() => {
+      this.Renderer.render(this.Stage);
+    }, 200);
+  }
+
+  onAddScalingRect() {
+    if (this.myRect === undefined) {
+      this.onAddRect();
+    }
+    this.ScalingRect = new BasicScaler();
+    this.ScalingRect.FromBounding(this.myRect.MainDisObject.getBounds(), 30);
+    setTimeout(() => {
+      this.onAddObject(this.ScalingRect.Arrows.Right.DispObj);
+      this.onAddObject(this.ScalingRect.Arrows.Left.DispObj);
+      this.onAddObject(this.ScalingRect.Arrows.Bottom.DispObj);
+      this.onAddObject(this.ScalingRect.Arrows.Top.DispObj);
+    }, 200);
   }
 
   onObjectEvent(event: GeoEvent) {

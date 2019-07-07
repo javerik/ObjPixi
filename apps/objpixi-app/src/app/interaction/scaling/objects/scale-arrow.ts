@@ -21,15 +21,15 @@ export class ScaleArrow {
 
     switch (this.direction) {
       case ScaleArrowDirection.Up:
-        sp.angle = -90;
-        break;
-      case ScaleArrowDirection.Down:
-        sp.angle = 90;
-        break;
-      case ScaleArrowDirection.Left:
         sp.angle = 180;
         break;
+      case ScaleArrowDirection.Down:
+        break;
+      case ScaleArrowDirection.Left:
+        sp.angle = 90;
+        break;
       case ScaleArrowDirection.Right:
+        sp.angle = -90;
         break;
     }
     this.DispObj = sp;

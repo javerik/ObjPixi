@@ -10,6 +10,9 @@
     <mat-button-toggle (click)="onScaleStage()">Scale Stage</mat-button-toggle>
   </mat-grid-tile>
   <mat-grid-tile colspan="1" rowspan="1">
+    <mat-button-toggle (click)="onAddScalingRect()">Scaling Rect</mat-button-toggle>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1">
     <form>
       <mat-form-field>
         <input matInput type="number" name="scaleVal" [(ngModel)]="ScaleValue">
