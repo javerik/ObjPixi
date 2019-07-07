@@ -3,6 +3,7 @@ import {ScaleArrow} from './objects/scale-arrow';
 import {Subject} from 'rxjs';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {ScalingEvent} from '../../interface/events/scaling-event';
+import {IScaler, ScalerInfo} from '../../interface/iscaler';
 
 
 export interface ScalingArrows {
@@ -25,11 +26,12 @@ interface ArrowPositions {
 }
 
 
-export class BasicScaler {
+export class BasicScaler implements IScaler {
 
   Arrows: ScalingArrows;
   Positions: ArrowPositions;
   Container: PIXI.Container;
+  protected ScalingInfo: ScalerInfo;
   public OnCreated: Subject<PIXI.DisplayObject>;
   public OnRequestRender: Subject<null>;
   public OnScaleEvent: Subject<ScalingEvent>;
@@ -46,21 +48,31 @@ export class BasicScaler {
     Bottom: false,
   };
 
-  FromBounding(bounding: PIXI.Rectangle, offset = 0) {
+  // region Init
+
+  FromBounding() {
     this.Arrows = {
       Top: new ScaleArrow(ScaleDirection.Up),
       Bottom: new ScaleArrow(ScaleDirection.Down),
       Left: new ScaleArrow(ScaleDirection.Left),
       Right: new ScaleArrow(ScaleDirection.Right)
     };
-    this.generatePoints(bounding, offset);
+    this.generatePoints();
     this.initArrows();
     this.Container = new PIXI.Container();
     this.Container.addChild(this.Arrows.Right.DispObj);
     this.Container.addChild(this.Arrows.Bottom.DispObj);
     this.Container.addChild(this.Arrows.Left.DispObj);
     this.Container.addChild(this.Arrows.Top.DispObj);
+    this.Container.visible = false;
     this.registerEvents();
+  }
+
+  private initArrows() {
+    this.Arrows.Right.Init(this.Positions.Right.x, this.Positions.Right.y);
+    this.Arrows.Bottom.Init(this.Positions.Bottom.x, this.Positions.Bottom.y);
+    this.Arrows.Left.Init(this.Positions.Left.x, this.Positions.Left.y);
+    this.Arrows.Top.Init(this.Positions.Top.x, this.Positions.Top.y);
   }
 
   private registerEvents() {
@@ -146,15 +158,12 @@ export class BasicScaler {
 
   }
 
-  private initArrows() {
-    this.Arrows.Right.Init(this.Positions.Right.x, this.Positions.Right.y);
-    this.Arrows.Bottom.Init(this.Positions.Bottom.x, this.Positions.Bottom.y);
-    this.Arrows.Left.Init(this.Positions.Left.x, this.Positions.Left.y);
-    this.Arrows.Top.Init(this.Positions.Top.x, this.Positions.Top.y);
-  }
+  // endregion
 
   // region point calculations
-  private generatePoints(bounding: PIXI.Rectangle, offset): void {
+  private generatePoints(): void {
+    const bounding = this.ScalingInfo.obj.getBounds();
+    const offset = this.ScalingInfo.offset;
     this.Positions = {
       Bottom: {
         x: bounding.x + bounding.width / 2,
@@ -185,6 +194,22 @@ export class BasicScaler {
     return delta;
   }
 
+  // endregion
+
+  // region IScaler
+  Generate(info: ScalerInfo) {
+    this.ScalingInfo = info;
+    this.FromBounding();
+  }
+
+  SetVisibility(visible: boolean) {
+    this.Container.visible = visible;
+    this.OnRequestRender.next();
+  }
+
+  GetObject(): PIXI.DisplayObject {
+    return this.Container;
+  }
   // endregion
 
 }

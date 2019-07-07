@@ -95,7 +95,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.myRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
     this.myRect.OnRequestRender.subscribe({
       next: value => {
-        this.App.render();
+        this.ForceRender();
       }
     });
     this.myRect.OnInitialized.subscribe({
@@ -133,13 +133,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
   }
 
-  onAddScalingRect() {
-    if (this.myRect === undefined) {
-      this.onAddRect();
-    }
-    this.ScalingRect.FromBounding(this.myRect.MainDisObject.getBounds(), 15);
-    this.onAddObject(this.ScalingRect.Container);
-  }
 
   onObjectEvent(event: GeoEvent) {
     console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);

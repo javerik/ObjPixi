@@ -5,6 +5,8 @@ import {ScalingEvent} from './events/scaling-event';
 
 export interface IScaler {
   OnScaleEvent: Subject<ScalingEvent>;
+  OnRequestRender: Subject<null>;
+  GetObject(): PIXI.DisplayObject;
   Generate(info: ScalerInfo);
   SetVisibility(visible: boolean);
 }

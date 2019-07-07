@@ -11,9 +11,13 @@ export class BaseGeo {
   protected Id: string;
   protected Name: string;
 
-  constructor(name: string) {
+  constructor(name?: string) {
     this.Id = UUID.UUID();
-    this.Name = name;
+    if (name === undefined) {
+      this.Name = '';
+    } else {
+      this.Name = name;
+    }
     this.OnRequestRender = new Subject();
     this.OnInitialized = new Subject();
     this.OnInteraction = new Subject();
