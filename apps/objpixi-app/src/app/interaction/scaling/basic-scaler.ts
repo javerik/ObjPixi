@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import {ScaleArrow, ScaleArrowDirection} from './objects/scale-arrow';
+import {ScaleArrow, ScaleDirection} from './objects/scale-arrow';
 import {Subject} from 'rxjs';
 
 
@@ -22,12 +22,24 @@ interface ArrowPositions {
   Bottom: PositionPoint;
 }
 
+export interface ScalingEvent {
+  direction: ScaleDirection;
+  delta: PIXI.Point;
+}
+
 export class BasicScaler {
 
   Arrows: ScalingArrows;
   Positions: ArrowPositions;
   Container: PIXI.Container;
   public OnCreated: Subject<PIXI.DisplayObject>;
+  public OnRequestRender: Subject<null>;
+  public OnScaleEvent: Subject<ScalingEvent>;
+
+  constructor() {
+    this.OnRequestRender = new Subject();
+    this.OnScaleEvent = new Subject();
+  }
 
   private DragStates = {
     Top: false,
@@ -38,10 +50,10 @@ export class BasicScaler {
 
   FromBounding(bounding: PIXI.Rectangle, offset = 0) {
     this.Arrows = {
-      Top: new ScaleArrow(ScaleArrowDirection.Up),
-      Bottom: new ScaleArrow(ScaleArrowDirection.Down),
-      Left: new ScaleArrow(ScaleArrowDirection.Left),
-      Right: new ScaleArrow(ScaleArrowDirection.Right)
+      Top: new ScaleArrow(ScaleDirection.Up),
+      Bottom: new ScaleArrow(ScaleDirection.Down),
+      Left: new ScaleArrow(ScaleDirection.Left),
+      Right: new ScaleArrow(ScaleDirection.Right)
     };
     this.generatePoints(bounding, offset);
     this.initArrows();
@@ -54,18 +66,86 @@ export class BasicScaler {
   }
 
   private registerEvents() {
-    this.Arrows.Right.DispObj.on('click', event1 => {
-      console.log('Right arrow has benn clicked');
+    // region Pointerdown drag start
+    this.Arrows.Right.DispObj.on('pointerdown', event1 => {
+      this.DragStates.Right = true;
     });
-    this.Arrows.Bottom.DispObj.on('click', event1 => {
-      console.log('Bottom arrow has benn clicked');
+    this.Arrows.Bottom.DispObj.on('pointerdown', event1 => {
+      this.DragStates.Bottom = true;
     });
-    this.Arrows.Left.DispObj.on('click', event1 => {
-      console.log('Left arrow has benn clicked');
+    this.Arrows.Left.DispObj.on('pointerdown', event1 => {
+      this.DragStates.Left = true;
     });
-    this.Arrows.Top.DispObj.on('click', event1 => {
-      console.log('Top arrow has benn clicked');
+    this.Arrows.Top.DispObj.on('pointerdown', event1 => {
+      this.DragStates.Top = true;
     });
+    // endregion
+
+    // region Pointerup/outside drag stop
+    this.Arrows.Right.DispObj.on('pointerup', event1 => {
+      this.DragStates.Right = false;
+    });
+    this.Arrows.Bottom.DispObj.on('pointerup', event1 => {
+      this.DragStates.Bottom = false;
+    });
+    this.Arrows.Left.DispObj.on('pointerup', event1 => {
+      this.DragStates.Left = false;
+    });
+    this.Arrows.Top.DispObj.on('pointerup', event1 => {
+      this.DragStates.Top = false;
+    });
+
+    this.Arrows.Right.DispObj.on('pointerupoutside', event1 => {
+      this.DragStates.Right = false;
+    });
+    this.Arrows.Bottom.DispObj.on('pointerupoutside', event1 => {
+      this.DragStates.Bottom = false;
+    });
+    this.Arrows.Left.DispObj.on('pointerupoutside', event1 => {
+      this.DragStates.Left = false;
+    });
+    this.Arrows.Top.DispObj.on('pointerupoutside', event1 => {
+      this.DragStates.Top = false;
+    });
+    // endregion
+
+    // region Move
+    this.Arrows.Right.DispObj.on('pointermove', event1 => {
+      if (!this.DragStates.Right) {
+        return;
+      }
+      const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      this.Arrows.Right.DispObj.x = newPos.x;
+      this.OnRequestRender.next();
+    });
+    this.Arrows.Bottom.DispObj.on('pointermove', event1 => {
+      if (!this.DragStates.Bottom) {
+        return;
+      }
+      const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      this.Arrows.Bottom.DispObj.y = newPos.y;
+      this.OnRequestRender.next();
+    });
+    this.Arrows.Left.DispObj.on('pointermove', event1 => {
+      if (!this.DragStates.Left) {
+        return;
+      }
+      const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      this.Arrows.Left.DispObj.x = newPos.x;
+      this.OnRequestRender.next();
+    });
+    this.Arrows.Top.DispObj.on('pointermove', event1 => {
+      if (!this.DragStates.Top) {
+        return;
+      }
+      const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      this.Arrows.Top.DispObj.y = newPos.y;
+      const delta = this.getDeltePos('Top', newPos);
+      console.log('Delta Y: %f', delta.y);
+      this.OnRequestRender.next();
+    });
+    // endregion
+
   }
 
   private initArrows() {
@@ -96,6 +176,17 @@ export class BasicScaler {
       }
     };
   }
+
+  private getDeltePos(arrowType: string, newPos: PIXI.Point): PIXI.Point {
+    const delta = new PIXI.Point();
+    switch (arrowType) {
+      case 'Top':
+        delta.y = this.Positions.Top.y - newPos.y;
+        break;
+    }
+    return delta;
+  }
+
   // endregion
 
 }

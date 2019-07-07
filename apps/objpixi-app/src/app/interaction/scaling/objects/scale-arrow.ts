@@ -5,11 +5,11 @@ export class ScaleArrow {
   private static Texture: PIXI.Texture;
   private static TextureLoader: PIXI.Loader;
   private readonly Icon = 'assets/arrow_down.png';
-  private readonly direction: ScaleArrowDirection;
+  private readonly direction: ScaleDirection;
 
   public DispObj: PIXI.DisplayObject;
 
-  constructor(direction: ScaleArrowDirection) {
+  constructor(direction: ScaleDirection) {
     this.direction = direction;
   }
 
@@ -23,15 +23,15 @@ export class ScaleArrow {
     sp.y = posY;
 
     switch (this.direction) {
-      case ScaleArrowDirection.Up:
+      case ScaleDirection.Up:
         sp.angle = 180;
         break;
-      case ScaleArrowDirection.Down:
+      case ScaleDirection.Down:
         break;
-      case ScaleArrowDirection.Left:
+      case ScaleDirection.Left:
         sp.angle = 90;
         break;
-      case ScaleArrowDirection.Right:
+      case ScaleDirection.Right:
         sp.angle = -90;
         break;
     }
@@ -42,7 +42,7 @@ export class ScaleArrow {
 
 }
 
-export enum ScaleArrowDirection {
+export enum ScaleDirection {
   Up,
   Down,
   Left,

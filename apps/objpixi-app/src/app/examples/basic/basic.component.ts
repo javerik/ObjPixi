@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/
 import * as PIXI from 'pixi.js';
 import {Rect} from '../../geometries/Rect/rect';
 import {GeoEvent} from '../../geometries/base-geo';
-import {ScaleArrow, ScaleArrowDirection} from '../../interaction/scaling/objects/scale-arrow';
+import {ScaleArrow, ScaleDirection} from '../../interaction/scaling/objects/scale-arrow';
 import {MatGridTile} from '@angular/material';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 
@@ -44,6 +44,9 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Stage.y = 0;
     this.Stage.width = 800;
     this.Stage.height = 600;
+    this.ScalingRect.OnRequestRender.subscribe(() => {
+      this.ForceRender();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -108,7 +111,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddArrow() {
-    this.myArrow = new ScaleArrow(ScaleArrowDirection.Left);
+    this.myArrow = new ScaleArrow(ScaleDirection.Left);
     this.myArrow.Init(100, 100);
     this.onAddObject(this.myArrow.DispObj);
   }
@@ -125,11 +128,14 @@ export class BasicComponent implements OnInit, AfterViewInit {
     }, 10);
   }
 
+  ForceRender() {
+    this.Renderer.render(this.Stage);
+  }
+
   onAddScalingRect() {
     if (this.myRect === undefined) {
       this.onAddRect();
     }
-    this.ScalingRect = new BasicScaler();
     this.ScalingRect.FromBounding(this.myRect.MainDisObject.getBounds(), 15);
     this.onAddObject(this.ScalingRect.Container);
   }
