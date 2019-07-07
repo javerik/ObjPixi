@@ -152,7 +152,9 @@ export class BasicScaler implements IScaler {
       this.Arrows.Top.DispObj.y = newPos.y;
       const delta = this.getDeltePos('Top', newPos);
       console.log('Delta Y: %f', delta.y);
-      this.OnRequestRender.next();
+      this.Arrows.Left.DispObj.y = this.Positions.Left.y - (delta.y / 2);
+      this.Arrows.Right.DispObj.y = this.Positions.Right.y - (delta.y / 2);
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Up});
     });
     // endregion
 
@@ -210,6 +212,7 @@ export class BasicScaler implements IScaler {
   GetObject(): PIXI.DisplayObject {
     return this.Container;
   }
+
   // endregion
 
 }
