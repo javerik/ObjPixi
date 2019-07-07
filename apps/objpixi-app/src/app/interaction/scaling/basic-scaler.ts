@@ -72,6 +72,7 @@ export class BasicScaler implements IScaler {
     this.Container.addChild(this.Arrows.Left.DispObj);
     this.Container.addChild(this.Arrows.Top.DispObj);
     this.Container.visible = false;
+    this.Container.zIndex = 10;
     this.registerEvents();
   }
 
