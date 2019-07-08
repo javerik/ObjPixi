@@ -6,6 +6,7 @@ import {ScaleArrow} from '../../interaction/scaling/objects/scale-arrow';
 import {MatGridTile} from '@angular/material';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
+import {IGeometry} from '../../interface/igeometry';
 
 
 @Component({
@@ -20,10 +21,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
   App: PIXI.Application;
   Renderer: PIXI.Renderer;
   Stage: PIXI.Container;
-  myRect: Rect;
   myArrow: ScaleArrow;
   ScaleValue: number;
   ScalingRect: BasicScaler = new BasicScaler();
+  Geometries: Array<IGeometry> = [];
 
   private ratio: number;
   private winWidth = 800;
@@ -45,6 +46,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Stage.y = 0;
     this.Stage.width = 800;
     this.Stage.height = 600;
+    this.Stage.interactive = true;
+    this.Stage.buttonMode = true;
     this.ScalingRect.OnRequestRender.subscribe(() => {
       this.ForceRender();
     });
@@ -92,23 +95,24 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddRect() {
-    this.myRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
-    this.myRect.OnRequestRender.subscribe({
+    const newRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
+    newRect.OnRequestRender.subscribe({
       next: value => {
         this.ForceRender();
       }
     });
-    this.myRect.OnInitialized.subscribe({
+    newRect.OnInitialized.subscribe({
       next: value => {
         this.onAddObject(value);
       }
     });
-    this.myRect.OnInteraction.subscribe({
+    newRect.OnInteraction.subscribe({
       next: value => {
         this.onObjectEvent(value);
       }
     });
-    this.myRect.Init();
+    newRect.Init();
+    this.Geometries.push(newRect);
   }
 
   onAddArrow() {
@@ -139,9 +143,15 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
     switch (event.event.type) {
       case 'click':
-        console.log('Clicked');
+        this.clearExcept(event.target.GetId());
         break;
     }
+  }
+
+  private clearExcept(id: string) {
+    this.Geometries.filter(value => value.GetId() !== id).forEach(value => {
+      value.ClearSelection();
+    });
   }
 
 }

@@ -8,6 +8,7 @@ import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 
 export class Rect extends BaseGeo implements IGeometry {
+
   private readonly scalerOffset = 15;
   Scaler: IScaler;
   public MainDisObject: PIXI.Container;
@@ -137,6 +138,8 @@ export class Rect extends BaseGeo implements IGeometry {
     }
   }
 
+  // region IGeometry
+
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
   }
@@ -152,6 +155,13 @@ export class Rect extends BaseGeo implements IGeometry {
   SetName(name: string) {
     this.Name = name;
   }
+
+  ClearSelection(): void {
+    this.Mover.SetVisibility(false);
+    this.Scaler.SetVisibility(false);
+  }
+
+  // endregion
 
 }
 

@@ -10,4 +10,5 @@ export interface IGeometry {
   GetName(): string;
   SetName(name: string);
   GetObject(): PIXI.DisplayObject;
+  ClearSelection(): void;
 }
