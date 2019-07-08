@@ -12,7 +12,6 @@ export class Rect extends BaseGeo implements IGeometry {
   private readonly scalerOffset = 15;
   Scaler: IScaler;
   public MainDisObject: PIXI.Container;
-  private GContainer: PIXI.Container;
   private originInfo: RectInfo;
   private transformedInfo: RectInfo;
   private readonly Mover: Mover;
@@ -74,7 +73,7 @@ export class Rect extends BaseGeo implements IGeometry {
       px = px - (w / 2);
       py = py - (h / 2);
     }
-    g.drawRect(x, y, w, h);
+    g.drawRect(px, py, w, h);
     g.endFill();
     return g;
   }
