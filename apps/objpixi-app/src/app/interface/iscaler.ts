@@ -8,6 +8,7 @@ export interface IScaler {
   OnRequestRender: Subject<null>;
   GetObject(): PIXI.DisplayObject;
   Generate(info: ScalerInfo);
+  Regenerate(info: ScalerInfo);
   SetVisibility(visible: boolean);
 }
 
