@@ -12,19 +12,12 @@ export class Rect extends BaseGeo implements IGeometry {
   private readonly scalerOffset = 15;
   Scaler: IScaler;
   public MainDisObject: PIXI.Container;
-  private originInfo: RectInfo;
-  private transformedInfo: RectInfo;
+  private info: RectInfo;
   private readonly Mover: Mover;
 
   constructor(info: RectInfo, name?: string) {
     super(name);
-    this.originInfo = info;
-    this.transformedInfo = {
-      height: this.originInfo.height,
-      center: this.originInfo.center,
-      position: new PIXI.Point(this.originInfo.position.x, this.originInfo.position.y),
-      width: this.originInfo.width
-    };
+    this.info = info;
     this.Scaler = new BasicScaler();
     this.Mover = new Mover();
     this.Scaler.OnRequestRender.subscribe(() => {
@@ -45,7 +38,11 @@ export class Rect extends BaseGeo implements IGeometry {
 
   public Init() {
     this.GContainer = new PIXI.Container();
-    const rect = this.getGraphicFromInfo(this.originInfo);
+    if (this.info.center) {
+      this.info.position.x = this.info.position.x - (this.info.width / 2);
+      this.info.position.y = this.info.position.y - (this.info.height / 2);
+    }
+    const rect = this.getGraphicFromInfo(this.info);
     rect.name = 'origin';
     this.GContainer.addChild(rect);
     const container = new PIXI.Container();
@@ -95,32 +92,32 @@ export class Rect extends BaseGeo implements IGeometry {
   private handleScaling(event: ScalingEvent) {
     switch (event.direction) {
       case ScaleDirection.Up:
-        this.transformedInfo.position.y += event.delta.y;
+        this.info.position.y += event.delta.y;
         const dY = event.delta.y * -1;
-        this.transformedInfo.height += dY;
+        this.info.height += dY;
         break;
       case ScaleDirection.Down:
-        this.transformedInfo.height += event.delta.y;
+        this.info.height += event.delta.y;
         break;
       case ScaleDirection.Left:
-        this.transformedInfo.position.x += event.delta.x;
+        this.info.position.x += event.delta.x;
         const dX = event.delta.x * -1;
-        this.transformedInfo.width += dX;
+        this.info.width += dX;
         break;
       case ScaleDirection.Right:
-        this.transformedInfo.width += event.delta.x;
+        this.info.width += event.delta.x;
         break;
 
     }
-    this.refreshGraphic(this.transformedInfo, false);
+    this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.OnRequestRender.next();
   }
 
   private handleMove(moveEvent: MoveDelta) {
-    this.transformedInfo.position.x += moveEvent.x;
-    this.transformedInfo.position.y += moveEvent.y;
-    this.refreshGraphic(this.transformedInfo, false);
+    this.info.position.x += moveEvent.x;
+    this.info.position.y += moveEvent.y;
+    this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
   }
