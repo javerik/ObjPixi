@@ -6,6 +6,7 @@ import {Subject} from 'rxjs';
 export interface IGeometry {
   Scaler: IScaler;
   OnRequestRender: Subject<null>;
+  Init(): void;
   GetId(): string;
   GetName(): string;
   SetName(name: string);
