@@ -9,12 +9,15 @@ export class Mover {
   private originPosition = new PIXI.Point();
   private crossSprite: PIXI.DisplayObject;
   private dragMode = false;
+  private lastPosition: PIXI.Point;
   public OnRequestRender: Subject<null>;
   public OnMoved: Subject<MoveDelta>;
+  public OnMoveEnd: Subject<null>;
 
   constructor() {
     this.OnRequestRender = new Subject();
     this.OnMoved = new Subject();
+    this.OnMoveEnd = new Subject();
   }
 
   public Generate(rect: PIXI.Rectangle) {
@@ -28,15 +31,25 @@ export class Mover {
     sprite.anchor.set(0.5, 0.5);
     sprite.interactive = true;
     sprite.buttonMode = true;
-    sprite.x = this.originPoint.x + (this.originPoint.width / 2);
-    sprite.y = this.originPoint.y + (this.originPoint.height / 2);
     sprite.zIndex = 10;
     sprite.angle = 45;
-    this.originPosition.set(sprite.x, sprite.y);
     this.crossSprite = sprite;
+    this.centerSprite();
     this.registerEvents();
     this.Container.addChild(this.crossSprite);
     this.OnRequestRender.next();
+  }
+
+  private centerSprite() {
+    this.crossSprite.x = this.originPoint.x + (this.originPoint.width / 2);
+    this.crossSprite.y = this.originPoint.y + (this.originPoint.height / 2);
+    this.originPosition.set(this.crossSprite.x, this.crossSprite.y);
+    this.lastPosition = this.originPosition;
+  }
+
+  public recenter(rect: PIXI.Rectangle) {
+    this.originPoint = rect;
+    this.centerSprite();
   }
 
   public GetObject(): PIXI.DisplayObject {
@@ -55,9 +68,11 @@ export class Mover {
     });
     this.crossSprite.on('pointerup', event1 => {
       this.dragMode = false;
+      this.OnMoveEnd.next();
     });
     this.crossSprite.on('pointerupoutside', event1 => {
       this.dragMode = false;
+      this.OnMoveEnd.next();
     });
     this.crossSprite.on('pointermove', event1 => {
       if (!this.dragMode) {
@@ -65,13 +80,13 @@ export class Mover {
       }
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
       const moveDelta: MoveDelta = {
-        x: newPos.x - this.originPosition.x,
-        y: newPos.y - this.originPosition.y
+        x: newPos.x - this.lastPosition.x,
+        y: newPos.y - this.lastPosition.y
       };
-      this.crossSprite.x = this.originPosition.x + moveDelta.x;
-      this.crossSprite.y = this.originPosition.y + moveDelta.y;
+      this.lastPosition = newPos;
+      this.crossSprite.x += moveDelta.x;
+      this.crossSprite.y += moveDelta.y;
       this.OnMoved.next(moveDelta);
-      this.OnRequestRender.next();
     });
   }
 

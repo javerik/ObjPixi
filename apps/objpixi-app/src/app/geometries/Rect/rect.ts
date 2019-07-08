@@ -5,6 +5,7 @@ import {IScaler} from '../../interface/iscaler';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScalingEvent} from '../../interface/events/scaling-event';
 import {MoveDelta, Mover} from '../../interaction/moving/mover';
+import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 
 export class Rect extends BaseGeo implements IGeometry {
   private readonly scalerOffset = 15;
@@ -37,6 +38,8 @@ export class Rect extends BaseGeo implements IGeometry {
     });
     this.Mover.OnMoved.subscribe(value => {
       this.handleMove(value);
+    });
+    this.Mover.OnMoveEnd.subscribe(value => {
     });
   }
 
@@ -90,28 +93,48 @@ export class Rect extends BaseGeo implements IGeometry {
   }
 
   private handleScaling(event: ScalingEvent) {
-    this.transformedInfo.position.y = this.originInfo.position.y - event.deltas[0].delta.y;
-    this.transformedInfo.position.x = this.originInfo.position.x - event.deltas[1].delta.x;
-    this.transformedInfo.width = this.originInfo.width + (event.deltas[1].delta.x + event.deltas[2].delta.x);
-    this.transformedInfo.height = this.originInfo.height + (event.deltas[0].delta.y + event.deltas[3].delta.y);
+    switch (event.direction) {
+      case ScaleDirection.Up:
+        this.transformedInfo.position.y += event.delta.y;
+        const dY = event.delta.y * -1;
+        this.transformedInfo.height += dY;
+        break;
+      case ScaleDirection.Down:
+        this.transformedInfo.height += event.delta.y;
+        break;
+      case ScaleDirection.Left:
+        this.transformedInfo.position.x += event.delta.x;
+        const dX = event.delta.x * -1;
+        this.transformedInfo.width += dX;
+        break;
+      case ScaleDirection.Right:
+        this.transformedInfo.width += event.delta.x;
+        break;
 
-    this.refreshGraphic(this.transformedInfo);
+    }
+    this.refreshGraphic(this.transformedInfo, false);
+    this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
+    this.OnRequestRender.next();
   }
 
   private handleMove(moveEvent: MoveDelta) {
-    this.transformedInfo.position.x = this.originInfo.position.x + moveEvent.x;
-    this.transformedInfo.position.y = this.originInfo.position.y + moveEvent.y;
-    this.refreshGraphic(this.transformedInfo);
+    this.transformedInfo.position.x += moveEvent.x;
+    this.transformedInfo.position.y += moveEvent.y;
+    this.refreshGraphic(this.transformedInfo, false);
+    this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
+    this.OnRequestRender.next();
   }
 
-  private refreshGraphic(rectInfo: RectInfo) {
+  private refreshGraphic(rectInfo: RectInfo, render = true) {
     const nG = this.getGraphicFromInfo(rectInfo);
     nG.name = 'origin';
     const orig = this.GContainer.getChildByName('origin');
     this.GContainer.removeChild(orig);
     this.GContainer.addChild(nG);
     this.registerEvents();
-    this.OnRequestRender.next();
+    if (render) {
+      this.OnRequestRender.next();
+    }
   }
 
   GetObject(): PIXI.DisplayObject {

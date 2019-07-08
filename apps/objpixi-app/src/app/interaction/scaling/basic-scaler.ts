@@ -25,13 +25,18 @@ interface ArrowPositions {
   Bottom: PositionPoint;
 }
 
+interface LastPosition {
+  dir: ScaleDirection;
+  point: PIXI.Point;
+}
+
 
 export class BasicScaler implements IScaler {
-
   Arrows: ScalingArrows;
   Positions: ArrowPositions;
   Container: PIXI.Container;
   private deltas: Array<ScalingDelta>;
+  private lastPositions: Array<LastPosition>;
   protected ScalingInfo: ScalerInfo;
   public OnCreated: Subject<PIXI.DisplayObject>;
   public OnRequestRender: Subject<null>;
@@ -135,10 +140,9 @@ export class BasicScaler implements IScaler {
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
       this.Arrows.Right.DispObj.x = newPos.x;
       const delta = this.getDeltePos(ScaleDirection.Right, newPos);
-      console.log(delta);
       this.reCalculatePositions();
       this.deltas[2].delta = delta;
-      this.OnScaleEvent.next({deltas: this.deltas, direction: ScaleDirection.Right});
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Right});
     });
     this.Arrows.Bottom.DispObj.on('pointermove', event1 => {
       if (!this.DragStates.Bottom) {
@@ -149,7 +153,7 @@ export class BasicScaler implements IScaler {
       const delta = this.getDeltePos(ScaleDirection.Down, newPos);
       this.reCalculatePositions();
       this.deltas[3].delta = delta;
-      this.OnScaleEvent.next({deltas: this.deltas, direction: ScaleDirection.Down});
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Down});
     });
     this.Arrows.Left.DispObj.on('pointermove', event1 => {
       if (!this.DragStates.Left) {
@@ -160,7 +164,7 @@ export class BasicScaler implements IScaler {
       const delta = this.getDeltePos(ScaleDirection.Left, newPos);
       this.reCalculatePositions();
       this.deltas[1].delta = delta;
-      this.OnScaleEvent.next({deltas: this.deltas, direction: ScaleDirection.Left});
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Left});
     });
     this.Arrows.Top.DispObj.on('pointermove', event1 => {
       if (!this.DragStates.Top) {
@@ -171,7 +175,7 @@ export class BasicScaler implements IScaler {
       const delta = this.getDeltePos(ScaleDirection.Up, newPos);
       this.reCalculatePositions();
       this.deltas[0].delta = delta;
-      this.OnScaleEvent.next({deltas: this.deltas, direction: ScaleDirection.Up});
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Up});
     });
     // endregion
 
@@ -201,6 +205,12 @@ export class BasicScaler implements IScaler {
         y: bounding.y - offset
       }
     };
+    this.lastPositions = [
+      {dir: ScaleDirection.Right, point: new PIXI.Point(this.Positions.Right.x, this.Positions.Right.y)},
+      {dir: ScaleDirection.Left, point: new PIXI.Point(this.Positions.Left.x, this.Positions.Left.y)},
+      {dir: ScaleDirection.Up, point: new PIXI.Point(this.Positions.Top.x, this.Positions.Top.y)},
+      {dir: ScaleDirection.Down, point: new PIXI.Point(this.Positions.Bottom.x, this.Positions.Bottom.y)},
+    ];
   }
 
   private reCalculatePositions() {
@@ -214,18 +224,17 @@ export class BasicScaler implements IScaler {
 
   private getDeltePos(direction: ScaleDirection, newPos: PIXI.Point): PIXI.Point {
     const delta = new PIXI.Point();
+    const idx = this.lastPositions.findIndex(value => value.dir === direction);
     switch (direction) {
       case ScaleDirection.Up:
-        delta.y = this.Positions.Top.y - newPos.y;
-        break;
       case ScaleDirection.Down:
-        delta.y = newPos.y - this.Positions.Bottom.y;
+        delta.y = newPos.y - this.lastPositions[idx].point.y;
+        this.lastPositions[idx].point.y = newPos.y;
         break;
       case ScaleDirection.Left:
-        delta.x = this.Positions.Left.x - newPos.x;
-        break;
       case ScaleDirection.Right:
-        delta.x = newPos.x - this.Positions.Right.x;
+        delta.x = newPos.x - this.lastPositions[idx].point.x;
+        this.lastPositions[idx].point.x = newPos.x;
         break;
     }
     return delta;
@@ -246,6 +255,23 @@ export class BasicScaler implements IScaler {
 
   GetObject(): PIXI.DisplayObject {
     return this.Container;
+  }
+
+  Regenerate(info: ScalerInfo) {
+    this.ScalingInfo = info;
+    this.generatePoints();
+    this.Arrows.Bottom.DispObj.x = this.Positions.Bottom.x;
+    this.Arrows.Bottom.DispObj.y = this.Positions.Bottom.y;
+
+    this.Arrows.Left.DispObj.x = this.Positions.Left.x;
+    this.Arrows.Left.DispObj.y = this.Positions.Left.y;
+
+    this.Arrows.Right.DispObj.x = this.Positions.Right.x;
+    this.Arrows.Right.DispObj.y = this.Positions.Right.y;
+
+    this.Arrows.Top.DispObj.x = this.Positions.Top.x;
+    this.Arrows.Top.DispObj.y = this.Positions.Top.y;
+
   }
 
   // endregion
