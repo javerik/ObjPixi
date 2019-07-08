@@ -66,9 +66,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     // @ts-ignore
     const h = this.tilePixi._element.nativeElement.offsetHeight;
 
-    const lastWidth = this.winWidth;
-    const lastHeight = this.winHeight;
-
     if (w / h >= this.ratio) {
       this.winWidth = window.innerHeight * this.ratio;
       this.winHeight = window.innerHeight;
@@ -82,17 +79,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
     if (this.winHeight > 600) {
       this.winHeight = 600;
     }
-
-    const fX = BasicComponent.mapRange(this.winWidth / (800 / 100), 0, 100, -1, 1);
-    const fY = BasicComponent.mapRange(this.winHeight / (600 / 100), 0, 100, -1, 1);
-    // console.log('W: %d H:%d fX: %f fY: %f', this.winWidth, this.winHeight, fX, fY);
     this.App.renderer.resize(this.winWidth, this.winHeight);
-    // this.Stage.scale.set(fX, fY);
-    console.log('Stage: x: %d y: %d', this.Stage.x, this.Stage.y);
     this.Renderer.view.style.width = this.winWidth + 'px';
     this.Renderer.view.style.height = this.winHeight + 'px';
     this.Renderer.render(this.Stage);
-    // this.App.render();
   }
 
   onAddRect() {
@@ -103,7 +93,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddEllipse() {
-    const newEllipse = new Ellipse({width: 100, height: 150, center: true, position: new PIXI.Point(400, 300)});
+    const newEllipse = new Ellipse({width: 100, height: 120, center: true, position: new PIXI.Point(400, 300)});
     this.registerGeoEvents(newEllipse);
     newEllipse.Init();
     this.Geometries.push(newEllipse);

@@ -53,7 +53,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
       px = px - (w / 2);
       py = py - (h / 2);
     }
-    g.drawEllipse(x, y, w, h);
+    g.drawEllipse(x, y, w / 2, h / 2);
     g.endFill();
     return g;
   }
@@ -85,12 +85,12 @@ export class Ellipse extends BaseGeo implements IGeometry {
     switch (event.direction) {
       case ScaleDirection.Up:
       case ScaleDirection.Down:
-        this.info.height = (h - (this.scalerOffset * 2)) / 2;
+        this.info.height = (h - (this.scalerOffset * 2));
         this.info.position.y += event.delta.y / 2;
         break;
       case ScaleDirection.Left:
       case ScaleDirection.Right:
-        this.info.width = (w - (this.scalerOffset * 2)) / 2;
+        this.info.width = (w - (this.scalerOffset * 2));
         this.info.position.x += event.delta.x / 2;
         break;
 
