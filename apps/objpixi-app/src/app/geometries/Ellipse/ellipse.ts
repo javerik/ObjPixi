@@ -53,7 +53,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
       px = px - (w / 2);
       py = py - (h / 2);
     }
-    g.drawEllipse(px, py, w, h);
+    g.drawEllipse(x, y, w, h);
     g.endFill();
     return g;
   }
@@ -75,22 +75,23 @@ export class Ellipse extends BaseGeo implements IGeometry {
   // Scaling And Move handling
 
   private handleScaling(event: ScalingEvent) {
+    const leftP = event.ArrowPositions.find(value => value.dir === ScaleDirection.Left).point;
+    const rightP = event.ArrowPositions.find(value => value.dir === ScaleDirection.Right).point;
+    const topP = event.ArrowPositions.find(value => value.dir === ScaleDirection.Up).point;
+    const bottomP = event.ArrowPositions.find(value => value.dir === ScaleDirection.Down).point;
+
+    const w = rightP.x - leftP.x;
+    const h = bottomP.y - topP.y;
     switch (event.direction) {
       case ScaleDirection.Up:
-        this.info.position.y += event.delta.y;
-        const dY = event.delta.y * -1;
-        this.info.height += dY;
-        break;
       case ScaleDirection.Down:
-        this.info.height += event.delta.y;
+        this.info.height = (h - (this.scalerOffset * 2)) / 2;
+        this.info.position.y += event.delta.y / 2;
         break;
       case ScaleDirection.Left:
-        this.info.position.x += event.delta.x;
-        const dX = event.delta.x * -1;
-        this.info.width += dX;
-        break;
       case ScaleDirection.Right:
-        this.info.width += event.delta.x;
+        this.info.width = (w - (this.scalerOffset * 2)) / 2;
+        this.info.position.x += event.delta.x / 2;
         break;
 
     }

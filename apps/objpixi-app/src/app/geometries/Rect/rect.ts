@@ -73,7 +73,7 @@ export class Rect extends BaseGeo implements IGeometry {
       px = px - (w / 2);
       py = py - (h / 2);
     }
-    g.drawRect(px, py, w, h);
+    g.drawRect(x, y, w, h);
     g.endFill();
     return g;
   }

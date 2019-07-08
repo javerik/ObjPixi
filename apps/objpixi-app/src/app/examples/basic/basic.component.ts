@@ -7,6 +7,7 @@ import {MatGridTile} from '@angular/material';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {IGeometry} from '../../interface/igeometry';
+import {Ellipse} from '../../geometries/Ellipse/ellipse';
 
 
 @Component({
@@ -96,23 +97,34 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   onAddRect() {
     const newRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
-    newRect.OnRequestRender.subscribe({
+    this.registerGeoEvents(newRect);
+    newRect.Init();
+    this.Geometries.push(newRect);
+  }
+
+  onAddEllipse() {
+    const newEllipse = new Ellipse({width: 100, height: 150, center: true, position: new PIXI.Point(400, 300)});
+    this.registerGeoEvents(newEllipse);
+    newEllipse.Init();
+    this.Geometries.push(newEllipse);
+  }
+
+  private registerGeoEvents(geo: IGeometry) {
+    geo.OnRequestRender.subscribe({
       next: value => {
         this.ForceRender();
       }
     });
-    newRect.OnInitialized.subscribe({
+    geo.OnInitialized.subscribe({
       next: value => {
         this.onAddObject(value);
       }
     });
-    newRect.OnInteraction.subscribe({
+    geo.OnInteraction.subscribe({
       next: value => {
         this.onObjectEvent(value);
       }
     });
-    newRect.Init();
-    this.Geometries.push(newRect);
   }
 
   onAddArrow() {
