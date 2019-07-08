@@ -85,6 +85,14 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
   }
 
+  onAddCircle() {
+    const g = new PIXI.Graphics();
+    g.beginFill(0xe91e63);
+    g.drawCircle(400, 300, 100);
+    g.endFill();
+    this.onAddObject(g);
+  }
+
   onAddRect() {
     const newRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
     this.registerGeoEvents(newRect);

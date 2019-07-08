@@ -72,7 +72,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
 
   // endregion
 
-  // Scaling And Move handling
+  // region Scaling And Move handling
 
   private handleScaling(event: ScalingEvent) {
     const leftP = event.ArrowPositions.find(value => value.dir === ScaleDirection.Left).point;
