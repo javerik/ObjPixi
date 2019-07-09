@@ -8,15 +8,19 @@ import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScalingEvent} from '../../interface/events/scaling-event';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import Graphics = PIXI.Graphics;
+import Container = PIXI.Container;
 
 export class PolyLine extends BaseGeo implements IGeometry {
   public MainDisObject: PIXI.Container;
   private readonly scalerOffset = 15;
   private readonly pointNamePrefix = 'P_';
+  private readonly cNamePoint = 'CONTAINER_POINTS';
+  private readonly cNameLines = 'CONTAINER_LINES';
+  private atMove = false;
   private readonly Mover: Mover;
   private info: PolyInfo;
   dragStates: { [id: string]: boolean; } = {};
-  lastPositions: { [id: string]: PIXI.Point};
+  lastPositions: { [id: string]: PIXI.Point };
   Scaler: IScaler;
 
   constructor(polyInfo: PolyInfo, name?: string) {
@@ -34,9 +38,11 @@ export class PolyLine extends BaseGeo implements IGeometry {
       this.OnRequestRender.next();
     });
     this.Mover.OnMoved.subscribe(value => {
+      this.atMove = true;
       this.handleMove(value);
     });
     this.Mover.OnMoveEnd.subscribe(value => {
+      this.atMove = false;
     });
   }
 
@@ -47,7 +53,7 @@ export class PolyLine extends BaseGeo implements IGeometry {
     this.dragStates = {};
     this.lastPositions = {};
     const container = new PIXI.Container();
-    container.name = 'points';
+    container.name = this.cNamePoint;
     points.forEach((p, i) => {
       const tmpPoint = this.getPointGraphic(p.x, p.y, pointRadius);
       tmpPoint.name = this.pointNamePrefix + i;
@@ -58,9 +64,9 @@ export class PolyLine extends BaseGeo implements IGeometry {
     return container;
   }
 
-  private getLineContainer(points: Array<PIXI.Point>, lineWidth: number): PIXI.DisplayObject {
+  private getLineContainer(points: Array<PIXI.Point>, lineWidth: number): PIXI.Container {
     const container = new PIXI.Container();
-    container.name = 'lines';
+    container.name = this.cNameLines;
     const g = new PIXI.Graphics();
     g.lineStyle(lineWidth, 0xffd900, 1);
     g.moveTo(points[0].x, points[0].y);
@@ -83,7 +89,6 @@ export class PolyLine extends BaseGeo implements IGeometry {
   private refreshGraphic(info: PolyInfo, render = true) {
     this.refreshLines(info);
     this.refreshPoints(info);
-    this.registerEvents();
     if (render) {
       this.OnRequestRender.next();
     }
@@ -92,18 +97,21 @@ export class PolyLine extends BaseGeo implements IGeometry {
   private refreshLines(info: PolyInfo) {
     const lContainer = this.getLineContainer(info.points, info.lineWidth);
     lContainer.zIndex = 3;
-    const toDeleteL = this.GContainer.getChildByName('lines');
+    const toDeleteL = this.GContainer.getChildByName(this.cNameLines);
     this.GContainer.removeChild(toDeleteL);
     this.GContainer.addChild(lContainer);
+    this.createHitArea(lContainer);
   }
 
   private refreshPoints(info: PolyInfo) {
     const pContainer = this.getPointContainer(info.points, info.pointRadius);
-    const toDeleteP = this.GContainer.getChildByName('points');
+    if (!this.atMove) {
+      pContainer.visible = false;
+    }
+    const toDeleteP = this.GContainer.getChildByName(this.cNamePoint);
     pContainer.zIndex = 5;
     this.GContainer.removeChild(toDeleteP);
     this.GContainer.addChild(pContainer);
-
   }
 
   // endregion
@@ -127,6 +135,7 @@ export class PolyLine extends BaseGeo implements IGeometry {
         this.refreshGraphic(this.info, false);
         break;
     }
+    this.OnRequestRender.next();
   }
 
   private handleMove(moveEvent: MoveDelta) {
@@ -135,10 +144,11 @@ export class PolyLine extends BaseGeo implements IGeometry {
       p.y += moveEvent.y;
     }
     this.refreshGraphic(this.info, false);
+    this.OnRequestRender.next();
   }
 
   private getDelta(newPos: PIXI.Point, pointName: string): PIXI.Point {
-    const x =  newPos.x - this.lastPositions[pointName].x;
+    const x = newPos.x - this.lastPositions[pointName].x;
     const y = newPos.y - this.lastPositions[pointName].y;
     this.lastPositions[pointName].x = newPos.x;
     this.lastPositions[pointName].y = newPos.y;
@@ -146,6 +156,7 @@ export class PolyLine extends BaseGeo implements IGeometry {
   }
 
   private lastPointsToInfo() {
+    // TODO very inefficient
     const points: Array<PIXI.Point> = [];
     const keys = Object.keys(this.lastPositions);
     keys.forEach(k => {
@@ -154,9 +165,25 @@ export class PolyLine extends BaseGeo implements IGeometry {
     this.info.points = points;
   }
 
+  private createHitArea(container: PIXI.Container) {
+    container.interactive = true;
+    container.buttonMode = true;
+    container.hitArea = container.getBounds();
+    this.registerLineEvents(container);
+  }
+
   // endregion
 
   // region Init
+
+  private registerLineEvents(line: PIXI.DisplayObject) {
+    line.addListener('click', event1 => {
+      this.GContainer.getChildByName(this.cNamePoint).visible = true;
+      this.Mover.SetVisibility(true);
+      this.OnInteraction.next({event: event1, target: this});
+      this.OnRequestRender.next();
+    });
+  }
 
   private registerPointEvents(point: PIXI.DisplayObject) {
     point.interactive = true;
@@ -181,23 +208,11 @@ export class PolyLine extends BaseGeo implements IGeometry {
       event1.currentTarget.y += delta.y;
       this.lastPointsToInfo();
       this.refreshLines(this.info);
+      this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
     });
   }
 
-  private registerEvents() {
-    const obj = this.GContainer.getChildByName('origin');
-    obj.interactive = true;
-    obj.buttonMode = true;
-    obj.addListener('pointerupoutside', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
-    });
-    obj.addListener('click', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
-      this.Scaler.SetVisibility(true);
-      this.Mover.SetVisibility(true);
-    });
-  }
 
   // endregion
 
@@ -207,7 +222,9 @@ export class PolyLine extends BaseGeo implements IGeometry {
     const container = new PIXI.Container();
     this.GContainer = new PIXI.Container();
     const points = this.getPointContainer(this.info.points, this.info.pointRadius);
+    points.visible = false;
     const lines = this.getLineContainer(this.info.points, this.info.lineWidth);
+    this.createHitArea(lines);
     this.GContainer.addChild(lines);
     this.GContainer.addChild(points);
     this.Scaler.Generate({obj: points, offset: this.scalerOffset});
@@ -220,6 +237,8 @@ export class PolyLine extends BaseGeo implements IGeometry {
   }
 
   ClearSelection(): void {
+    this.GContainer.getChildByName(this.cNamePoint).visible = false;
+    this.Mover.SetVisibility(false);
   }
 
   GetId(): string {
