@@ -2,10 +2,15 @@
   <mat-grid-tile colspan="1" rowspan="1">
     Basic Example
   </mat-grid-tile>
-  <mat-grid-tile colspan="4" rowspan="1">
+  <mat-grid-tile colspan="3" rowspan="1">
     <mat-button-toggle (click)="onAddRect()">AddRect</mat-button-toggle>
     <mat-button-toggle (click)="onAddArrow()">AddArrow</mat-button-toggle>
     <mat-button-toggle (click)="onAddEllipse()">AddEllipse</mat-button-toggle>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1">
+    <mat-button-toggle (click)="onAddCircle()">AddCircle</mat-button-toggle>
+    <mat-button-toggle (click)="onAddPolyLine()">AddPolyLine</mat-button-toggle>
+    <mat-button-toggle (click)="onAddPolygon()">AddPolygon</mat-button-toggle>
   </mat-grid-tile>
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-button-toggle (click)="onScaleStage()">Scale Stage</mat-button-toggle>
