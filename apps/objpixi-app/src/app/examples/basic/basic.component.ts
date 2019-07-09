@@ -8,7 +8,7 @@ import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {IGeometry} from '../../interface/igeometry';
 import {Ellipse} from '../../geometries/Ellipse/ellipse';
-import {PolyLine} from "../../geometries/Polyline/poly-line";
+import {PolyLine} from '../../geometries/Polyline/poly-line';
 
 
 @Component({
@@ -48,8 +48,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Stage.y = 0;
     this.Stage.width = 800;
     this.Stage.height = 600;
-    this.Stage.interactive = true;
-    this.Stage.buttonMode = true;
     this.ScalingRect.OnRequestRender.subscribe(() => {
       this.ForceRender();
     });
@@ -86,6 +84,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
   }
 
+
   onAddCircle() {
     const g = new PIXI.Graphics();
     g.beginFill(0xe91e63);
@@ -113,7 +112,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const midY = 300;
     const offset = 100;
     const polyLine = new PolyLine({
-      lineWidth: 2, pointRadius: 4, points: [
+      lineWidth: 2, pointRadius: 6, points: [
         new PIXI.Point(midX - offset, midY - offset),
         new PIXI.Point(midX + offset, midY - offset),
 

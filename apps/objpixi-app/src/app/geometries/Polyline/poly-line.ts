@@ -100,6 +100,7 @@ export class PolyLine extends BaseGeo implements IGeometry {
     const toDeleteL = this.GContainer.getChildByName(this.cNameLines);
     this.GContainer.removeChild(toDeleteL);
     this.GContainer.addChild(lContainer);
+    this.GContainer.setChildIndex(lContainer, 0);
     this.createHitArea(lContainer);
   }
 
