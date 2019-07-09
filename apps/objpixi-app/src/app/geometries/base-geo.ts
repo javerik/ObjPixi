@@ -10,6 +10,8 @@ export class BaseGeo {
   public OnInteraction: Subject<GeoEvent>;
   protected Id: string;
   protected Name: string;
+  protected GContainer: PIXI.Container;
+
 
   constructor(name?: string) {
     this.Id = UUID.UUID();

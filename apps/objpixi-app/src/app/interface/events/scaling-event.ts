@@ -3,10 +3,12 @@ import * as PIXI from 'pixi.js';
 
 export interface ScalingEvent {
   direction: ScaleDirection;
-  deltas: Array<ScalingDelta>;
+  delta: PIXI.Point;
+  ArrowPositions: Array<ScalingDelta>;
 }
 
 export interface ScalingDelta {
-  delta: PIXI.Point;
-  direction: ScaleDirection;
+  dir: ScaleDirection;
+  point: PIXI.Point;
 }
+

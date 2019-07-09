@@ -6,6 +6,8 @@ import {ScaleArrow} from '../../interaction/scaling/objects/scale-arrow';
 import {MatGridTile} from '@angular/material';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
+import {IGeometry} from '../../interface/igeometry';
+import {Ellipse} from '../../geometries/Ellipse/ellipse';
 
 
 @Component({
@@ -20,10 +22,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
   App: PIXI.Application;
   Renderer: PIXI.Renderer;
   Stage: PIXI.Container;
-  myRect: Rect;
   myArrow: ScaleArrow;
   ScaleValue: number;
   ScalingRect: BasicScaler = new BasicScaler();
+  Geometries: Array<IGeometry> = [];
 
   private ratio: number;
   private winWidth = 800;
@@ -45,6 +47,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Stage.y = 0;
     this.Stage.width = 800;
     this.Stage.height = 600;
+    this.Stage.interactive = true;
+    this.Stage.buttonMode = true;
     this.ScalingRect.OnRequestRender.subscribe(() => {
       this.ForceRender();
     });
@@ -62,9 +66,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     // @ts-ignore
     const h = this.tilePixi._element.nativeElement.offsetHeight;
 
-    const lastWidth = this.winWidth;
-    const lastHeight = this.winHeight;
-
     if (w / h >= this.ratio) {
       this.winWidth = window.innerHeight * this.ratio;
       this.winHeight = window.innerHeight;
@@ -78,37 +79,42 @@ export class BasicComponent implements OnInit, AfterViewInit {
     if (this.winHeight > 600) {
       this.winHeight = 600;
     }
-
-    const fX = BasicComponent.mapRange(this.winWidth / (800 / 100), 0, 100, -1, 1);
-    const fY = BasicComponent.mapRange(this.winHeight / (600 / 100), 0, 100, -1, 1);
-    // console.log('W: %d H:%d fX: %f fY: %f', this.winWidth, this.winHeight, fX, fY);
     this.App.renderer.resize(this.winWidth, this.winHeight);
-    // this.Stage.scale.set(fX, fY);
-    console.log('Stage: x: %d y: %d', this.Stage.x, this.Stage.y);
     this.Renderer.view.style.width = this.winWidth + 'px';
     this.Renderer.view.style.height = this.winHeight + 'px';
     this.Renderer.render(this.Stage);
-    // this.App.render();
   }
 
   onAddRect() {
-    this.myRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
-    this.myRect.OnRequestRender.subscribe({
+    const newRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
+    this.registerGeoEvents(newRect);
+    newRect.Init();
+    this.Geometries.push(newRect);
+  }
+
+  onAddEllipse() {
+    const newEllipse = new Ellipse({width: 100, height: 120, center: true, position: new PIXI.Point(400, 300)});
+    this.registerGeoEvents(newEllipse);
+    newEllipse.Init();
+    this.Geometries.push(newEllipse);
+  }
+
+  private registerGeoEvents(geo: IGeometry) {
+    geo.OnRequestRender.subscribe({
       next: value => {
         this.ForceRender();
       }
     });
-    this.myRect.OnInitialized.subscribe({
+    geo.OnInitialized.subscribe({
       next: value => {
         this.onAddObject(value);
       }
     });
-    this.myRect.OnInteraction.subscribe({
+    geo.OnInteraction.subscribe({
       next: value => {
         this.onObjectEvent(value);
       }
     });
-    this.myRect.Init();
   }
 
   onAddArrow() {
@@ -139,9 +145,15 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
     switch (event.event.type) {
       case 'click':
-        console.log('Clicked');
+        this.clearExcept(event.target.GetId());
         break;
     }
+  }
+
+  private clearExcept(id: string) {
+    this.Geometries.filter(value => value.GetId() !== id).forEach(value => {
+      value.ClearSelection();
+    });
   }
 
 }
