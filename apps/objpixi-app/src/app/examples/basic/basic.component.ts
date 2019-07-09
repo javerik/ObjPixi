@@ -8,7 +8,7 @@ import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {IGeometry} from '../../interface/igeometry';
 import {Ellipse} from '../../geometries/Ellipse/ellipse';
-import {PolyLine} from '../../geometries/Polyline/poly-line';
+import {PolyLine} from '../../geometries/Poly/Polyline/poly-line';
 
 
 @Component({
