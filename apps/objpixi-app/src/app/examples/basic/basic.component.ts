@@ -23,10 +23,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   @ViewChild('pixiContainer', {static: false}) pixiContainer: ElementRef;
   @ViewChild('tilePixi', {static: false}) tilePixi: MatGridTile;
-  App: PIXI.Application;
   Renderer: PIXI.Renderer;
   Stage: PIXI.Container;
   myArrow: ScaleArrow;
+  testSprite: PIXI.Sprite;
   ScaleValue: number;
   ScalingRect: BasicScaler = new BasicScaler();
   Geometries: Array<IGeometry> = [];
@@ -44,7 +44,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.Renderer = PIXI.autoDetectRenderer({width: 800, height: 600, antialias: true});
-    this.App = new PIXI.Application({width: 800, height: 600});
     this.ratio = 800 / 600;
     this.Stage = new PIXI.Container();
     this.Stage.x = 0;
@@ -56,10 +55,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
     });
   }
 
+
   ngAfterViewInit(): void {
     this.pixiContainer.nativeElement.appendChild(this.Renderer.view);
     this.Renderer.render(this.Stage);
-    // this.App.stage.addChild(this.Stage);
   }
 
   onTileResize(event) {
@@ -81,7 +80,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     if (this.winHeight > 600) {
       this.winHeight = 600;
     }
-    this.App.renderer.resize(this.winWidth, this.winHeight);
     this.Renderer.view.style.width = this.winWidth + 'px';
     this.Renderer.view.style.height = this.winHeight + 'px';
     this.Renderer.render(this.Stage);
@@ -179,6 +177,18 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.myArrow = new ScaleArrow(ScaleDirection.Left);
     this.myArrow.Init(100, 100);
     this.onAddObject(this.myArrow.DispObj);
+  }
+
+  onAddTest() {
+    this.testSprite = PIXI.Sprite.from('assets/bunny.png');
+    this.testSprite.interactive = true;
+    // @ts-ignore
+    this.testSprite.interactiveMousewheel = true;
+    this.testSprite.on('mousewheel', (delta, event) => {
+      console.log('mouseWheel');
+    });
+    this.Stage.addChild(this.testSprite);
+    this.ForceRender();
   }
 
 

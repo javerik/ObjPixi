@@ -7,11 +7,13 @@ import { BasicComponent } from './examples/basic/basic.component';
 import {MatButtonToggleModule, MatFormFieldModule, MatGridListModule, MatInputModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { WizardComponent } from './examples/wizard/wizard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BasicComponent
+    BasicComponent,
+    WizardComponent
   ],
   imports: [
     BrowserModule,
