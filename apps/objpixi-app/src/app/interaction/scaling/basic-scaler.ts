@@ -157,7 +157,6 @@ export class BasicScaler implements IScaler {
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
       this.Arrows.Left.DispObj.x = newPos.x;
       const delta = this.getDeltePos(ScaleDirection.Left, newPos);
-      console.log(delta);
       this.reCalculatePositions();
       this.deltas[1].point = delta;
       this.OnScaleEvent.next({delta, direction: ScaleDirection.Left, ArrowPositions: this.lastPositions});

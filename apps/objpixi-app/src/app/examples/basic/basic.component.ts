@@ -8,6 +8,9 @@ import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {IGeometry} from '../../interface/igeometry';
 import {Ellipse} from '../../geometries/Ellipse/ellipse';
+import {PolyLine} from '../../geometries/Poly/Polyline/poly-line';
+import {PolyGon} from '../../geometries/Poly/Polygon/poly-gon';
+import {Line} from '../../geometries/Line/line';
 
 
 @Component({
@@ -47,8 +50,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Stage.y = 0;
     this.Stage.width = 800;
     this.Stage.height = 600;
-    this.Stage.interactive = true;
-    this.Stage.buttonMode = true;
     this.ScalingRect.OnRequestRender.subscribe(() => {
       this.ForceRender();
     });
@@ -85,6 +86,15 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
   }
 
+
+  onAddCircle() {
+    const g = new PIXI.Graphics();
+    g.beginFill(0xe91e63);
+    g.drawCircle(400, 300, 100);
+    g.endFill();
+    this.onAddObject(g);
+  }
+
   onAddRect() {
     const newRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
     this.registerGeoEvents(newRect);
@@ -97,6 +107,54 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.registerGeoEvents(newEllipse);
     newEllipse.Init();
     this.Geometries.push(newEllipse);
+  }
+
+  onAddLine() {
+    const line = new Line({
+      p1: new PIXI.Point(200, 300),
+      p2: new PIXI.Point(400, 300),
+      lineWidth: 3,
+      pointRadius: 6
+    });
+    this.registerGeoEvents(line);
+    line.Init();
+    this.Geometries.push(line);
+  }
+
+  onAddPolyLine() {
+    const midX = 400;
+    const midY = 300;
+    const offset = 100;
+    const polyLine = new PolyLine({
+      lineWidth: 2, pointRadius: 6, points: [
+        new PIXI.Point(midX - offset, midY - offset),
+        new PIXI.Point(midX + offset, midY - offset),
+
+        new PIXI.Point(midX + offset, midY + offset),
+        new PIXI.Point(midX - offset, midY + offset)
+      ]
+    });
+    this.registerGeoEvents(polyLine);
+    polyLine.Init();
+    this.Geometries.push(polyLine);
+  }
+
+  onAddPolygon() {
+    const midX = 400;
+    const midY = 300;
+    const offset = 100;
+    const polygon = new PolyGon({
+      lineWidth: 2, pointRadius: 6, points: [
+        new PIXI.Point(midX - offset, midY - offset),
+        new PIXI.Point(midX + offset, midY - offset),
+
+        new PIXI.Point(midX + offset, midY + offset),
+        new PIXI.Point(midX - offset, midY + offset)
+      ]
+    });
+    this.registerGeoEvents(polygon);
+    polygon.Init();
+    this.Geometries.push(polygon);
   }
 
   private registerGeoEvents(geo: IGeometry) {
@@ -122,6 +180,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.myArrow.Init(100, 100);
     this.onAddObject(this.myArrow.DispObj);
   }
+
 
   onScaleStage() {
     this.Stage.scale.set(this.ScaleValue);
