@@ -161,6 +161,12 @@ export class Line extends BaseGeo implements IGeometry {
       this.OnInteraction.next({event: event1, target: this});
       this.OnRequestRender.next();
     });
+    container.addListener('tap', event1 => {
+      this.OnInteraction.next({target: this, event: event1});
+      this.GContainer.getChildByName(this.cNamePoint).visible = true;
+      this.Mover.SetVisibility(true);
+      this.OnRequestRender.next();
+    });
   }
 
   // endregion

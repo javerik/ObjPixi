@@ -87,6 +87,11 @@ export class Rect extends BaseGeo implements IGeometry {
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
+    obj.addListener('tap', event1 => {
+      this.OnInteraction.next({target: this, event: event1});
+      this.Scaler.SetVisibility(true);
+      this.Mover.SetVisibility(true);
+    });
   }
 
   private handleScaling(event: ScalingEvent) {

@@ -11,6 +11,7 @@ import {Ellipse} from '../../geometries/Ellipse/ellipse';
 import {PolyLine} from '../../geometries/Poly/Polyline/poly-line';
 import {PolyGon} from '../../geometries/Poly/Polygon/poly-gon';
 import {Line} from '../../geometries/Line/line';
+import {Point} from '../../geometries/Point/point';
 
 
 @Component({
@@ -42,7 +43,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.Renderer = PIXI.autoDetectRenderer({width: 800, height: 600});
+    this.Renderer = PIXI.autoDetectRenderer({width: 800, height: 600, antialias: true});
     this.App = new PIXI.Application({width: 800, height: 600});
     this.ratio = 800 / 600;
     this.Stage = new PIXI.Container();
@@ -87,12 +88,11 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
 
-  onAddCircle() {
-    const g = new PIXI.Graphics();
-    g.beginFill(0xe91e63);
-    g.drawCircle(400, 300, 100);
-    g.endFill();
-    this.onAddObject(g);
+  onAddPoint() {
+    const p = new Point({position: new PIXI.Point(400, 300)});
+    this.registerGeoEvents(p);
+    p.Init();
+    this.Geometries.push(p);
   }
 
   onAddRect() {

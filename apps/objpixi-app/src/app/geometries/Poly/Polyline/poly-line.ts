@@ -54,6 +54,12 @@ export class PolyLine extends PolyBase implements IGeometry {
       this.OnInteraction.next({event: event1, target: this});
       this.OnRequestRender.next();
     });
+    container.addListener('tap', event1 => {
+      this.GContainer.getChildByName(this.cNamePoint).visible = true;
+      this.Mover.SetVisibility(true);
+      this.OnInteraction.next({event: event1, target: this});
+      this.OnRequestRender.next();
+    });
   }
 
 

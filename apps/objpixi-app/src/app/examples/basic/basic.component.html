@@ -15,8 +15,10 @@
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-button-toggle (click)="onAddPolygon()">Polygon</mat-button-toggle>
   </mat-grid-tile>
-  <mat-grid-tile colspan="4" rowspan="1">
+  <mat-grid-tile colspan="1" rowspan="1">
+    <mat-button-toggle (click)="onAddPoint()">Point</mat-button-toggle>
   </mat-grid-tile>
+
   <mat-grid-tile id="testDiv" #tilePixi colspan="5" rowspan="6" (window:resize)="onTileResize($event)">
     <div #pixiContainer></div>
   </mat-grid-tile>
