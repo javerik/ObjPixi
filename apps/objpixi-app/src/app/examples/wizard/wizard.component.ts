@@ -41,6 +41,9 @@ export class WizardComponent implements OnInit, AfterViewInit {
       this.Stage.addChild(object);
       this.ForceRender();
     });
+    this.Wizard.OnRequestRender.subscribe(value => {
+      this.ForceRender();
+    });
   }
 
   onTileResize(event) {

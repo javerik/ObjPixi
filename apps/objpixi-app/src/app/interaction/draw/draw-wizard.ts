@@ -1,10 +1,20 @@
 import * as PIXI from 'pixi.js';
+import {IGeometry} from '../../interface/igeometry';
+import {Point} from '../../geometries/Point/point';
+import {Subject} from 'rxjs';
+import {Line} from '../../geometries/Line/line';
 
 
 export class DrawWizard {
   private drawContainer: PIXI.Container;
+  private editGeo: IGeometry;
+  private clickPoint: PIXI.Point = new PIXI.Point();
+  private dragStart = false;
+  private dragged = false;
+  public OnRequestRender: Subject<null>;
 
   constructor() {
+    this.OnRequestRender = new Subject();
   }
 
   public Init(w, h, callback: (object: PIXI.DisplayObject) => void) {
@@ -16,16 +26,74 @@ export class DrawWizard {
     this.drawContainer.hitArea = new PIXI.Rectangle(0, 0, w, h);
     this.drawContainer.interactive = true;
     this.drawContainer.buttonMode = true;
+    this.drawContainer.zIndex = 100;
     this.registerEvents(this.drawContainer);
     callback(this.drawContainer);
   }
 
   private registerEvents(obj: PIXI.DisplayObject) {
     obj.addListener('tap', event1 => {
-      console.log('Tap');
+      if (this.dragged) {
+        return;
+      }
+      this.addPoint();
+      this.dragStart = true;
     });
     obj.addListener('click', event1 => {
-      console.log('Click');
+      if (this.dragged) {
+        return;
+      }
+      this.addPoint();
+      this.dragStart = true;
+    });
+    obj.addListener('pointerdown', event1 => {
+      this.clickPoint = event1.data.getLocalPosition(event1.currentTarget.parent);
+      this.dragStart = true;
+    });
+    obj.addListener('pointermove', event1 => {
+      console.log('Move %s', this.dragStart);
+      if (!this.dragStart) {
+        return;
+      }
+      console.log('MOVE');
+      const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      this.onMove(newPos);
+    });
+    obj.addListener('pointerup', event1 => {
+      this.dragStart = false;
+    });
+  }
+
+  private clear() {
+    this.drawContainer.removeChildren();
+  }
+
+  private addPoint() {
+    this.clear();
+    this.editGeo = new Point({position: this.clickPoint, enableInteractive: false});
+    this.registerGeoEvents();
+    this.editGeo.Init();
+  }
+
+  private onMove(pos: PIXI.Point) {
+    this.clear();
+    if (this.clickPoint === pos) {
+      this.dragged = false;
+      return;
+    }
+    this.dragged = true;
+    this.editGeo = new Line({lineWidth: 3, p1: this.clickPoint, p2: pos, pointRadius: 6});
+    this.registerGeoEvents();
+    this.editGeo.Init();
+  }
+
+  private registerGeoEvents() {
+    this.editGeo.OnInitialized.subscribe(value => {
+      this.drawContainer.addChild(value);
+      this.OnRequestRender.next();
+    });
+    this.editGeo.OnRequestRender.subscribe(value => {
+      this.OnRequestRender.next();
     });
   }
 

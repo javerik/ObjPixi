@@ -32,10 +32,16 @@ export class Point extends BaseGeo implements IGeometry {
     super(name);
     Point.pointTexture = PIXI.Texture.from(this.icon);
     this.info = pointInfo;
+    if (this.info.enableInteractive === undefined) {
+      this.info.enableInteractive = true;
+    }
   }
 
   // region Events
   private registerEvents(obj: PIXI.DisplayObject) {
+    if (!this.info.enableInteractive) {
+      return;
+    }
     obj.addListener('click', event1 => {
       this.OnInteraction.next({event: event1, target: this});
     });
