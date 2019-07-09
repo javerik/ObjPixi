@@ -8,6 +8,7 @@ import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {IGeometry} from '../../interface/igeometry';
 import {Ellipse} from '../../geometries/Ellipse/ellipse';
+import {PolyLine} from "../../geometries/Polyline/poly-line";
 
 
 @Component({
@@ -107,6 +108,24 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Geometries.push(newEllipse);
   }
 
+  onAddPolyLine() {
+    const midX = 400;
+    const midY = 300;
+    const offset = 100;
+    const polyLine = new PolyLine({
+      lineWidth: 2, pointRadius: 4, points: [
+        new PIXI.Point(midX - offset, midY - offset),
+        new PIXI.Point(midX + offset, midY - offset),
+
+        new PIXI.Point(midX + offset, midY + offset),
+        new PIXI.Point(midX - offset, midY + offset)
+      ]
+    });
+    this.registerGeoEvents(polyLine);
+    polyLine.Init();
+    this.Geometries.push(polyLine);
+  }
+
   private registerGeoEvents(geo: IGeometry) {
     geo.OnRequestRender.subscribe({
       next: value => {
@@ -130,6 +149,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.myArrow.Init(100, 100);
     this.onAddObject(this.myArrow.DispObj);
   }
+
 
   onScaleStage() {
     this.Stage.scale.set(this.ScaleValue);
