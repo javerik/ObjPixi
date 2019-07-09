@@ -4,22 +4,10 @@ import {PolyInfo} from '../poly-info';
 import {PolyBase} from '../poly-base';
 
 export class PolyLine extends PolyBase implements IGeometry {
-  public MainDisObject: PIXI.Container;
   private readonly scalerOffset = 15;
 
   constructor(polyInfo: PolyInfo, name?: string) {
     super(polyInfo, name);
-
-    this.Scaler.OnRequestRender.subscribe(() => {
-      this.OnRequestRender.next();
-    });
-    this.Scaler.OnScaleEvent.subscribe(value => {
-      this.handleScaling(value);
-    });
-    this.Mover.OnMoved.subscribe(value => {
-      this.atMove = true;
-      this.handleMove(value);
-    });
   }
 
   // region Graphics
@@ -99,10 +87,8 @@ export class PolyLine extends PolyBase implements IGeometry {
     this.createHitArea(lines);
     this.GContainer.addChild(lines);
     this.GContainer.addChild(points);
-    this.Scaler.Generate({obj: points, offset: this.scalerOffset});
     this.Mover.Generate(points.getBounds());
     container.addChild(this.GContainer);
-    container.addChild(this.Scaler.GetObject());
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
     this.OnInitialized.next(this.MainDisObject);

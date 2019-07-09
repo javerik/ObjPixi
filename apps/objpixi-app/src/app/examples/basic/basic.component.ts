@@ -9,6 +9,7 @@ import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {IGeometry} from '../../interface/igeometry';
 import {Ellipse} from '../../geometries/Ellipse/ellipse';
 import {PolyLine} from '../../geometries/Poly/Polyline/poly-line';
+import {PolyGon} from "../../geometries/Poly/Polygon/poly-gon";
 
 
 @Component({
@@ -123,6 +124,24 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.registerGeoEvents(polyLine);
     polyLine.Init();
     this.Geometries.push(polyLine);
+  }
+
+  onAddPolygon() {
+    const midX = 400;
+    const midY = 300;
+    const offset = 100;
+    const polygon = new PolyGon({
+      lineWidth: 2, pointRadius: 6, points: [
+        new PIXI.Point(midX - offset, midY - offset),
+        new PIXI.Point(midX + offset, midY - offset),
+
+        new PIXI.Point(midX + offset, midY + offset),
+        new PIXI.Point(midX - offset, midY + offset)
+      ]
+    });
+    this.registerGeoEvents(polygon);
+    polygon.Init();
+    this.Geometries.push(polygon);
   }
 
   private registerGeoEvents(geo: IGeometry) {

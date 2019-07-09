@@ -15,6 +15,7 @@ export class PolyBase extends BaseGeo {
   // endregion
 
   // region Member
+  protected MainDisObject: PIXI.Container;
   protected info: PolyInfo;
   // endregion
 
@@ -28,6 +29,7 @@ export class PolyBase extends BaseGeo {
   protected readonly pointNamePrefix = 'P_';
   protected readonly cNamePoint = 'CONTAINER_POINTS';
   protected readonly cNameLines = 'CONTAINER_LINES';
+  protected readonly cNamePolygon = 'CONTAINER_POLYGON';
   // endregion
 
   constructor(polyInfo: PolyInfo, name?: string) {
@@ -94,6 +96,10 @@ export class PolyBase extends BaseGeo {
     });
     this.Mover.OnRequestRender.subscribe(() => {
       this.OnRequestRender.next();
+    });
+    this.Mover.OnMoved.subscribe(value => {
+      this.atMove = true;
+      this.handleMove(value);
     });
   }
 
