@@ -9,6 +9,27 @@ import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 
 export class PolyBase extends BaseGeo {
 
+  // region Helper
+  public Scaler: IScaler;
+  protected readonly Mover: Mover;
+  // endregion
+
+  // region Member
+  protected info: PolyInfo;
+  // endregion
+
+  // region States
+  protected atMove = false;
+  protected dragStates: { [id: string]: boolean; } = {};
+  protected lastPositions: { [id: string]: PIXI.Point };
+  // endregion
+
+  // region Read only variables
+  protected readonly pointNamePrefix = 'P_';
+  protected readonly cNamePoint = 'CONTAINER_POINTS';
+  protected readonly cNameLines = 'CONTAINER_LINES';
+  // endregion
+
   constructor(polyInfo: PolyInfo, name?: string) {
     super(name);
     this.info = polyInfo;
@@ -16,20 +37,6 @@ export class PolyBase extends BaseGeo {
     this.Mover = new Mover();
     this.registerMoveEvents();
   }
-
-  public Scaler: IScaler;
-  protected readonly Mover: Mover;
-
-  protected info: PolyInfo;
-
-  protected atMove = false;
-
-  protected dragStates: { [id: string]: boolean; } = {};
-  protected lastPositions: { [id: string]: PIXI.Point };
-
-  protected readonly pointNamePrefix = 'P_';
-  protected readonly cNamePoint = 'CONTAINER_POINTS';
-  protected readonly cNameLines = 'CONTAINER_LINES';
 
   // region Statics
 
