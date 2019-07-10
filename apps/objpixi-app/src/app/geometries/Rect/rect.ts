@@ -6,6 +6,7 @@ import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScalingEvent} from '../../interface/events/scaling-event';
 import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
+import {RectInfo} from './rect-info';
 
 export class Rect extends BaseGeo implements IGeometry {
 
@@ -60,18 +61,19 @@ export class Rect extends BaseGeo implements IGeometry {
     return this.getGraphic(info.position.x, info.position.y, info.width, info.height);
   }
 
-  private getGraphic(x, y, w, h, center = true): PIXI.DisplayObject {
+  private getGraphic(x, y, w, h): PIXI.DisplayObject {
     const g = new PIXI.Graphics();
-    g.lineStyle(3, 0xfdd835);
-    g.beginFill(0x9ccc65, 0.8);
-    let px = x;
-    let py = y;
-    if (center) {
-      px = px - (w / 2);
-      py = py - (h / 2);
+    const style = this.info.style.fillStyle;
+    if (style.useLine) {
+      g.lineStyle(style.lineWidth, style.lineColor, style.lineAlpha);
+    }
+    if (style.useFill) {
+      g.beginFill(style.fillColor, style.fillAlpha);
     }
     g.drawRect(x, y, w, h);
-    g.endFill();
+    if (style.useFill) {
+      g.endFill();
+    }
     return g;
   }
 
@@ -164,11 +166,4 @@ export class Rect extends BaseGeo implements IGeometry {
 
   // endregion
 
-}
-
-export interface RectInfo {
-  width: number;
-  height: number;
-  center: boolean;
-  position: PIXI.Point;
 }

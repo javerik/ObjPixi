@@ -15,6 +15,7 @@ import {Point} from '../../geometries/Point/point';
 import {IStyleLine} from '../../styles/istyle-line';
 import {IStyleEllipse} from '../../styles/istyle-ellipse';
 import {IStylePoly} from '../../styles/istyle-poly';
+import {IStyleRect} from '../../styles/istyle-rect';
 
 
 @Component({
@@ -97,6 +98,17 @@ export class BasicComponent implements OnInit, AfterViewInit {
       fillAlpha: 0.5
     }
   };
+  rectStyle: IStyleRect = {
+    fillStyle: {
+      useFill: true,
+      useLine: true,
+      fillAlpha: 0.5,
+      lineAlpha: 1,
+      fillColor: 0x8d6e63,
+      lineColor: this.defaultLineColor,
+      lineWidth: 2
+    }
+  };
   // endregion
 
   private ratio: number;
@@ -162,7 +174,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddRect() {
-    const newRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
+    const newRect = new Rect({
+      width: 100, height: 100, center: true,
+      position: new PIXI.Point(400, 300), style: this.rectStyle
+    });
     this.registerGeoEvents(newRect);
     newRect.Init();
     this.Geometries.push(newRect);
