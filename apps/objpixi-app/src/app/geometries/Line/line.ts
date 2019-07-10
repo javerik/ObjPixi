@@ -39,11 +39,19 @@ export class Line extends BaseGeo implements IGeometry {
   // region Statics
 
   // TODO outsource in utility class
-  private static getPointGraphic(x, y, radius): PIXI.DisplayObject {
+  private getPointGraphic(x, y): PIXI.DisplayObject {
+    const pStyle = this.info.style.pointStyle;
     const g = new PIXI.Graphics();
-    g.beginFill(0xb0003a);
-    g.drawCircle(x, y, radius);
-    g.endFill();
+    if (pStyle.useFill) {
+      g.beginFill(pStyle.fillColor, pStyle.fillAlpha);
+    }
+    if (pStyle.useLine) {
+      g.lineStyle(pStyle.lineWidth, pStyle.lineColor, pStyle.lineAlpha);
+    }
+    g.drawCircle(x, y, pStyle.radius);
+    if (pStyle.useFill) {
+      g.endFill();
+    }
     return g;
   }
 
@@ -52,15 +60,15 @@ export class Line extends BaseGeo implements IGeometry {
   // region Graphics
 
   private refreshGraphic(info: LineInfo, render = true) {
-    this.refreshLines(info);
-    this.refreshPoints(info);
+    this.refreshLines();
+    this.refreshPoints();
     if (render) {
       this.OnRequestRender.next();
     }
   }
 
-  private refreshPoints(info: LineInfo) {
-    const pContainer = this.getPointContainer([this.info.p1, this.info.p2], info.pointRadius);
+  private refreshPoints() {
+    const pContainer = this.getPointContainer([this.info.p1, this.info.p2]);
     if (!this.atMove) {
       pContainer.visible = false;
     }
@@ -69,8 +77,8 @@ export class Line extends BaseGeo implements IGeometry {
     this.GContainer.addChild(pContainer);
   }
 
-  private refreshLines(info: LineInfo) {
-    const lContainer = this.getLineContainer([this.info.p1, this.info.p2], info.lineWidth);
+  private refreshLines() {
+    const lContainer = this.getLineContainer([this.info.p1, this.info.p2]);
     lContainer.zIndex = 3;
     const toDeleteL = this.GContainer.getChildByName(this.cNameLines);
     this.GContainer.removeChild(toDeleteL);
@@ -80,13 +88,13 @@ export class Line extends BaseGeo implements IGeometry {
   }
 
   // TODO outsource in utility class
-  private getPointContainer(points: Array<PIXI.Point>, pointRadius: number): PIXI.DisplayObject {
+  private getPointContainer(points: Array<PIXI.Point>): PIXI.DisplayObject {
     this.dragStates = {};
     this.lastPositions = {};
     const container = new PIXI.Container();
     container.name = this.cNamePoint;
     points.forEach((p, i) => {
-      const tmpPoint = Line.getPointGraphic(p.x, p.y, pointRadius);
+      const tmpPoint = this.getPointGraphic(p.x, p.y);
       tmpPoint.name = this.pointNamePrefix + i;
       this.lastPositions[tmpPoint.name] = new PIXI.Point(p.x, p.y);
       this.registerPointEvents(tmpPoint);
@@ -95,11 +103,12 @@ export class Line extends BaseGeo implements IGeometry {
     return container;
   }
 
-  private getLineContainer(points: Array<PIXI.Point>, lineWidth: number): PIXI.Container {
+  private getLineContainer(points: Array<PIXI.Point>): PIXI.Container {
     const container = new PIXI.Container();
     container.name = this.cNameLines;
     const g = new PIXI.Graphics();
-    g.lineStyle(lineWidth, 0xffd900, 1);
+    const lStyle = this.info.style;
+    g.lineStyle(lStyle.lineWidth, lStyle.color, lStyle.alpha);
     g.moveTo(points[0].x, points[0].y);
     points.forEach(p => {
       g.lineTo(p.x, p.y);
@@ -148,7 +157,7 @@ export class Line extends BaseGeo implements IGeometry {
       event1.currentTarget.x += delta.x;
       event1.currentTarget.y += delta.y;
       this.lastPointsToInfo();
-      this.refreshLines(this.info);
+      this.refreshLines();
       this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
     });
@@ -216,9 +225,9 @@ export class Line extends BaseGeo implements IGeometry {
   Init(): void {
     const container = new PIXI.Container();
     this.GContainer = new PIXI.Container();
-    const points = this.getPointContainer([this.info.p1, this.info.p2], this.info.pointRadius);
+    const points = this.getPointContainer([this.info.p1, this.info.p2]);
     points.visible = false;
-    const lines = this.getLineContainer([this.info.p1, this.info.p2], this.info.lineWidth);
+    const lines = this.getLineContainer([this.info.p1, this.info.p2]);
     this.createHitArea(lines);
     this.GContainer.addChild(lines);
     this.GContainer.addChild(points);

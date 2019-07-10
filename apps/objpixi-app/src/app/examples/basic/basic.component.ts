@@ -12,6 +12,7 @@ import {PolyLine} from '../../geometries/Poly/Polyline/poly-line';
 import {PolyGon} from '../../geometries/Poly/Polygon/poly-gon';
 import {Line} from '../../geometries/Line/line';
 import {Point} from '../../geometries/Point/point';
+import {IStyleLine} from '../../styles/istyle-line';
 
 
 @Component({
@@ -30,6 +31,19 @@ export class BasicComponent implements OnInit, AfterViewInit {
   ScaleValue: number;
   ScalingRect: BasicScaler = new BasicScaler();
   Geometries: Array<IGeometry> = [];
+  dragPointFillColor = 0xf44336;
+  lineStyle: IStyleLine = {
+    alpha: 1,
+    color: 0x009688,
+    lineWidth: 3,
+    pointStyle: {
+      useFill: true,
+      useLine: false,
+      radius: 6,
+      fillAlpha: 1,
+      fillColor: this.dragPointFillColor
+    }
+  };
 
   private ratio: number;
   private winWidth = 800;
@@ -111,8 +125,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const line = new Line({
       p1: new PIXI.Point(200, 300),
       p2: new PIXI.Point(400, 300),
-      lineWidth: 3,
-      pointRadius: 6
+      style: this.lineStyle
     });
     this.registerGeoEvents(line);
     line.Init();
