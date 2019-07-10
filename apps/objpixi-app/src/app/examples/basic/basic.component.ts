@@ -13,6 +13,7 @@ import {PolyGon} from '../../geometries/Poly/Polygon/poly-gon';
 import {Line} from '../../geometries/Line/line';
 import {Point} from '../../geometries/Point/point';
 import {IStyleLine} from '../../styles/istyle-line';
+import {IStyleEllipse} from '../../styles/istyle-ellipse';
 
 
 @Component({
@@ -32,16 +33,30 @@ export class BasicComponent implements OnInit, AfterViewInit {
   ScalingRect: BasicScaler = new BasicScaler();
   Geometries: Array<IGeometry> = [];
   dragPointFillColor = 0xf44336;
+  defaultLineColor = 0x009688;
   lineStyle: IStyleLine = {
     alpha: 1,
-    color: 0x009688,
+    color: this.defaultLineColor,
     lineWidth: 3,
     pointStyle: {
+      fillStyle: {
+        useFill: true,
+        useLine: false,
+        fillAlpha: 1,
+        fillColor: this.dragPointFillColor
+      },
+      radius: 6
+    }
+  };
+  ellipseStyle: IStyleEllipse = {
+    fillStyle: {
       useFill: true,
-      useLine: false,
-      radius: 6,
-      fillAlpha: 1,
-      fillColor: this.dragPointFillColor
+      useLine: true,
+      fillAlpha: 0.5,
+      lineAlpha: 1,
+      fillColor: 0x7e57c2,
+      lineColor: this.defaultLineColor,
+      lineWidth: 2
     }
   };
 
@@ -115,7 +130,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddEllipse() {
-    const newEllipse = new Ellipse({width: 100, height: 120, center: true, position: new PIXI.Point(400, 300)});
+    const newEllipse = new Ellipse({
+      width: 100, height: 120, center: true, position: new PIXI.Point(400, 300),
+      style: this.ellipseStyle
+    });
     this.registerGeoEvents(newEllipse);
     newEllipse.Init();
     this.Geometries.push(newEllipse);

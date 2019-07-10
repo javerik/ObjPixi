@@ -42,14 +42,14 @@ export class Line extends BaseGeo implements IGeometry {
   private getPointGraphic(x, y): PIXI.DisplayObject {
     const pStyle = this.info.style.pointStyle;
     const g = new PIXI.Graphics();
-    if (pStyle.useFill) {
-      g.beginFill(pStyle.fillColor, pStyle.fillAlpha);
+    if (pStyle.fillStyle.useFill) {
+      g.beginFill(pStyle.fillStyle.fillColor, pStyle.fillStyle.fillAlpha);
     }
-    if (pStyle.useLine) {
-      g.lineStyle(pStyle.lineWidth, pStyle.lineColor, pStyle.lineAlpha);
+    if (pStyle.fillStyle.useLine) {
+      g.lineStyle(pStyle.fillStyle.lineWidth, pStyle.fillStyle.lineColor, pStyle.fillStyle.lineAlpha);
     }
     g.drawCircle(x, y, pStyle.radius);
-    if (pStyle.useFill) {
+    if (pStyle.fillStyle.useFill) {
       g.endFill();
     }
     return g;

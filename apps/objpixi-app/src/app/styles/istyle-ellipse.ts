@@ -1,6 +1,5 @@
 import {IStyleFill} from './istyle-fill';
 
-export interface IStyleDragPoint {
-  radius: number;
+export interface IStyleEllipse {
   fillStyle: IStyleFill;
 }

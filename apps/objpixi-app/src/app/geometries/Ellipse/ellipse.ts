@@ -45,16 +45,17 @@ export class Ellipse extends BaseGeo implements IGeometry {
 
   private getGraphic(x, y, w, h, center = true): PIXI.DisplayObject {
     const g = new PIXI.Graphics();
-    g.lineStyle(3, 0xfdd835);
-    g.beginFill(0x9ccc65, 0.8);
-    let px = x;
-    let py = y;
-    if (center) {
-      px = px - (w / 2);
-      py = py - (h / 2);
+    const style = this.info.style;
+    if (style.fillStyle.useLine) {
+      g.lineStyle(style.fillStyle.lineWidth, style.fillStyle.lineColor, style.fillStyle.lineAlpha);
+    }
+    if (style.fillStyle.useFill) {
+      g.beginFill(style.fillStyle.fillColor, style.fillStyle.fillAlpha);
     }
     g.drawEllipse(x, y, w / 2, h / 2);
-    g.endFill();
+    if (style.fillStyle.useFill) {
+      g.endFill();
+    }
     return g;
   }
 
