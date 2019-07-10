@@ -14,6 +14,7 @@ import {Line} from '../../geometries/Line/line';
 import {Point} from '../../geometries/Point/point';
 import {IStyleLine} from '../../styles/istyle-line';
 import {IStyleEllipse} from '../../styles/istyle-ellipse';
+import {IStylePoly} from '../../styles/istyle-poly';
 
 
 @Component({
@@ -34,6 +35,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
   Geometries: Array<IGeometry> = [];
   dragPointFillColor = 0xf44336;
   defaultLineColor = 0x009688;
+  // region styles
+
   lineStyle: IStyleLine = {
     alpha: 1,
     color: this.defaultLineColor,
@@ -59,6 +62,42 @@ export class BasicComponent implements OnInit, AfterViewInit {
       lineWidth: 2
     }
   };
+  polyLineStyle: IStylePoly = {
+    pointStyle: {
+      radius: 6,
+      fillStyle: {
+        useFill: true,
+        useLine: false,
+        fillAlpha: 1,
+        fillColor: this.dragPointFillColor
+      }
+    },
+    fillStyle: {
+      useLine: true,
+      useFill: false,
+      lineWidth: 2,
+      lineColor: this.defaultLineColor,
+      lineAlpha: 1
+    }
+  };
+  polyGonStyle: IStylePoly = {
+    pointStyle: {
+      radius: 6,
+      fillStyle: {
+        useFill: true,
+        useLine: false,
+        fillAlpha: 1,
+        fillColor: this.dragPointFillColor
+      }
+    },
+    fillStyle: {
+      useLine: false,
+      useFill: true,
+      fillColor: 0x66bb6a,
+      fillAlpha: 0.5
+    }
+  };
+  // endregion
 
   private ratio: number;
   private winWidth = 800;
@@ -155,13 +194,13 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const midY = 300;
     const offset = 100;
     const polyLine = new PolyLine({
-      lineWidth: 2, pointRadius: 6, points: [
+      points: [
         new PIXI.Point(midX - offset, midY - offset),
         new PIXI.Point(midX + offset, midY - offset),
 
         new PIXI.Point(midX + offset, midY + offset),
         new PIXI.Point(midX - offset, midY + offset)
-      ]
+      ], style: this.polyLineStyle
     });
     this.registerGeoEvents(polyLine);
     polyLine.Init();
@@ -173,13 +212,13 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const midY = 300;
     const offset = 100;
     const polygon = new PolyGon({
-      lineWidth: 2, pointRadius: 6, points: [
+      points: [
         new PIXI.Point(midX - offset, midY - offset),
         new PIXI.Point(midX + offset, midY - offset),
 
         new PIXI.Point(midX + offset, midY + offset),
         new PIXI.Point(midX - offset, midY + offset)
-      ]
+      ], style: this.polyGonStyle
     });
     this.registerGeoEvents(polygon);
     polygon.Init();

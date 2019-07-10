@@ -13,11 +13,12 @@ export class PolyLine extends PolyBase implements IGeometry {
   // region Graphics
 
 
-  private getLineContainer(points: Array<PIXI.Point>, lineWidth: number): PIXI.Container {
+  private getLineContainer(points: Array<PIXI.Point>): PIXI.Container {
     const container = new PIXI.Container();
     container.name = this.cNameLines;
     const g = new PIXI.Graphics();
-    g.lineStyle(lineWidth, 0xffd900, 1);
+    const style = this.info.style.fillStyle;
+    g.lineStyle(style.lineWidth, style.lineColor, style.lineAlpha);
     g.moveTo(points[0].x, points[0].y);
     points.forEach(p => {
       g.lineTo(p.x, p.y);
@@ -33,7 +34,7 @@ export class PolyLine extends PolyBase implements IGeometry {
   }
 
   private refreshLines(info: PolyInfo) {
-    const lContainer = this.getLineContainer(info.points, info.lineWidth);
+    const lContainer = this.getLineContainer(info.points);
     lContainer.zIndex = 3;
     const toDeleteL = this.GContainer.getChildByName(this.cNameLines);
     this.GContainer.removeChild(toDeleteL);
@@ -87,9 +88,9 @@ export class PolyLine extends PolyBase implements IGeometry {
   Init(): void {
     const container = new PIXI.Container();
     this.GContainer = new PIXI.Container();
-    const points = this.getPointContainer(this.info.points, this.info.pointRadius);
+    const points = this.getPointContainer(this.info.points);
     points.visible = false;
-    const lines = this.getLineContainer(this.info.points, this.info.lineWidth);
+    const lines = this.getLineContainer(this.info.points);
     this.createHitArea(lines);
     this.GContainer.addChild(lines);
     this.GContainer.addChild(points);

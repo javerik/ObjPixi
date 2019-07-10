@@ -40,17 +40,6 @@ export class PolyBase extends BaseGeo {
     this.registerMoveEvents();
   }
 
-  // region Statics
-
-  protected static getPointGraphic(x, y, radius): PIXI.DisplayObject {
-    const g = new PIXI.Graphics();
-    g.beginFill(0xb0003a);
-    g.drawCircle(x, y, radius);
-    g.endFill();
-    return g;
-  }
-
-  // endregion
 
   // region Graphics
 
@@ -61,13 +50,13 @@ export class PolyBase extends BaseGeo {
     }
   }
 
-  protected getPointContainer(points: Array<PIXI.Point>, pointRadius: number): PIXI.DisplayObject {
+  protected getPointContainer(points: Array<PIXI.Point>): PIXI.DisplayObject {
     this.dragStates = {};
     this.lastPositions = {};
     const container = new PIXI.Container();
     container.name = this.cNamePoint;
     points.forEach((p, i) => {
-      const tmpPoint = PolyBase.getPointGraphic(p.x, p.y, pointRadius);
+      const tmpPoint = this.getPointGraphic(p.x, p.y);
       tmpPoint.name = this.pointNamePrefix + i;
       this.lastPositions[tmpPoint.name] = new PIXI.Point(p.x, p.y);
       this.registerPointEvents(tmpPoint);
@@ -77,7 +66,7 @@ export class PolyBase extends BaseGeo {
   }
 
   protected refreshPoints(info: PolyInfo) {
-    const pContainer = this.getPointContainer(info.points, info.pointRadius);
+    const pContainer = this.getPointContainer(info.points);
     if (!this.atMove) {
       pContainer.visible = false;
     }
@@ -85,6 +74,22 @@ export class PolyBase extends BaseGeo {
     pContainer.zIndex = 5;
     this.GContainer.removeChild(toDeleteP);
     this.GContainer.addChild(pContainer);
+  }
+
+  protected getPointGraphic(x, y): PIXI.DisplayObject {
+    const pStyle = this.info.style.pointStyle;
+    const g = new PIXI.Graphics();
+    if (pStyle.fillStyle.useFill) {
+      g.beginFill(pStyle.fillStyle.fillColor, pStyle.fillStyle.fillAlpha);
+    }
+    if (pStyle.fillStyle.useLine) {
+      g.lineStyle(pStyle.fillStyle.lineWidth, pStyle.fillStyle.lineColor, pStyle.fillStyle.lineAlpha);
+    }
+    g.drawCircle(x, y, pStyle.radius);
+    if (pStyle.fillStyle.useFill) {
+      g.endFill();
+    }
+    return g;
   }
 
   // endregion

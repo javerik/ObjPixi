@@ -16,7 +16,11 @@ export class PolyGon extends PolyBase implements IGeometry {
     const container = new PIXI.Container();
     container.name = this.cNamePolygon;
     const g = new PIXI.Graphics();
-    g.beginFill(0xff8a50, 0.7);
+    const style = this.info.style.fillStyle;
+    if (style.useLine) {
+      g.lineStyle(style.lineWidth, style.lineColor, style.lineAlpha);
+    }
+    g.beginFill(style.fillColor, style.fillAlpha);
     g.drawPolygon(points);
     g.endFill();
     container.addChild(g);
@@ -83,7 +87,7 @@ export class PolyGon extends PolyBase implements IGeometry {
   Init(): void {
     this.GContainer = new PIXI.Container();
     const container = new PIXI.Container();
-    const points = this.getPointContainer(this.info.points, this.info.pointRadius);
+    const points = this.getPointContainer(this.info.points);
     points.visible = false;
     const poly = this.getPolygonGraphic(this.info.points);
     this.createHitArea(poly);
