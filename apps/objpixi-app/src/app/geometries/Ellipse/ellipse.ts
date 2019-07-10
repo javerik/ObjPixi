@@ -111,9 +111,12 @@ export class Ellipse extends BaseGeo implements IGeometry {
 
   // endregion
 
-  // region Init
+  // region Events
 
   private registerEvents() {
+    if (!this.enableControl) {
+      return;
+    }
     const obj = this.GContainer.getChildByName('origin');
     obj.interactive = true;
     obj.buttonMode = true;
@@ -188,6 +191,14 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
+  }
+
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
   }
 
   // endregion

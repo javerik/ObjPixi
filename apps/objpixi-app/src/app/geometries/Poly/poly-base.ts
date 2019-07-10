@@ -95,6 +95,7 @@ export class PolyBase extends BaseGeo {
   // endregion
 
   // region Events
+
   protected registerMoveEvents() {
     this.Mover.OnMoveEnd.subscribe(value => {
       this.atMove = false;
@@ -109,6 +110,9 @@ export class PolyBase extends BaseGeo {
   }
 
   protected registerPointEvents(point: PIXI.DisplayObject) {
+    if (!this.enableControl) {
+      return;
+    }
     point.interactive = true;
     point.buttonMode = true;
     this.dragStates[point.name] = false;
@@ -161,6 +165,9 @@ export class PolyBase extends BaseGeo {
   }
 
   protected createHitArea(container: PIXI.Container) {
+    if (!this.enableControl) {
+      return;
+    }
     container.interactive = true;
     container.buttonMode = true;
     container.hitArea = container.getBounds();

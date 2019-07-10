@@ -121,6 +121,13 @@ export class Line extends BaseGeo implements IGeometry {
 
   // region Events
 
+  private enablePointInteractive(container: PIXI.Container, state: boolean) {
+    container.children.forEach(c => {
+      c.interactive = state;
+      c.buttonMode = state;
+    });
+  }
+
   private registerMoveEvents() {
     this.Mover.OnMoveEnd.subscribe(value => {
       this.atMove = false;
@@ -136,6 +143,9 @@ export class Line extends BaseGeo implements IGeometry {
 
   // TODO outsource in utility class
   private registerPointEvents(point: PIXI.DisplayObject) {
+    if (!this.enableControl) {
+      return;
+    }
     point.interactive = true;
     point.buttonMode = true;
     this.dragStates[point.name] = false;
@@ -164,6 +174,9 @@ export class Line extends BaseGeo implements IGeometry {
   }
 
   private registerContainerEvents(container: PIXI.DisplayObject) {
+    if (!this.enableControl) {
+      return;
+    }
     container.addListener('click', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
@@ -269,6 +282,14 @@ export class Line extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getBounds());
     this.OnRequestRender.next();
+  }
+
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
   }
 
   // endregion

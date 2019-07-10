@@ -32,14 +32,11 @@ export class Point extends BaseGeo implements IGeometry {
     super(name);
     Point.pointTexture = PIXI.Texture.from(this.icon);
     this.info = pointInfo;
-    if (this.info.enableInteractive === undefined) {
-      this.info.enableInteractive = true;
-    }
   }
 
   // region Events
   private registerEvents(obj: PIXI.DisplayObject) {
-    if (!this.info.enableInteractive) {
+    if (!this.enableControl) {
       return;
     }
     obj.addListener('click', event1 => {
@@ -117,6 +114,14 @@ export class Point extends BaseGeo implements IGeometry {
     this.pointSprite.x = this.info.position.x;
     this.pointSprite.y = this.info.position.y;
     this.OnRequestRender.next();
+  }
+
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
   }
 
   // endregion

@@ -12,6 +12,7 @@ export interface IGeometry {
   Init(): void;
   GetPoints(): Array<PIXI.Point>;
   UpdatePoints(points: Array<PIXI.Point>);
+  EnableControls(state: boolean);
   GetId(): string;
   GetName(): string;
   SetName(name: string);

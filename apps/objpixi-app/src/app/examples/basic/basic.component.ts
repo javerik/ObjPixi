@@ -288,6 +288,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     rectPoints[0].x = 50;
     rectPoints[1].x = 500;
     rect.UpdatePoints(rectPoints);
+    rect.EnableControls(false);
   }
 
   modifyPoint() {

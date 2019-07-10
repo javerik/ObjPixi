@@ -133,5 +133,13 @@ export class PolyLine extends PolyBase implements IGeometry {
     this.OnRequestRender.next();
   }
 
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
+  }
+
   // endregion
 }

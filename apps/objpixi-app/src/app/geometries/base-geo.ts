@@ -11,7 +11,7 @@ export class BaseGeo {
   protected Id: string;
   protected Name: string;
   protected GContainer: PIXI.Container;
-
+  protected enableControl = true;
 
   constructor(name?: string) {
     this.Id = UUID.UUID();

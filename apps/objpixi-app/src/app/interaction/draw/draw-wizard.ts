@@ -87,7 +87,7 @@ export class DrawWizard {
 
   private addPoint() {
     this.clear();
-    this.editGeo = new Point({position: this.clickPoint, enableInteractive: false});
+    this.editGeo = new Point({position: this.clickPoint});
     this.registerGeoEvents();
     this.editGeo.Init();
   }
