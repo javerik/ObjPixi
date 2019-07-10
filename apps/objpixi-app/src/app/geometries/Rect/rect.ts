@@ -37,26 +37,7 @@ export class Rect extends BaseGeo implements IGeometry {
     });
   }
 
-  public Init() {
-    this.GContainer = new PIXI.Container();
-    if (this.info.center) {
-      this.info.position.x = this.info.position.x - (this.info.width / 2);
-      this.info.position.y = this.info.position.y - (this.info.height / 2);
-    }
-    const rect = this.getGraphicFromInfo(this.info);
-    rect.name = 'origin';
-    this.GContainer.addChild(rect);
-    const container = new PIXI.Container();
-    this.Scaler.Generate({obj: rect, offset: this.scalerOffset});
-    this.Mover.Generate(rect.getBounds());
-    container.addChild(this.GContainer);
-    container.addChild(this.Scaler.GetObject());
-    container.addChild(this.Mover.GetObject());
-    this.MainDisObject = container;
-    this.registerEvents();
-    this.OnInitialized.next(this.MainDisObject);
-  }
-
+  // region Graphics
   private getGraphicFromInfo(info: RectInfo): PIXI.DisplayObject {
     return this.getGraphic(info.position.x, info.position.y, info.width, info.height);
   }
@@ -77,6 +58,22 @@ export class Rect extends BaseGeo implements IGeometry {
     return g;
   }
 
+  private refreshGraphic(rectInfo: RectInfo, render = true) {
+    const nG = this.getGraphicFromInfo(rectInfo);
+    nG.name = 'origin';
+    const orig = this.GContainer.getChildByName('origin');
+    this.GContainer.removeChild(orig);
+    this.GContainer.addChild(nG);
+    this.registerEvents();
+    if (render) {
+      this.OnRequestRender.next();
+    }
+  }
+
+  // endregion
+
+  // region Events
+
   private registerEvents() {
     const obj = this.GContainer.getChildByName('origin');
     obj.interactive = true;
@@ -96,6 +93,9 @@ export class Rect extends BaseGeo implements IGeometry {
     });
   }
 
+  // endregion
+
+  // region Scaling and move handling
   private handleScaling(event: ScalingEvent) {
     switch (event.direction) {
       case ScaleDirection.Up:
@@ -129,19 +129,29 @@ export class Rect extends BaseGeo implements IGeometry {
     this.OnRequestRender.next();
   }
 
-  private refreshGraphic(rectInfo: RectInfo, render = true) {
-    const nG = this.getGraphicFromInfo(rectInfo);
-    nG.name = 'origin';
-    const orig = this.GContainer.getChildByName('origin');
-    this.GContainer.removeChild(orig);
-    this.GContainer.addChild(nG);
-    this.registerEvents();
-    if (render) {
-      this.OnRequestRender.next();
-    }
-  }
+  // endregion
 
   // region IGeometry
+
+  public Init() {
+    this.GContainer = new PIXI.Container();
+    if (this.info.center) {
+      this.info.position.x = this.info.position.x - (this.info.width / 2);
+      this.info.position.y = this.info.position.y - (this.info.height / 2);
+    }
+    const rect = this.getGraphicFromInfo(this.info);
+    rect.name = 'origin';
+    this.GContainer.addChild(rect);
+    const container = new PIXI.Container();
+    this.Scaler.Generate({obj: rect, offset: this.scalerOffset});
+    this.Mover.Generate(rect.getBounds());
+    container.addChild(this.GContainer);
+    container.addChild(this.Scaler.GetObject());
+    container.addChild(this.Mover.GetObject());
+    this.MainDisObject = container;
+    this.registerEvents();
+    this.OnInitialized.next(this.MainDisObject);
+  }
 
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
