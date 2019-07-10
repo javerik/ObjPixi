@@ -61,6 +61,7 @@ export class Point extends BaseGeo implements IGeometry {
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
       this.pointSprite.position.x = newPos.x;
       this.pointSprite.position.y = newPos.y;
+      this.info.position = this.pointSprite.position;
       this.OnRequestRender.next();
     });
   }
@@ -105,6 +106,17 @@ export class Point extends BaseGeo implements IGeometry {
 
   SetName(name: string) {
     this.Name = name;
+  }
+
+  GetPoints(): Array<PIXI.Point> {
+    return [this.info.position];
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.position = points[0];
+    this.pointSprite.x = this.info.position.x;
+    this.pointSprite.y = this.info.position.y;
+    this.OnRequestRender.next();
   }
 
   // endregion

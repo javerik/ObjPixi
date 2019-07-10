@@ -3,6 +3,7 @@ import {IGeometry} from '../../interface/igeometry';
 import {Point} from '../../geometries/Point/point';
 import {Subject} from 'rxjs';
 import {Line} from '../../geometries/Line/line';
+import {IStyleLine} from '../../styles/istyle-line';
 
 
 export class DrawWizard {
@@ -12,6 +13,22 @@ export class DrawWizard {
   private dragStart = false;
   private dragged = false;
   public OnRequestRender: Subject<null>;
+  dragPointFillColor = 0xf44336;
+  defaultLineColor = 0x009688;
+  lineStyle: IStyleLine = {
+    alpha: 1,
+    color: this.defaultLineColor,
+    lineWidth: 3,
+    pointStyle: {
+      fillStyle: {
+        useFill: true,
+        useLine: false,
+        fillAlpha: 1,
+        fillColor: this.dragPointFillColor
+      },
+      radius: 6
+    }
+  };
 
   constructor() {
     this.OnRequestRender = new Subject();
@@ -82,7 +99,7 @@ export class DrawWizard {
       return;
     }
     this.dragged = true;
-    this.editGeo = new Line({lineWidth: 3, p1: this.clickPoint, p2: pos, pointRadius: 6});
+    this.editGeo = new Line({p1: this.clickPoint, p2: pos, style: this.lineStyle});
     this.registerGeoEvents();
     this.editGeo.Init();
   }

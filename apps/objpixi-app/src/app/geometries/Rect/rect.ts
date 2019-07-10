@@ -131,6 +131,35 @@ export class Rect extends BaseGeo implements IGeometry {
 
   // endregion
 
+  // region calculation
+  private getPoints(): Array<PIXI.Point> {
+    const x = this.info.position.x;
+    const y = this.info.position.y;
+    const width = this.info.width;
+    const height = this.info.height;
+    return [
+      new PIXI.Point(x, y), // Top left
+      new PIXI.Point(x + width, y), // Top right
+      new PIXI.Point(x + width, y + height), // Bottom right
+      new PIXI.Point(x , y + height), // Bottom left
+    ];
+  }
+
+  private updatePoints(points: Array<PIXI.Point>) {
+    const x = points[0].x;
+    const y = points[0].y;
+    const width = points[1].x - x;
+    const height = points[2].y - y;
+    this.info.position.x = x;
+    this.info.position.y = y;
+    this.info.width = width;
+    this.info.height = height;
+    this.refreshGraphic(this.info, false);
+    this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
+    this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
+  }
+  // endregion
+
   // region IGeometry
 
   public Init() {
@@ -172,6 +201,23 @@ export class Rect extends BaseGeo implements IGeometry {
   ClearSelection(): void {
     this.Mover.SetVisibility(false);
     this.Scaler.SetVisibility(false);
+  }
+
+  GetPoints(): Array<PIXI.Point> {
+    return [
+      this.info.position,
+      new PIXI.Point(this.info.width, this.info.height)
+    ];
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.position = points[0];
+    this.info.width = points[1].x;
+    this.info.height = points[1].y;
+    this.refreshGraphic(this.info, false);
+    this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
+    this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
+    this.OnRequestRender.next();
   }
 
   // endregion

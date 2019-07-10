@@ -121,6 +121,17 @@ export class PolyGon extends PolyBase implements IGeometry {
     this.Name = name;
   }
 
+  GetPoints(): Array<PIXI.Point> {
+    return this.info.points;
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.points = points;
+    this.refreshGraphic(this.info, false);
+    this.Mover.recenter(this.GContainer.getBounds());
+    this.OnRequestRender.next();
+  }
+
   // endregion
 
 }

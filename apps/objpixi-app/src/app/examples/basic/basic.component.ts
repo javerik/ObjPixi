@@ -168,6 +168,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   onAddPoint() {
     const p = new Point({position: new PIXI.Point(400, 300)});
+    p.SetName('myPoint');
     this.registerGeoEvents(p);
     p.Init();
     this.Geometries.push(p);
@@ -178,6 +179,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
       width: 100, height: 100, center: true,
       position: new PIXI.Point(400, 300), style: this.rectStyle
     });
+    newRect.SetName('myRect');
     this.registerGeoEvents(newRect);
     newRect.Init();
     this.Geometries.push(newRect);
@@ -188,6 +190,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
       width: 100, height: 120, center: true, position: new PIXI.Point(400, 300),
       style: this.ellipseStyle
     });
+    newEllipse.SetName('myEllipse');
     this.registerGeoEvents(newEllipse);
     newEllipse.Init();
     this.Geometries.push(newEllipse);
@@ -199,6 +202,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
       p2: new PIXI.Point(400, 300),
       style: this.lineStyle
     });
+    line.SetName('myLine');
     this.registerGeoEvents(line);
     line.Init();
     this.Geometries.push(line);
@@ -217,6 +221,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
         new PIXI.Point(midX - offset, midY + offset)
       ], style: this.polyLineStyle
     });
+    polyLine.SetName('myPolyLine');
     this.registerGeoEvents(polyLine);
     polyLine.Init();
     this.Geometries.push(polyLine);
@@ -235,6 +240,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
         new PIXI.Point(midX - offset, midY + offset)
       ], style: this.polyGonStyle
     });
+    polygon.SetName('myPolyGon');
     this.registerGeoEvents(polygon);
     polygon.Init();
     this.Geometries.push(polygon);
@@ -265,17 +271,82 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddTest() {
-    this.testSprite = PIXI.Sprite.from('assets/bunny.png');
-    this.testSprite.interactive = true;
-    // @ts-ignore
-    this.testSprite.interactiveMousewheel = true;
-    this.testSprite.on('mousewheel', (delta, event) => {
-      console.log('mouseWheel');
-    });
-    this.Stage.addChild(this.testSprite);
-    this.ForceRender();
+    this.modifyRect();
+    this.modifyPoint();
+    this.modifyLine();
+    this.modifyEllipse();
+    this.modifyPolyGon();
+    this.modifyPolyLine();
   }
 
+  modifyRect() {
+    const rect = this.Geometries.find(value => value.GetName() === 'myRect');
+    if (rect === undefined) {
+      return;
+    }
+    const rectPoints = rect.GetPoints();
+    rectPoints[0].x = 50;
+    rectPoints[1].x = 500;
+    rect.UpdatePoints(rectPoints);
+  }
+
+  modifyPoint() {
+    const p = this.Geometries.find(value => value.GetName() === 'myPoint');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    points[0].x += 100;
+    points[0].y += 50;
+    p.UpdatePoints(points);
+  }
+
+  modifyLine() {
+    const p = this.Geometries.find(value => value.GetName() === 'myLine');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    points[0].x = 50;
+    points[1].y = 450;
+    p.UpdatePoints(points);
+  }
+
+  modifyEllipse() {
+    const p = this.Geometries.find(value => value.GetName() === 'myEllipse');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    points[1].x += 50;
+    p.UpdatePoints(points);
+  }
+
+  modifyPolyGon() {
+    const p = this.Geometries.find(value => value.GetName() === 'myPolyGon');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    for (const pp of points) {
+      pp.x += 10;
+      pp.y += 10;
+    }
+    p.UpdatePoints(points);
+  }
+
+  modifyPolyLine() {
+    const p = this.Geometries.find(value => value.GetName() === 'myPolyLine');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    for (const pp of points) {
+      pp.x += 10;
+      pp.y += 10;
+    }
+    p.UpdatePoints(points);
+  }
 
   onScaleStage() {
     this.Stage.scale.set(this.ScaleValue);

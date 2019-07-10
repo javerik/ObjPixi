@@ -10,6 +10,8 @@ export interface IGeometry {
   OnInitialized: Subject<PIXI.DisplayObject>;
   OnInteraction: Subject<GeoEvent>;
   Init(): void;
+  GetPoints(): Array<PIXI.Point>;
+  UpdatePoints(points: Array<PIXI.Point>);
   GetId(): string;
   GetName(): string;
   SetName(name: string);

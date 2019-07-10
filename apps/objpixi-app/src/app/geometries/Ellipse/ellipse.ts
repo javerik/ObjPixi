@@ -173,6 +173,23 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.Name = name;
   }
 
+  GetPoints(): Array<PIXI.Point> {
+    return [
+      this.info.position,
+      new PIXI.Point(this.info.width, this.info.height)
+    ];
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.position = points[0];
+    this.info.width = points[1].x;
+    this.info.height = points[1].y;
+    this.refreshGraphic(this.info);
+    this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
+    this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
+    this.OnRequestRender.next();
+  }
+
   // endregion
 }
 

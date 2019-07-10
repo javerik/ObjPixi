@@ -259,5 +259,17 @@ export class Line extends BaseGeo implements IGeometry {
     this.Name = name;
   }
 
+  GetPoints(): Array<PIXI.Point> {
+    return [this.info.p1, this.info.p2];
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.p1 = points[0];
+    this.info.p2 = points[1];
+    this.refreshGraphic(this.info, false);
+    this.Mover.recenter(this.GContainer.getBounds());
+    this.OnRequestRender.next();
+  }
+
   // endregion
 }
