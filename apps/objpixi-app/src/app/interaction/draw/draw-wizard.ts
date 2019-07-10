@@ -4,10 +4,16 @@ import {Point} from '../../geometries/Point/point';
 import {Subject} from 'rxjs';
 import {Line} from '../../geometries/Line/line';
 import {IStyleLine} from '../../styles/istyle-line';
+import {DrawerPoint} from './Point/drawer-point';
+import {GeometryType} from '../../interface/enums/geometry-type.enum';
 
 
 export class DrawWizard {
   private drawContainer: PIXI.Container;
+  private currentGeoType: GeometryType = null;
+  // region Drawer
+  private pointDrawer: DrawerPoint;
+  // endregion
   private editGeo: IGeometry;
   private clickPoint: PIXI.Point = new PIXI.Point();
   private dragStart = false;
@@ -32,6 +38,11 @@ export class DrawWizard {
 
   constructor() {
     this.OnRequestRender = new Subject();
+  }
+
+  public SetGeometryType(type: GeometryType) {
+    this.clear();
+    this.currentGeoType = type;
   }
 
   public Init(w, h, callback: (object: PIXI.DisplayObject) => void) {
