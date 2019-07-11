@@ -9,6 +9,8 @@ import {IDrawer} from '../../interface/draw/idrawer';
 import {DrawerPoint} from './Point/drawer-point';
 import {DrawerLine} from './Line/drawer-line';
 import {DrawerRect} from './Rect/drawer-rect';
+import {DrawerPolyGon} from './Poly/drawer-poly-gon';
+import {DrawerPolyLine} from './Poly/drawer-poly-line';
 
 
 export class DrawWizard {
@@ -59,8 +61,10 @@ export class DrawWizard {
         this.drawer = new DrawerRect();
         break;
       case GeometryType.Polygon:
+        this.drawer = new DrawerPolyGon();
         break;
       case GeometryType.Polyline:
+        this.drawer = new DrawerPolyLine();
         break;
     }
     this.drawer.OnInitialized.subscribe(value => {
@@ -112,6 +116,12 @@ export class DrawWizard {
       this.drawer.OnEvent(event1);
     });
     obj.addListener('pointerup', event1 => {
+      if (this.drawer === undefined) {
+        return;
+      }
+      this.drawer.OnEvent(event1);
+    });
+    obj.addListener('rightclick', event1 => {
       if (this.drawer === undefined) {
         return;
       }
