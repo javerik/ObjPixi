@@ -2,6 +2,7 @@
 <mat-grid-list cols="7" rowHeight="100px">
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-button-toggle (click)="changeGeometry(GeometryTypes.Point)">Point</mat-button-toggle>
+    <mat-button-toggle (click)="changeGeometry(GeometryTypes.Line)">Line</mat-button-toggle>
   </mat-grid-tile>
   <mat-grid-tile id="testDiv" #tilePixi colspan="7" rowspan="6" (window:resize)="onTileResize($event)">
     <div #pixiContainer></div>

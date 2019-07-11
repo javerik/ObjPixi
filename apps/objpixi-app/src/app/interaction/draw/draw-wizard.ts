@@ -7,6 +7,7 @@ import {IStyleLine} from '../../styles/istyle-line';
 import {GeometryType} from '../../interface/enums/geometry-type.enum';
 import {IDrawer} from '../../interface/draw/idrawer';
 import {DrawerPoint} from './Point/drawer-point';
+import {DrawerLine} from './Line/drawer-line';
 
 
 export class DrawWizard {
@@ -51,6 +52,7 @@ export class DrawWizard {
       case GeometryType.Ellipse:
         break;
       case GeometryType.Line:
+        this.drawer = new DrawerLine();
         break;
       case GeometryType.Rect:
         break;
@@ -66,7 +68,6 @@ export class DrawWizard {
       this.OnRequestRender.next();
     });
     this.drawer.Init();
-
   }
 
   public Init(w, h, callback: (object: PIXI.DisplayObject) => void) {
