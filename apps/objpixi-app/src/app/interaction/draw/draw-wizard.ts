@@ -8,6 +8,7 @@ import {GeometryType} from '../../interface/enums/geometry-type.enum';
 import {IDrawer} from '../../interface/draw/idrawer';
 import {DrawerPoint} from './Point/drawer-point';
 import {DrawerLine} from './Line/drawer-line';
+import {DrawerRect} from './Rect/drawer-rect';
 
 
 export class DrawWizard {
@@ -55,6 +56,7 @@ export class DrawWizard {
         this.drawer = new DrawerLine();
         break;
       case GeometryType.Rect:
+        this.drawer = new DrawerRect();
         break;
       case GeometryType.Polygon:
         break;
