@@ -39,16 +39,16 @@ export class Point extends BaseGeo implements IGeometry {
     if (!this.enableControl) {
       return;
     }
-    obj.addListener('click', event1 => {
-      this.OnInteraction.next({event: event1, target: this});
+    obj.addListener('click', () => {
+      this.OnInteraction.next();
     });
-    obj.addListener('pointerdown', event1 => {
+    obj.addListener('pointerdown', () => {
         this.dragState = true;
     });
-    obj.addListener('pointerup', event1 => {
+    obj.addListener('pointerup', () => {
         this.dragState = false;
     });
-    obj.addListener('pointerupoutside', event1 => {
+    obj.addListener('pointerupoutside', () => {
       this.dragState = false;
     });
     obj.addListener('pointermove', event1 => {
@@ -60,6 +60,7 @@ export class Point extends BaseGeo implements IGeometry {
       this.pointSprite.position.y = newPos.y;
       this.info.position = this.pointSprite.position;
       this.OnRequestRender.next();
+      this.OnChange.next();
     });
   }
   // endregion
@@ -82,7 +83,7 @@ export class Point extends BaseGeo implements IGeometry {
     this.pointSprite.buttonMode = true;
     this.registerEvents(this.pointSprite);
     this.MainDisObject.addChild(this.pointSprite);
-    this.OnInitialized.next(this.MainDisObject);
+    this.OnInitialized.next();
   }
 
   ClearSelection(): void {
@@ -114,6 +115,7 @@ export class Point extends BaseGeo implements IGeometry {
     this.pointSprite.x = this.info.position.x;
     this.pointSprite.y = this.info.position.y;
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   EnableControls(state: boolean) {

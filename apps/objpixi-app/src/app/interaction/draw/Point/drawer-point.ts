@@ -33,7 +33,7 @@ export class DrawerPoint implements IDrawer {
     });
     this.point.OnInitialized.subscribe(value => {
       this.point.EnableControls(false);
-      this.OnInitialized.next(this.point.GetObject());
+      this.OnInitialized.next();
     });
   }
 

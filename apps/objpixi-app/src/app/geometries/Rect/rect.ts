@@ -33,7 +33,7 @@ export class Rect extends BaseGeo implements IGeometry {
     this.Mover.OnMoved.subscribe(value => {
       this.handleMove(value);
     });
-    this.Mover.OnMoveEnd.subscribe(value => {
+    this.Mover.OnMoveEnd.subscribe(() => {
     });
   }
 
@@ -82,15 +82,15 @@ export class Rect extends BaseGeo implements IGeometry {
     obj.interactive = true;
     obj.buttonMode = true;
     obj.addListener('pointerupoutside', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
     });
     obj.addListener('click', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
     obj.addListener('tap', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
@@ -122,6 +122,7 @@ export class Rect extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   private handleMove(moveEvent: MoveDelta) {
@@ -130,6 +131,7 @@ export class Rect extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   // endregion
@@ -154,7 +156,7 @@ export class Rect extends BaseGeo implements IGeometry {
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
     this.registerEvents();
-    this.OnInitialized.next(this.MainDisObject);
+    this.OnInitialized.next();
   }
 
   GetObject(): PIXI.DisplayObject {
@@ -193,6 +195,7 @@ export class Rect extends BaseGeo implements IGeometry {
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   EnableControls(state: boolean) {

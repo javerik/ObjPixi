@@ -16,6 +16,7 @@ import {IStyleLine} from '../../styles/istyle-line';
 import {IStyleEllipse} from '../../styles/istyle-ellipse';
 import {IStylePoly} from '../../styles/istyle-poly';
 import {IStyleRect} from '../../styles/istyle-rect';
+import {ChangeEvent} from '../../interface/events/change-event';
 
 
 @Component({
@@ -30,12 +31,12 @@ export class BasicComponent implements OnInit, AfterViewInit {
   Renderer: PIXI.Renderer;
   Stage: PIXI.Container;
   myArrow: ScaleArrow;
-  testSprite: PIXI.Sprite;
   ScaleValue: number;
   ScalingRect: BasicScaler = new BasicScaler();
   Geometries: Array<IGeometry> = [];
   dragPointFillColor = 0xf44336;
   defaultLineColor = 0x009688;
+  changeEvents: Array<ChangeEvent> = [];
   // region styles
 
   lineStyle: IStyleLine = {
@@ -248,7 +249,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   private registerGeoEvents(geo: IGeometry) {
     geo.OnRequestRender.subscribe({
-      next: value => {
+      next: () => {
         this.ForceRender();
       }
     });
@@ -260,6 +261,14 @@ export class BasicComponent implements OnInit, AfterViewInit {
     geo.OnInteraction.subscribe({
       next: value => {
         this.onObjectEvent(value);
+      }
+    });
+    geo.OnChange.subscribe(value => {
+      this.changeEvents.push(value);
+      if (this.changeEvents.length >= 2) {
+        while (this.changeEvents.length > 2) {
+          this.changeEvents.shift();
+        }
       }
     });
   }

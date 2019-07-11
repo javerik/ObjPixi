@@ -33,17 +33,17 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.Mover.OnMoved.subscribe(value => {
       this.handleMove(value);
     });
-    this.Mover.OnMoveEnd.subscribe(value => {
+    this.Mover.OnMoveEnd.subscribe(() => {
     });
   }
 
   // region Graphics
 
   private getGraphicFromInfo(info: EllipseInfo): PIXI.DisplayObject {
-    return this.getGraphic(info.position.x, info.position.y, info.width, info.height, info.center);
+    return this.getGraphic(info.position.x, info.position.y, info.width, info.height);
   }
 
-  private getGraphic(x, y, w, h, center = true): PIXI.DisplayObject {
+  private getGraphic(x, y, w, h): PIXI.DisplayObject {
     const g = new PIXI.Graphics();
     const style = this.info.style;
     if (style.fillStyle.useLine) {
@@ -99,6 +99,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   private handleMove(moveEvent: MoveDelta) {
@@ -107,6 +108,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   // endregion
@@ -121,15 +123,15 @@ export class Ellipse extends BaseGeo implements IGeometry {
     obj.interactive = true;
     obj.buttonMode = true;
     obj.addListener('pointerupoutside', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
     });
     obj.addListener('click', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
     obj.addListener('tap', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
@@ -152,7 +154,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
     this.registerEvents();
-    this.OnInitialized.next(this.MainDisObject);
+    this.OnInitialized.next();
   }
 
   ClearSelection(): void {
@@ -191,6 +193,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   EnableControls(state: boolean) {

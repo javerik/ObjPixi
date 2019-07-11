@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import {IGeometry} from '../../../interface/igeometry';
 import {PolyInfo} from '../poly-info';
 import {PolyBase} from '../poly-base';
+import {MoveDelta} from '../../../interaction/moving/mover';
 
 
 export class PolyGon extends PolyBase implements IGeometry {
@@ -46,18 +47,23 @@ export class PolyGon extends PolyBase implements IGeometry {
 
   // region Events
 
+  protected handleMove(moveEvent: MoveDelta) {
+    super.handleMove(moveEvent);
+    this.OnChange.next();
+  }
+
   protected registerContainerEvents(container: PIXI.DisplayObject) {
     super.registerContainerEvents(container);
     container.addListener('click', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
+      this.OnInteraction.next();
       this.OnRequestRender.next();
     });
     container.addListener('tap', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
+      this.OnInteraction.next();
       this.OnRequestRender.next();
     });
   }
@@ -76,6 +82,7 @@ export class PolyGon extends PolyBase implements IGeometry {
       this.refreshPolygon(this.info);
       this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
+      this.OnChange.next();
     });
 
   }
@@ -97,7 +104,7 @@ export class PolyGon extends PolyBase implements IGeometry {
     container.addChild(this.GContainer);
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
-    this.OnInitialized.next(this.MainDisObject);
+    this.OnInitialized.next();
   }
 
   ClearSelection(): void {
@@ -130,6 +137,7 @@ export class PolyGon extends PolyBase implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getBounds());
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   EnableControls(state: boolean) {

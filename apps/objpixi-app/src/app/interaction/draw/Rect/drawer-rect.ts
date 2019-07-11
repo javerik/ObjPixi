@@ -68,7 +68,7 @@ export class DrawerRect implements IDrawer {
     });
     this.rect.OnInitialized.subscribe(value => {
       this.rect.EnableControls(false);
-      this.OnInitialized.next(this.rect.GetObject());
+      this.OnInitialized.next();
     });
   }
 }

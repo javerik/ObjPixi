@@ -4,7 +4,7 @@ import {IStylePoly} from '../../../styles/istyle-poly';
 import {Subject} from 'rxjs';
 import {PolyGon} from '../../../geometries/Poly/Polygon/poly-gon';
 import {PolyLine} from '../../../geometries/Poly/Polyline/poly-line';
-import {Point} from "../../../geometries/Point/point";
+import {Point} from '../../../geometries/Point/point';
 
 export class PolyDrawerBase implements IDrawer {
 
@@ -79,11 +79,12 @@ export class PolyDrawerBase implements IDrawer {
     for (const p of ar) {
       p.OnInitialized.subscribe(value => {
         this.container.addChild(value);
+        this.firstPoint.EnableControls(false);
       });
-      p.OnRequestRender.subscribe(value => {
+      p.OnRequestRender.subscribe(() => {
         this.OnRequestRender.next();
       });
-      p.OnInteraction.subscribe(value => {
+      p.OnInteraction.subscribe(() => {
       });
     }
   }
@@ -95,7 +96,7 @@ export class PolyDrawerBase implements IDrawer {
       this.object.EnableControls(false);
       this.container.addChild(value);
       this.container.setChildIndex(value, 0);
-      this.OnInitialized.next(this.container);
+      this.OnInitialized.next();
     });
   }
   // endregion

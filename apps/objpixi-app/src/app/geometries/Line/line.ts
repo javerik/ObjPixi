@@ -59,7 +59,7 @@ export class Line extends BaseGeo implements IGeometry {
 
   // region Graphics
 
-  private refreshGraphic(info: LineInfo, render = true) {
+  private refreshGraphic(render = true) {
     this.refreshLines();
     this.refreshPoints();
     if (render) {
@@ -121,15 +121,8 @@ export class Line extends BaseGeo implements IGeometry {
 
   // region Events
 
-  private enablePointInteractive(container: PIXI.Container, state: boolean) {
-    container.children.forEach(c => {
-      c.interactive = state;
-      c.buttonMode = state;
-    });
-  }
-
   private registerMoveEvents() {
-    this.Mover.OnMoveEnd.subscribe(value => {
+    this.Mover.OnMoveEnd.subscribe(() => {
       this.atMove = false;
     });
     this.Mover.OnRequestRender.subscribe(() => {
@@ -170,6 +163,7 @@ export class Line extends BaseGeo implements IGeometry {
       this.refreshLines();
       this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
+      this.OnChange.next();
     });
   }
 
@@ -180,11 +174,11 @@ export class Line extends BaseGeo implements IGeometry {
     container.addListener('click', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
+      this.OnInteraction.next();
       this.OnRequestRender.next();
     });
     container.addListener('tap', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
       this.OnRequestRender.next();
@@ -200,8 +194,9 @@ export class Line extends BaseGeo implements IGeometry {
     this.info.p2.x += moveEvent.x;
     this.info.p1.y += moveEvent.y;
     this.info.p2.y += moveEvent.y;
-    this.refreshGraphic(this.info, false);
+    this.refreshGraphic( false);
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   private createHitArea(container: PIXI.Container) {
@@ -248,7 +243,7 @@ export class Line extends BaseGeo implements IGeometry {
     container.addChild(this.GContainer);
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
-    this.OnInitialized.next(this.MainDisObject);
+    this.OnInitialized.next();
   }
 
   ClearSelection(): void {
@@ -279,9 +274,10 @@ export class Line extends BaseGeo implements IGeometry {
   UpdatePoints(points: Array<PIXI.Point>) {
     this.info.p1 = points[0];
     this.info.p2 = points[1];
-    this.refreshGraphic(this.info, false);
+    this.refreshGraphic(false);
     this.Mover.recenter(this.GContainer.getBounds());
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   EnableControls(state: boolean) {
