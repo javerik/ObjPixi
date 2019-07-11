@@ -12,6 +12,11 @@ import {PolyLine} from '../../geometries/Poly/Polyline/poly-line';
 import {PolyGon} from '../../geometries/Poly/Polygon/poly-gon';
 import {Line} from '../../geometries/Line/line';
 import {Point} from '../../geometries/Point/point';
+import {IStyleLine} from '../../styles/istyle-line';
+import {IStyleEllipse} from '../../styles/istyle-ellipse';
+import {IStylePoly} from '../../styles/istyle-poly';
+import {IStyleRect} from '../../styles/istyle-rect';
+import {ChangeEvent} from '../../interface/events/change-event';
 
 
 @Component({
@@ -23,13 +28,89 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   @ViewChild('pixiContainer', {static: false}) pixiContainer: ElementRef;
   @ViewChild('tilePixi', {static: false}) tilePixi: MatGridTile;
-  App: PIXI.Application;
   Renderer: PIXI.Renderer;
   Stage: PIXI.Container;
   myArrow: ScaleArrow;
   ScaleValue: number;
   ScalingRect: BasicScaler = new BasicScaler();
   Geometries: Array<IGeometry> = [];
+  dragPointFillColor = 0xf44336;
+  defaultLineColor = 0x009688;
+  changeEvents: Array<ChangeEvent> = [];
+  // region styles
+
+  lineStyle: IStyleLine = {
+    alpha: 1,
+    color: this.defaultLineColor,
+    lineWidth: 3,
+    pointStyle: {
+      fillStyle: {
+        useFill: true,
+        useLine: false,
+        fillAlpha: 1,
+        fillColor: this.dragPointFillColor
+      },
+      radius: 6
+    }
+  };
+  ellipseStyle: IStyleEllipse = {
+    fillStyle: {
+      useFill: true,
+      useLine: true,
+      fillAlpha: 0.5,
+      lineAlpha: 1,
+      fillColor: 0x7e57c2,
+      lineColor: this.defaultLineColor,
+      lineWidth: 2
+    }
+  };
+  polyLineStyle: IStylePoly = {
+    pointStyle: {
+      radius: 6,
+      fillStyle: {
+        useFill: true,
+        useLine: false,
+        fillAlpha: 1,
+        fillColor: this.dragPointFillColor
+      }
+    },
+    fillStyle: {
+      useLine: true,
+      useFill: false,
+      lineWidth: 2,
+      lineColor: this.defaultLineColor,
+      lineAlpha: 1
+    }
+  };
+  polyGonStyle: IStylePoly = {
+    pointStyle: {
+      radius: 6,
+      fillStyle: {
+        useFill: true,
+        useLine: false,
+        fillAlpha: 1,
+        fillColor: this.dragPointFillColor
+      }
+    },
+    fillStyle: {
+      useLine: false,
+      useFill: true,
+      fillColor: 0x66bb6a,
+      fillAlpha: 0.5
+    }
+  };
+  rectStyle: IStyleRect = {
+    fillStyle: {
+      useFill: true,
+      useLine: true,
+      fillAlpha: 0.5,
+      lineAlpha: 1,
+      fillColor: 0x8d6e63,
+      lineColor: this.defaultLineColor,
+      lineWidth: 2
+    }
+  };
+  // endregion
 
   private ratio: number;
   private winWidth = 800;
@@ -44,7 +125,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.Renderer = PIXI.autoDetectRenderer({width: 800, height: 600, antialias: true});
-    this.App = new PIXI.Application({width: 800, height: 600});
     this.ratio = 800 / 600;
     this.Stage = new PIXI.Container();
     this.Stage.x = 0;
@@ -56,10 +136,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
     });
   }
 
+
   ngAfterViewInit(): void {
     this.pixiContainer.nativeElement.appendChild(this.Renderer.view);
     this.Renderer.render(this.Stage);
-    // this.App.stage.addChild(this.Stage);
   }
 
   onTileResize(event) {
@@ -81,7 +161,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     if (this.winHeight > 600) {
       this.winHeight = 600;
     }
-    this.App.renderer.resize(this.winWidth, this.winHeight);
     this.Renderer.view.style.width = this.winWidth + 'px';
     this.Renderer.view.style.height = this.winHeight + 'px';
     this.Renderer.render(this.Stage);
@@ -90,20 +169,29 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   onAddPoint() {
     const p = new Point({position: new PIXI.Point(400, 300)});
+    p.SetName('myPoint');
     this.registerGeoEvents(p);
     p.Init();
     this.Geometries.push(p);
   }
 
   onAddRect() {
-    const newRect = new Rect({width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)});
+    const newRect = new Rect({
+      width: 100, height: 100, center: true,
+      position: new PIXI.Point(400, 300), style: this.rectStyle
+    });
+    newRect.SetName('myRect');
     this.registerGeoEvents(newRect);
     newRect.Init();
     this.Geometries.push(newRect);
   }
 
   onAddEllipse() {
-    const newEllipse = new Ellipse({width: 100, height: 120, center: true, position: new PIXI.Point(400, 300)});
+    const newEllipse = new Ellipse({
+      width: 100, height: 120, center: true, position: new PIXI.Point(400, 300),
+      style: this.ellipseStyle
+    });
+    newEllipse.SetName('myEllipse');
     this.registerGeoEvents(newEllipse);
     newEllipse.Init();
     this.Geometries.push(newEllipse);
@@ -113,9 +201,9 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const line = new Line({
       p1: new PIXI.Point(200, 300),
       p2: new PIXI.Point(400, 300),
-      lineWidth: 3,
-      pointRadius: 6
+      style: this.lineStyle
     });
+    line.SetName('myLine');
     this.registerGeoEvents(line);
     line.Init();
     this.Geometries.push(line);
@@ -126,14 +214,15 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const midY = 300;
     const offset = 100;
     const polyLine = new PolyLine({
-      lineWidth: 2, pointRadius: 6, points: [
+      points: [
         new PIXI.Point(midX - offset, midY - offset),
         new PIXI.Point(midX + offset, midY - offset),
 
         new PIXI.Point(midX + offset, midY + offset),
         new PIXI.Point(midX - offset, midY + offset)
-      ]
+      ], style: this.polyLineStyle
     });
+    polyLine.SetName('myPolyLine');
     this.registerGeoEvents(polyLine);
     polyLine.Init();
     this.Geometries.push(polyLine);
@@ -144,14 +233,15 @@ export class BasicComponent implements OnInit, AfterViewInit {
     const midY = 300;
     const offset = 100;
     const polygon = new PolyGon({
-      lineWidth: 2, pointRadius: 6, points: [
+      points: [
         new PIXI.Point(midX - offset, midY - offset),
         new PIXI.Point(midX + offset, midY - offset),
 
         new PIXI.Point(midX + offset, midY + offset),
         new PIXI.Point(midX - offset, midY + offset)
-      ]
+      ], style: this.polyGonStyle
     });
+    polygon.SetName('myPolyGon');
     this.registerGeoEvents(polygon);
     polygon.Init();
     this.Geometries.push(polygon);
@@ -159,7 +249,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   private registerGeoEvents(geo: IGeometry) {
     geo.OnRequestRender.subscribe({
-      next: value => {
+      next: () => {
         this.ForceRender();
       }
     });
@@ -173,6 +263,14 @@ export class BasicComponent implements OnInit, AfterViewInit {
         this.onObjectEvent(value);
       }
     });
+    geo.OnChange.subscribe(value => {
+      this.changeEvents.push(value);
+      if (this.changeEvents.length >= 2) {
+        while (this.changeEvents.length > 2) {
+          this.changeEvents.shift();
+        }
+      }
+    });
   }
 
   onAddArrow() {
@@ -181,6 +279,84 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.onAddObject(this.myArrow.DispObj);
   }
 
+  onAddTest() {
+    this.modifyRect();
+    this.modifyPoint();
+    this.modifyLine();
+    this.modifyEllipse();
+    this.modifyPolyGon();
+    this.modifyPolyLine();
+  }
+
+  modifyRect() {
+    const rect = this.Geometries.find(value => value.GetName() === 'myRect');
+    if (rect === undefined) {
+      return;
+    }
+    const rectPoints = rect.GetPoints();
+    rectPoints[0].x = 50;
+    rectPoints[1].x = 500;
+    rect.UpdatePoints(rectPoints);
+    rect.EnableControls(false);
+  }
+
+  modifyPoint() {
+    const p = this.Geometries.find(value => value.GetName() === 'myPoint');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    points[0].x += 100;
+    points[0].y += 50;
+    p.UpdatePoints(points);
+  }
+
+  modifyLine() {
+    const p = this.Geometries.find(value => value.GetName() === 'myLine');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    points[0].x = 50;
+    points[1].y = 450;
+    p.UpdatePoints(points);
+  }
+
+  modifyEllipse() {
+    const p = this.Geometries.find(value => value.GetName() === 'myEllipse');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    points[1].x += 50;
+    p.UpdatePoints(points);
+  }
+
+  modifyPolyGon() {
+    const p = this.Geometries.find(value => value.GetName() === 'myPolyGon');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    for (const pp of points) {
+      pp.x += 10;
+      pp.y += 10;
+    }
+    p.UpdatePoints(points);
+  }
+
+  modifyPolyLine() {
+    const p = this.Geometries.find(value => value.GetName() === 'myPolyLine');
+    if (p === undefined) {
+      return;
+    }
+    const points = p.GetPoints();
+    for (const pp of points) {
+      pp.x += 10;
+      pp.y += 10;
+    }
+    p.UpdatePoints(points);
+  }
 
   onScaleStage() {
     this.Stage.scale.set(this.ScaleValue);

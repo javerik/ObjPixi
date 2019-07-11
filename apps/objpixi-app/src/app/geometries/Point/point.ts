@@ -36,16 +36,19 @@ export class Point extends BaseGeo implements IGeometry {
 
   // region Events
   private registerEvents(obj: PIXI.DisplayObject) {
-    obj.addListener('click', event1 => {
-      this.OnInteraction.next({event: event1, target: this});
+    if (!this.enableControl) {
+      return;
+    }
+    obj.addListener('click', () => {
+      this.OnInteraction.next();
     });
-    obj.addListener('pointerdown', event1 => {
+    obj.addListener('pointerdown', () => {
         this.dragState = true;
     });
-    obj.addListener('pointerup', event1 => {
+    obj.addListener('pointerup', () => {
         this.dragState = false;
     });
-    obj.addListener('pointerupoutside', event1 => {
+    obj.addListener('pointerupoutside', () => {
       this.dragState = false;
     });
     obj.addListener('pointermove', event1 => {
@@ -55,7 +58,9 @@ export class Point extends BaseGeo implements IGeometry {
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
       this.pointSprite.position.x = newPos.x;
       this.pointSprite.position.y = newPos.y;
+      this.info.position = this.pointSprite.position;
       this.OnRequestRender.next();
+      this.OnChange.next();
     });
   }
   // endregion
@@ -99,6 +104,26 @@ export class Point extends BaseGeo implements IGeometry {
 
   SetName(name: string) {
     this.Name = name;
+  }
+
+  GetPoints(): Array<PIXI.Point> {
+    return [this.info.position];
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.position = points[0];
+    this.pointSprite.x = this.info.position.x;
+    this.pointSprite.y = this.info.position.y;
+    this.OnRequestRender.next();
+    this.OnChange.next();
+  }
+
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
   }
 
   // endregion

@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import {IGeometry} from '../../../interface/igeometry';
 import {PolyInfo} from '../poly-info';
 import {PolyBase} from '../poly-base';
+import {MoveDelta} from '../../../interaction/moving/mover';
 
 
 export class PolyGon extends PolyBase implements IGeometry {
@@ -16,7 +17,11 @@ export class PolyGon extends PolyBase implements IGeometry {
     const container = new PIXI.Container();
     container.name = this.cNamePolygon;
     const g = new PIXI.Graphics();
-    g.beginFill(0xff8a50, 0.7);
+    const style = this.info.style.fillStyle;
+    if (style.useLine) {
+      g.lineStyle(style.lineWidth, style.lineColor, style.lineAlpha);
+    }
+    g.beginFill(style.fillColor, style.fillAlpha);
     g.drawPolygon(points);
     g.endFill();
     container.addChild(g);
@@ -42,18 +47,23 @@ export class PolyGon extends PolyBase implements IGeometry {
 
   // region Events
 
+  protected handleMove(moveEvent: MoveDelta) {
+    super.handleMove(moveEvent);
+    this.OnChange.next();
+  }
+
   protected registerContainerEvents(container: PIXI.DisplayObject) {
     super.registerContainerEvents(container);
     container.addListener('click', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
+      this.OnInteraction.next();
       this.OnRequestRender.next();
     });
     container.addListener('tap', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
+      this.OnInteraction.next();
       this.OnRequestRender.next();
     });
   }
@@ -72,6 +82,7 @@ export class PolyGon extends PolyBase implements IGeometry {
       this.refreshPolygon(this.info);
       this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
+      this.OnChange.next();
     });
 
   }
@@ -83,7 +94,7 @@ export class PolyGon extends PolyBase implements IGeometry {
   Init(): void {
     this.GContainer = new PIXI.Container();
     const container = new PIXI.Container();
-    const points = this.getPointContainer(this.info.points, this.info.pointRadius);
+    const points = this.getPointContainer(this.info.points);
     points.visible = false;
     const poly = this.getPolygonGraphic(this.info.points);
     this.createHitArea(poly);
@@ -115,6 +126,26 @@ export class PolyGon extends PolyBase implements IGeometry {
 
   SetName(name: string) {
     this.Name = name;
+  }
+
+  GetPoints(): Array<PIXI.Point> {
+    return this.info.points;
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.points = points;
+    this.refreshGraphic(this.info, false);
+    this.Mover.recenter(this.GContainer.getBounds());
+    this.OnRequestRender.next();
+    this.OnChange.next();
+  }
+
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
   }
 
   // endregion

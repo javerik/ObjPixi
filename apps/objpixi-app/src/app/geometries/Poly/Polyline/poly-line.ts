@@ -2,9 +2,9 @@ import * as PIXI from 'pixi.js';
 import {IGeometry} from '../../../interface/igeometry';
 import {PolyInfo} from '../poly-info';
 import {PolyBase} from '../poly-base';
+import {MoveDelta} from '../../../interaction/moving/mover';
 
 export class PolyLine extends PolyBase implements IGeometry {
-  private readonly scalerOffset = 15;
 
   constructor(polyInfo: PolyInfo, name?: string) {
     super(polyInfo, name);
@@ -12,12 +12,12 @@ export class PolyLine extends PolyBase implements IGeometry {
 
   // region Graphics
 
-
-  private getLineContainer(points: Array<PIXI.Point>, lineWidth: number): PIXI.Container {
+  private getLineContainer(points: Array<PIXI.Point>): PIXI.Container {
     const container = new PIXI.Container();
     container.name = this.cNameLines;
     const g = new PIXI.Graphics();
-    g.lineStyle(lineWidth, 0xffd900, 1);
+    const style = this.info.style.fillStyle;
+    g.lineStyle(style.lineWidth, style.lineColor, style.lineAlpha);
     g.moveTo(points[0].x, points[0].y);
     points.forEach(p => {
       g.lineTo(p.x, p.y);
@@ -26,14 +26,13 @@ export class PolyLine extends PolyBase implements IGeometry {
     return container;
   }
 
-
   protected refreshGraphic(info: PolyInfo, render = true) {
     this.refreshLines(info);
     super.refreshGraphic(info, render);
   }
 
   private refreshLines(info: PolyInfo) {
-    const lContainer = this.getLineContainer(info.points, info.lineWidth);
+    const lContainer = this.getLineContainer(info.points);
     lContainer.zIndex = 3;
     const toDeleteL = this.GContainer.getChildByName(this.cNameLines);
     this.GContainer.removeChild(toDeleteL);
@@ -44,20 +43,24 @@ export class PolyLine extends PolyBase implements IGeometry {
 
   // endregion
 
-
   // region Events
+
+  protected handleMove(moveEvent: MoveDelta) {
+    super.handleMove(moveEvent);
+    this.OnChange.next();
+  }
 
   protected registerContainerEvents(container: PIXI.DisplayObject) {
     container.addListener('click', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
+      this.OnInteraction.next();
       this.OnRequestRender.next();
     });
     container.addListener('tap', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
+      this.OnInteraction.next();
       this.OnRequestRender.next();
     });
   }
@@ -77,6 +80,7 @@ export class PolyLine extends PolyBase implements IGeometry {
       this.refreshLines(this.info);
       this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
+      this.OnChange.next();
     });
   }
 
@@ -87,9 +91,9 @@ export class PolyLine extends PolyBase implements IGeometry {
   Init(): void {
     const container = new PIXI.Container();
     this.GContainer = new PIXI.Container();
-    const points = this.getPointContainer(this.info.points, this.info.pointRadius);
+    const points = this.getPointContainer(this.info.points);
     points.visible = false;
-    const lines = this.getLineContainer(this.info.points, this.info.lineWidth);
+    const lines = this.getLineContainer(this.info.points);
     this.createHitArea(lines);
     this.GContainer.addChild(lines);
     this.GContainer.addChild(points);
@@ -119,6 +123,26 @@ export class PolyLine extends PolyBase implements IGeometry {
 
   SetName(name: string) {
     this.Name = name;
+  }
+
+  GetPoints(): Array<PIXI.Point> {
+    return this.info.points;
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.points = points;
+    this.refreshGraphic(this.info, false);
+    this.Mover.recenter(this.GContainer.getBounds());
+    this.OnRequestRender.next();
+    this.OnChange.next();
+  }
+
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
   }
 
   // endregion

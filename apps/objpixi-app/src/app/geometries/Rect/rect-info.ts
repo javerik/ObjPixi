@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
-import {IStyleEllipse} from '../../styles/istyle-ellipse';
+import {IStyleRect} from '../../styles/istyle-rect';
 
-export interface EllipseInfo {
+export interface RectInfo {
   width: number;
   height: number;
   center: boolean;
   position: PIXI.Point;
-  style: IStyleEllipse;
+  style: IStyleRect;
 }

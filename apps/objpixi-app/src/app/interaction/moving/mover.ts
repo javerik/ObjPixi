@@ -86,7 +86,7 @@ export class Mover {
       this.lastPosition = newPos;
       this.crossSprite.x += moveDelta.x;
       this.crossSprite.y += moveDelta.y;
-      this.OnMoved.next(moveDelta);
+      this.OnMoved.next();
     });
   }
 

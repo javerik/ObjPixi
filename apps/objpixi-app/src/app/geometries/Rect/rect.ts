@@ -6,6 +6,7 @@ import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScalingEvent} from '../../interface/events/scaling-event';
 import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
+import {RectInfo} from './rect-info';
 
 export class Rect extends BaseGeo implements IGeometry {
 
@@ -32,68 +33,72 @@ export class Rect extends BaseGeo implements IGeometry {
     this.Mover.OnMoved.subscribe(value => {
       this.handleMove(value);
     });
-    this.Mover.OnMoveEnd.subscribe(value => {
+    this.Mover.OnMoveEnd.subscribe(() => {
     });
   }
 
-  public Init() {
-    this.GContainer = new PIXI.Container();
-    if (this.info.center) {
-      this.info.position.x = this.info.position.x - (this.info.width / 2);
-      this.info.position.y = this.info.position.y - (this.info.height / 2);
-    }
-    const rect = this.getGraphicFromInfo(this.info);
-    rect.name = 'origin';
-    this.GContainer.addChild(rect);
-    const container = new PIXI.Container();
-    this.Scaler.Generate({obj: rect, offset: this.scalerOffset});
-    this.Mover.Generate(rect.getBounds());
-    container.addChild(this.GContainer);
-    container.addChild(this.Scaler.GetObject());
-    container.addChild(this.Mover.GetObject());
-    this.MainDisObject = container;
-    this.registerEvents();
-    this.OnInitialized.next(this.MainDisObject);
-  }
-
+  // region Graphics
   private getGraphicFromInfo(info: RectInfo): PIXI.DisplayObject {
     return this.getGraphic(info.position.x, info.position.y, info.width, info.height);
   }
 
-  private getGraphic(x, y, w, h, center = true): PIXI.DisplayObject {
+  private getGraphic(x, y, w, h): PIXI.DisplayObject {
     const g = new PIXI.Graphics();
-    g.lineStyle(3, 0xfdd835);
-    g.beginFill(0x9ccc65, 0.8);
-    let px = x;
-    let py = y;
-    if (center) {
-      px = px - (w / 2);
-      py = py - (h / 2);
+    const style = this.info.style.fillStyle;
+    if (style.useLine) {
+      g.lineStyle(style.lineWidth, style.lineColor, style.lineAlpha);
+    }
+    if (style.useFill) {
+      g.beginFill(style.fillColor, style.fillAlpha);
     }
     g.drawRect(x, y, w, h);
-    g.endFill();
+    if (style.useFill) {
+      g.endFill();
+    }
     return g;
   }
 
+  private refreshGraphic(rectInfo: RectInfo, render = true) {
+    const nG = this.getGraphicFromInfo(rectInfo);
+    nG.name = 'origin';
+    const orig = this.GContainer.getChildByName('origin');
+    this.GContainer.removeChild(orig);
+    this.GContainer.addChild(nG);
+    this.registerEvents();
+    if (render) {
+      this.OnRequestRender.next();
+    }
+  }
+
+  // endregion
+
+  // region Events
+
   private registerEvents() {
+    if (!this.enableControl) {
+      return;
+    }
     const obj = this.GContainer.getChildByName('origin');
     obj.interactive = true;
     obj.buttonMode = true;
     obj.addListener('pointerupoutside', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
     });
     obj.addListener('click', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
     obj.addListener('tap', event1 => {
-      this.OnInteraction.next({target: this, event: event1});
+      this.OnInteraction.next();
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
   }
 
+  // endregion
+
+  // region Scaling and move handling
   private handleScaling(event: ScalingEvent) {
     switch (event.direction) {
       case ScaleDirection.Up:
@@ -117,6 +122,7 @@ export class Rect extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
   private handleMove(moveEvent: MoveDelta) {
@@ -125,21 +131,33 @@ export class Rect extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
+    this.OnChange.next();
   }
 
-  private refreshGraphic(rectInfo: RectInfo, render = true) {
-    const nG = this.getGraphicFromInfo(rectInfo);
-    nG.name = 'origin';
-    const orig = this.GContainer.getChildByName('origin');
-    this.GContainer.removeChild(orig);
-    this.GContainer.addChild(nG);
-    this.registerEvents();
-    if (render) {
-      this.OnRequestRender.next();
-    }
-  }
+  // endregion
+
 
   // region IGeometry
+
+  public Init() {
+    this.GContainer = new PIXI.Container();
+    if (this.info.center) {
+      this.info.position.x = this.info.position.x - (this.info.width / 2);
+      this.info.position.y = this.info.position.y - (this.info.height / 2);
+    }
+    const rect = this.getGraphicFromInfo(this.info);
+    rect.name = 'origin';
+    this.GContainer.addChild(rect);
+    const container = new PIXI.Container();
+    this.Scaler.Generate({obj: rect, offset: this.scalerOffset});
+    this.Mover.Generate(rect.getBounds());
+    container.addChild(this.GContainer);
+    container.addChild(this.Scaler.GetObject());
+    container.addChild(this.Mover.GetObject());
+    this.MainDisObject = container;
+    this.registerEvents();
+    this.OnInitialized.next(this.MainDisObject);
+  }
 
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
@@ -162,13 +180,32 @@ export class Rect extends BaseGeo implements IGeometry {
     this.Scaler.SetVisibility(false);
   }
 
+  GetPoints(): Array<PIXI.Point> {
+    return [
+      this.info.position,
+      new PIXI.Point(this.info.width, this.info.height)
+    ];
+  }
+
+  UpdatePoints(points: Array<PIXI.Point>) {
+    this.info.position = points[0];
+    this.info.width = points[1].x;
+    this.info.height = points[1].y;
+    this.refreshGraphic(this.info, false);
+    this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
+    this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
+    this.OnRequestRender.next();
+    this.OnChange.next();
+  }
+
+  EnableControls(state: boolean) {
+    this.enableControl = state;
+    if (!this.enableControl) {
+      this.ClearSelection();
+    }
+    this.UpdatePoints(this.GetPoints());
+  }
+
   // endregion
 
-}
-
-export interface RectInfo {
-  width: number;
-  height: number;
-  center: boolean;
-  position: PIXI.Point;
 }
