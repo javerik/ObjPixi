@@ -83,7 +83,7 @@ export class Point extends BaseGeo implements IGeometry {
     this.pointSprite.buttonMode = true;
     this.registerEvents(this.pointSprite);
     this.MainDisObject.addChild(this.pointSprite);
-    this.OnInitialized.next();
+    this.OnInitialized.next(this.MainDisObject);
   }
 
   ClearSelection(): void {

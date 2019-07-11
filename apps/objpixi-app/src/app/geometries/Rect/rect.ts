@@ -156,7 +156,7 @@ export class Rect extends BaseGeo implements IGeometry {
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
     this.registerEvents();
-    this.OnInitialized.next();
+    this.OnInitialized.next(this.MainDisObject);
   }
 
   GetObject(): PIXI.DisplayObject {

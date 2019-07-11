@@ -243,7 +243,7 @@ export class Line extends BaseGeo implements IGeometry {
     container.addChild(this.GContainer);
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
-    this.OnInitialized.next();
+    this.OnInitialized.next(this.MainDisObject);
   }
 
   ClearSelection(): void {

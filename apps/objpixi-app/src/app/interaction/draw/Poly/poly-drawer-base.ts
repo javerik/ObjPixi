@@ -96,7 +96,7 @@ export class PolyDrawerBase implements IDrawer {
       this.object.EnableControls(false);
       this.container.addChild(value);
       this.container.setChildIndex(value, 0);
-      this.OnInitialized.next();
+      this.OnInitialized.next(this.container);
     });
   }
   // endregion

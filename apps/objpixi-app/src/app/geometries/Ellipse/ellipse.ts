@@ -154,7 +154,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     container.addChild(this.Mover.GetObject());
     this.MainDisObject = container;
     this.registerEvents();
-    this.OnInitialized.next();
+    this.OnInitialized.next(this.MainDisObject);
   }
 
   ClearSelection(): void {

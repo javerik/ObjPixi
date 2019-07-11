@@ -70,7 +70,7 @@ export class DrawerLine implements IDrawer {
     });
     this.line.OnInitialized.subscribe(value => {
       this.line.EnableControls(false);
-      this.OnInitialized.next();
+      this.OnInitialized.next(value);
     });
   }
 }
