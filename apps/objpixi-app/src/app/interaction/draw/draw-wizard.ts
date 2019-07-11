@@ -4,15 +4,16 @@ import {Point} from '../../geometries/Point/point';
 import {Subject} from 'rxjs';
 import {Line} from '../../geometries/Line/line';
 import {IStyleLine} from '../../styles/istyle-line';
-import {DrawerPoint} from './Point/drawer-point';
 import {GeometryType} from '../../interface/enums/geometry-type.enum';
+import {IDrawer} from '../../interface/draw/idrawer';
+import {DrawerPoint} from './Point/drawer-point';
 
 
 export class DrawWizard {
   private drawContainer: PIXI.Container;
   private currentGeoType: GeometryType = null;
   // region Drawer
-  private pointDrawer: DrawerPoint;
+  private drawer: IDrawer;
   // endregion
   private editGeo: IGeometry;
   private clickPoint: PIXI.Point = new PIXI.Point();
@@ -43,6 +44,29 @@ export class DrawWizard {
   public SetGeometryType(type: GeometryType) {
     this.clear();
     this.currentGeoType = type;
+    switch (this.currentGeoType) {
+      case GeometryType.Point:
+        this.drawer = new DrawerPoint();
+        break;
+      case GeometryType.Ellipse:
+        break;
+      case GeometryType.Line:
+        break;
+      case GeometryType.Rect:
+        break;
+      case GeometryType.Polygon:
+        break;
+      case GeometryType.Polyline:
+        break;
+    }
+    this.drawer.OnInitialized.subscribe(value => {
+      this.drawContainer.addChild(value.GetObject());
+    });
+    this.drawer.OnRequestRender.subscribe(value => {
+      this.OnRequestRender.next();
+    });
+    this.drawer.Init();
+
   }
 
   public Init(w, h, callback: (object: PIXI.DisplayObject) => void) {
@@ -61,34 +85,34 @@ export class DrawWizard {
 
   private registerEvents(obj: PIXI.DisplayObject) {
     obj.addListener('tap', event1 => {
-      if (this.dragged) {
+      if (this.drawer === undefined) {
         return;
       }
-      this.addPoint();
-      this.dragStart = true;
+      this.drawer.OnEvent(event1);
     });
     obj.addListener('click', event1 => {
-      if (this.dragged) {
+      if (this.drawer === undefined) {
         return;
       }
-      this.addPoint();
-      this.dragStart = true;
+      this.drawer.OnEvent(event1);
     });
     obj.addListener('pointerdown', event1 => {
-      this.clickPoint = event1.data.getLocalPosition(event1.currentTarget.parent);
-      this.dragStart = true;
-    });
-    obj.addListener('pointermove', event1 => {
-      console.log('Move %s', this.dragStart);
-      if (!this.dragStart) {
+      if (this.drawer === undefined) {
         return;
       }
-      console.log('MOVE');
-      const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
-      this.onMove(newPos);
+      this.drawer.OnEvent(event1);
+    });
+    obj.addListener('pointermove', event1 => {
+      if (this.drawer === undefined) {
+        return;
+      }
+      this.drawer.OnEvent(event1);
     });
     obj.addListener('pointerup', event1 => {
-      this.dragStart = false;
+      if (this.drawer === undefined) {
+        return;
+      }
+      this.drawer.OnEvent(event1);
     });
   }
 

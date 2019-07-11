@@ -2,6 +2,8 @@ import {IDrawer} from '../../../interface/draw/idrawer';
 import {Subject} from 'rxjs';
 import {IGeometry} from '../../../interface/igeometry';
 import {Point} from '../../../geometries/Point/point';
+import * as PIXI from 'pixi.js';
+
 
 export class DrawerPoint implements IDrawer {
   OnInitialized: Subject<IGeometry>;
@@ -16,6 +18,7 @@ export class DrawerPoint implements IDrawer {
   Init() {
     this.point = new Point({position: new PIXI.Point(0, 0)});
     this.registerEvents();
+    this.point.Init();
   }
 
   OnEvent(event: PIXI.interaction.InteractionEvent) {

@@ -8,6 +8,7 @@ import {MatButtonToggleModule, MatFormFieldModule, MatGridListModule, MatInputMo
 import {FormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { WizardComponent } from './examples/wizard/wizard.component';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { WizardComponent } from './examples/wizard/wizard.component';
     MatButtonToggleModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]

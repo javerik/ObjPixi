@@ -3,6 +3,7 @@ import {MatGridTile} from '@angular/material';
 import * as PIXI from 'pixi.js';
 import {IGeometry} from '../../interface/igeometry';
 import {DrawWizard} from '../../interaction/draw/draw-wizard';
+import {GeometryType} from '../../interface/enums/geometry-type.enum';
 
 @Component({
   selector: 'app-wizard',
@@ -17,6 +18,8 @@ export class WizardComponent implements OnInit, AfterViewInit {
   Stage: PIXI.Container;
   Wizard: DrawWizard;
   Geometries: Array<IGeometry> = [];
+  AvailableTypes: Array<GeometryType> = [GeometryType.Point];
+  GeometryTypes = GeometryType;
   private ratio: number;
   private winWidth = 800;
   private winHeight = 600;
@@ -44,6 +47,10 @@ export class WizardComponent implements OnInit, AfterViewInit {
     this.Wizard.OnRequestRender.subscribe(value => {
       this.ForceRender();
     });
+  }
+
+  changeGeometry(type: GeometryType) {
+    this.Wizard.SetGeometryType(type);
   }
 
   onTileResize(event) {
