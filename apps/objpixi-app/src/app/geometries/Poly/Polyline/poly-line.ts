@@ -12,7 +12,6 @@ export class PolyLine extends PolyBase implements IGeometry {
 
   // region Graphics
 
-
   private getLineContainer(points: Array<PIXI.Point>): PIXI.Container {
     const container = new PIXI.Container();
     container.name = this.cNameLines;
@@ -26,7 +25,6 @@ export class PolyLine extends PolyBase implements IGeometry {
     container.addChild(g);
     return container;
   }
-
 
   protected refreshGraphic(info: PolyInfo, render = true) {
     this.refreshLines(info);
@@ -44,7 +42,6 @@ export class PolyLine extends PolyBase implements IGeometry {
   }
 
   // endregion
-
 
   // region Events
 

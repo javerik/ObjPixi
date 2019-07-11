@@ -1,13 +1,12 @@
 import {IDrawer} from '../../../interface/draw/idrawer';
 import {Subject} from 'rxjs';
-import {IGeometry} from '../../../interface/igeometry';
 import {Line} from '../../../geometries/Line/line';
 import {IStyleLine} from '../../../styles/istyle-line';
 import * as PIXI from 'pixi.js';
 
 
 export class DrawerLine implements IDrawer {
-  OnInitialized: Subject<IGeometry>;
+  OnInitialized: Subject<PIXI.DisplayObject>;
   OnRequestRender: Subject<null>;
   private line: Line;
   private dragState = false;
@@ -71,7 +70,7 @@ export class DrawerLine implements IDrawer {
     });
     this.line.OnInitialized.subscribe(value => {
       this.line.EnableControls(false);
-      this.OnInitialized.next(this.line);
+      this.OnInitialized.next(this.line.GetObject());
     });
   }
 }

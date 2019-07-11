@@ -2,14 +2,14 @@ import * as PIXI from 'pixi.js';
 import {IDrawer} from '../../../interface/draw/idrawer';
 import {IStylePoly} from '../../../styles/istyle-poly';
 import {Subject} from 'rxjs';
-import {IGeometry} from '../../../interface/igeometry';
 import {PolyGon} from '../../../geometries/Poly/Polygon/poly-gon';
 import {PolyLine} from '../../../geometries/Poly/Polyline/poly-line';
+import {Point} from "../../../geometries/Point/point";
 
 export class PolyDrawerBase implements IDrawer {
 
   // region IDrawer Member
-  OnInitialized: Subject<IGeometry>;
+  OnInitialized: Subject<PIXI.DisplayObject>;
   OnRequestRender: Subject<null>;
   // endregion
 
@@ -55,6 +55,9 @@ export class PolyDrawerBase implements IDrawer {
 
   // region Member
   protected points: Array<PIXI.Point>;
+  protected firstPoint: Point;
+  protected lastPoint: Point;
+  protected container: PIXI.Container;
   protected object: PolyGon | PolyLine;
   // endregion
 
@@ -62,19 +65,47 @@ export class PolyDrawerBase implements IDrawer {
     this.OnInitialized = new Subject();
     this.OnRequestRender = new Subject();
     this.points = new Array<PIXI.Point>();
+    this.container = new PIXI.Container();
+    this.firstPoint = new Point({position: new PIXI.Point(-100, -100)});
+    this.lastPoint = new Point({position: new PIXI.Point(-100, -100)});
+    this.registerPointEvents();
+    this.firstPoint.Init();
+    this.lastPoint.Init();
   }
 
   // region Events
+  private registerPointEvents() {
+    const ar = [this.firstPoint, this.lastPoint];
+    for (const p of ar) {
+      p.OnInitialized.subscribe(value => {
+        this.container.addChild(value);
+      });
+      p.OnRequestRender.subscribe(value => {
+        this.OnRequestRender.next();
+      });
+      p.OnInteraction.subscribe(value => {
+      });
+    }
+  }
   private registerEvents() {
     this.object.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
     });
     this.object.OnInitialized.subscribe(value => {
       this.object.EnableControls(false);
-      this.OnInitialized.next(this.object);
+      this.container.addChild(value);
+      this.container.setChildIndex(value, 0);
+      this.OnInitialized.next(this.container);
     });
   }
   // endregion
+
+  protected setPoints() {
+    this.firstPoint.UpdatePoints([this.points[0]]);
+    if (this.points.length > 1) {
+      this.lastPoint.UpdatePoints([this.points[this.points.length - 1]]);
+    }
+  }
 
   // region IDrawer
   Init() {
@@ -86,6 +117,7 @@ export class PolyDrawerBase implements IDrawer {
     if (event.type === 'click' || event.type === 'tap') {
       const newPos = event.data.getLocalPosition(event.currentTarget.parent);
       this.points.push(newPos);
+      this.setPoints();
       this.object.UpdatePoints(this.points);
     }
     if (event.type === ' rightclick') {

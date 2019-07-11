@@ -68,7 +68,8 @@ export class DrawWizard {
         break;
     }
     this.drawer.OnInitialized.subscribe(value => {
-      this.drawContainer.addChild(value.GetObject());
+      this.drawContainer.addChild(value);
+      this.OnRequestRender.next();
     });
     this.drawer.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
@@ -131,35 +132,6 @@ export class DrawWizard {
 
   private clear() {
     this.drawContainer.removeChildren();
-  }
-
-  private addPoint() {
-    this.clear();
-    this.editGeo = new Point({position: this.clickPoint});
-    this.registerGeoEvents();
-    this.editGeo.Init();
-  }
-
-  private onMove(pos: PIXI.Point) {
-    this.clear();
-    if (this.clickPoint === pos) {
-      this.dragged = false;
-      return;
-    }
-    this.dragged = true;
-    this.editGeo = new Line({p1: this.clickPoint, p2: pos, style: this.lineStyle});
-    this.registerGeoEvents();
-    this.editGeo.Init();
-  }
-
-  private registerGeoEvents() {
-    this.editGeo.OnInitialized.subscribe(value => {
-      this.drawContainer.addChild(value);
-      this.OnRequestRender.next();
-    });
-    this.editGeo.OnRequestRender.subscribe(value => {
-      this.OnRequestRender.next();
-    });
   }
 
 }

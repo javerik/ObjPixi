@@ -1,14 +1,13 @@
 import * as PIXI from 'pixi.js';
 import {IDrawer} from '../../../interface/draw/idrawer';
 import {Subject} from 'rxjs';
-import {IGeometry} from '../../../interface/igeometry';
 import {Rect} from '../../../geometries/Rect/rect';
 import {IStyleRect} from '../../../styles/istyle-rect';
 
 
 export class DrawerRect implements IDrawer {
 
-  OnInitialized: Subject<IGeometry>;
+  OnInitialized: Subject<PIXI.DisplayObject>;
   OnRequestRender: Subject<null>;
   private rect: Rect;
   private dragState = false;
@@ -69,7 +68,7 @@ export class DrawerRect implements IDrawer {
     });
     this.rect.OnInitialized.subscribe(value => {
       this.rect.EnableControls(false);
-      this.OnInitialized.next(this.rect);
+      this.OnInitialized.next(this.rect.GetObject());
     });
   }
 }

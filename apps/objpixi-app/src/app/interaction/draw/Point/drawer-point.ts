@@ -1,12 +1,11 @@
 import {IDrawer} from '../../../interface/draw/idrawer';
 import {Subject} from 'rxjs';
-import {IGeometry} from '../../../interface/igeometry';
 import {Point} from '../../../geometries/Point/point';
 import * as PIXI from 'pixi.js';
 
 
 export class DrawerPoint implements IDrawer {
-  OnInitialized: Subject<IGeometry>;
+  OnInitialized: Subject<PIXI.DisplayObject>;
   OnRequestRender: Subject<null>;
   private point: Point;
 
@@ -34,7 +33,7 @@ export class DrawerPoint implements IDrawer {
     });
     this.point.OnInitialized.subscribe(value => {
       this.point.EnableControls(false);
-      this.OnInitialized.next(this.point);
+      this.OnInitialized.next(this.point.GetObject());
     });
   }
 
