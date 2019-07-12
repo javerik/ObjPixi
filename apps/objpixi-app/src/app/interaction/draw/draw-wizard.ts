@@ -1,8 +1,6 @@
 import * as PIXI from 'pixi.js';
 import {IGeometry} from '../../interface/igeometry';
-import {Point} from '../../geometries/Point/point';
 import {Subject} from 'rxjs';
-import {Line} from '../../geometries/Line/line';
 import {IStyleLine} from '../../styles/istyle-line';
 import {GeometryType} from '../../interface/enums/geometry-type.enum';
 import {IDrawer} from '../../interface/draw/idrawer';
@@ -11,13 +9,18 @@ import {DrawerLine} from './Line/drawer-line';
 import {DrawerRect} from './Rect/drawer-rect';
 import {DrawerPolyGon} from './Poly/drawer-poly-gon';
 import {DrawerPolyLine} from './Poly/drawer-poly-line';
+import {IPositionIndicator} from '../../interface/info/iposition-indicator';
+import {DefaultPositionIndicator} from '../info/default-position-indicator';
+import {PositionIndicatorInfo} from '../../interface/info/position-indicator-info';
 
 
 export class DrawWizard {
+  private mainContainer: PIXI.Container;
   private drawContainer: PIXI.Container;
   private currentGeoType: GeometryType = null;
   // region Drawer
   private drawer: IDrawer;
+  private positionIndicator: IPositionIndicator;
   // endregion
   private editGeo: IGeometry;
   private clickPoint: PIXI.Point = new PIXI.Point();
@@ -40,9 +43,17 @@ export class DrawWizard {
       radius: 6
     }
   };
+  indicatorInfo: PositionIndicatorInfo = {
+    position: new PIXI.Point(10, 10),
+    lockPosition: true,
+    moveBox: false
+  };
 
-  constructor() {
+  constructor(positionIndicator?: IPositionIndicator) {
     this.OnRequestRender = new Subject();
+    if (positionIndicator === undefined) {
+      this.positionIndicator = new DefaultPositionIndicator();
+    }
   }
 
   public SetGeometryType(type: GeometryType) {
@@ -79,6 +90,11 @@ export class DrawWizard {
 
   public Init(w, h, callback: (object: PIXI.DisplayObject) => void) {
     this.drawContainer = new PIXI.Container();
+    this.mainContainer = new PIXI.Container();
+    this.mainContainer.x = 0;
+    this.mainContainer.y = 0;
+    this.mainContainer.width = w;
+    this.mainContainer.height = h;
     this.drawContainer.x = 0;
     this.drawContainer.y = 0;
     this.drawContainer.width = w;
@@ -87,8 +103,21 @@ export class DrawWizard {
     this.drawContainer.interactive = true;
     this.drawContainer.buttonMode = true;
     this.drawContainer.zIndex = 100;
+    this.mainContainer.addChild(this.drawContainer);
     this.registerEvents(this.drawContainer);
-    callback(this.drawContainer);
+    this.registerIndicatorEvents();
+    this.positionIndicator.Init(this.indicatorInfo);
+    callback(this.mainContainer);
+  }
+
+  private registerIndicatorEvents() {
+    this.positionIndicator.OnInitialized.subscribe(value => {
+      this.mainContainer.addChild(value);
+      this.OnRequestRender.next();
+    });
+    this.positionIndicator.OnRequestRender.subscribe(value => {
+      this.OnRequestRender.next();
+    });
   }
 
   private registerEvents(obj: PIXI.DisplayObject) {
@@ -111,6 +140,7 @@ export class DrawWizard {
       this.drawer.OnEvent(event1);
     });
     obj.addListener('pointermove', event1 => {
+      this.positionIndicator.OnEvent(event1);
       if (this.drawer === undefined) {
         return;
       }
