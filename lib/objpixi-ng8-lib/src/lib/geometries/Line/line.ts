@@ -24,8 +24,8 @@ export class Line extends BaseGeo implements IGeometry {
 
   // region Read only variables
   private readonly pointNamePrefix = 'P_';
-  protected readonly cNamePoint = 'CONTAINER_POINTS';
-  protected readonly cNameLines = 'CONTAINER_LINES';
+  private readonly cNamePoint = 'CONTAINER_POINTS';
+  private readonly cNameLines = 'CONTAINER_LINES';
 
   // endregion
 
@@ -163,7 +163,7 @@ export class Line extends BaseGeo implements IGeometry {
       this.refreshLines();
       this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
-      this.OnChange.next();
+      this.OnChange.next({sender: this, points: this.GetPoints()});
     });
   }
 
@@ -174,11 +174,11 @@ export class Line extends BaseGeo implements IGeometry {
     container.addListener('click', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next();
+      this.OnInteraction.next({event: event1, target: this});
       this.OnRequestRender.next();
     });
     container.addListener('tap', event1 => {
-      this.OnInteraction.next();
+      this.OnInteraction.next({event: event1, target: this});
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
       this.OnRequestRender.next();
@@ -196,7 +196,7 @@ export class Line extends BaseGeo implements IGeometry {
     this.info.p2.y += moveEvent.y;
     this.refreshGraphic( false);
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   private createHitArea(container: PIXI.Container) {
@@ -277,7 +277,7 @@ export class Line extends BaseGeo implements IGeometry {
     this.refreshGraphic(false);
     this.Mover.recenter(this.GContainer.getBounds());
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   EnableControls(state: boolean) {

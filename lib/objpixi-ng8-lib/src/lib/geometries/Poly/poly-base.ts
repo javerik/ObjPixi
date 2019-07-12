@@ -26,14 +26,18 @@ export class PolyBase extends BaseGeo {
   // endregion
 
   // region Read only variables
-  protected readonly pointNamePrefix = 'P_';
-  protected readonly cNamePoint = 'CONTAINER_POINTS';
-  protected readonly cNameLines = 'CONTAINER_LINES';
-  protected readonly cNamePolygon = 'CONTAINER_POLYGON';
+  protected readonly pointNamePrefix;
+  protected readonly cNamePoint;
+  protected readonly cNameLines;
+  protected readonly cNamePolygon;
   // endregion
 
   constructor(polyInfo: PolyInfo, name?: string) {
     super(name);
+    this.pointNamePrefix = 'P_';
+    this.cNamePoint = 'CONTAINER_POINTS';
+    this.cNameLines = 'CONTAINER_LINES';
+    this.cNamePolygon = 'CONTAINER_POLYGON';
     this.info = polyInfo;
     this.Scaler = new BasicScaler();
     this.Mover = new Mover();
