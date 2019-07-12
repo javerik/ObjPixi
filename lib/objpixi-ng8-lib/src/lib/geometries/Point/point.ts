@@ -7,7 +7,7 @@ import {PointInfo} from './point-info';
 export class Point extends BaseGeo implements IGeometry {
 
   // region Statics
-  private static pointTexture: PIXI.Texture;
+  private static pointTexture: PIXI.Texture = null;
   // endregion
 
   // region Helper

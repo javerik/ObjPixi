@@ -3,8 +3,7 @@ import {ScaleDirection} from '../../../interface/enums/scale-direction.enum';
 
 
 export class ScaleArrow {
-  private static Texture: PIXI.Texture;
-  private static TextureLoader: PIXI.Loader;
+  private static Texture: PIXI.Texture =  null;
   private readonly Icon = 'assets/arrows/arrow_down.png';
   private readonly direction: ScaleDirection;
 

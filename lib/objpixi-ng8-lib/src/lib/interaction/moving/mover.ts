@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import {Subject} from 'rxjs';
 
 export class Mover {
-  private static Texture: PIXI.Texture;
+  private static Texture: PIXI.Texture = null;
   private readonly Icon = 'assets/arrows/arrow_move.png';
   private Container: PIXI.Container;
   private originPoint: PIXI.Rectangle;
