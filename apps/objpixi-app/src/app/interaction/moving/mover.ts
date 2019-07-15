@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import {Subject} from 'rxjs';
 
 export class Mover {
-  private static Texture: PIXI.Texture;
+  private static Texture: PIXI.Texture = null;
   private readonly Icon = 'assets/arrows/arrow_move.png';
   private Container: PIXI.Container;
   private originPoint: PIXI.Rectangle;
@@ -21,7 +21,7 @@ export class Mover {
   }
 
   public Generate(rect: PIXI.Rectangle) {
-    if (Mover.Texture === undefined) {
+    if (Mover.Texture === null) {
       Mover.Texture = PIXI.Texture.from(this.Icon);
     }
     this.Container = new PIXI.Container();

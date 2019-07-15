@@ -68,7 +68,7 @@ export class Point extends BaseGeo implements IGeometry {
   // region IGeometry
 
   Init(): void {
-    if (Point.pointTexture === undefined) {
+    if (Point.pointTexture === null) {
       setTimeout(() => {
         this.Init();
       }, 100);

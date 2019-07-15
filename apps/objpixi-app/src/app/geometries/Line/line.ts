@@ -24,8 +24,8 @@ export class Line extends BaseGeo implements IGeometry {
 
   // region Read only variables
   private readonly pointNamePrefix = 'P_';
-  protected readonly cNamePoint = 'CONTAINER_POINTS';
-  protected readonly cNameLines = 'CONTAINER_LINES';
+  private readonly cNamePoint = 'CONTAINER_POINTS';
+  private readonly cNameLines = 'CONTAINER_LINES';
 
   // endregion
 
