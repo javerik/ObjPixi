@@ -1,5 +1,5 @@
 <h2>Wizard example</h2>
-<mat-grid-list cols="5" rowHeight="100px">
+<mat-grid-list cols="6" rowHeight="100px">
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-button-toggle (click)="changeGeometry(GeometryTypes.Point)">Point</mat-button-toggle>
   </mat-grid-tile>
@@ -14,6 +14,9 @@
   </mat-grid-tile>
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-button-toggle (click)="changeGeometry(GeometryTypes.Polygon)">PolyGon</mat-button-toggle>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1">
+    <mat-button-toggle (click)="changeGeometry(GeometryTypes.Ellipse)">Ellipse</mat-button-toggle>
   </mat-grid-tile>
   <mat-grid-tile id="testDiv" #tilePixi colspan="5" rowspan="6" (window:resize)="onTileResize($event)">
     <div #pixiContainer></div>
