@@ -47,20 +47,20 @@ export class PolyLine extends PolyBase implements IGeometry {
 
   protected handleMove(moveEvent: MoveDelta) {
     super.handleMove(moveEvent);
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   protected registerContainerEvents(container: PIXI.DisplayObject) {
     container.addListener('click', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next();
+      this.OnInteraction.next({event: event1, target: this});
       this.OnRequestRender.next();
     });
     container.addListener('tap', event1 => {
       this.GContainer.getChildByName(this.cNamePoint).visible = true;
       this.Mover.SetVisibility(true);
-      this.OnInteraction.next();
+      this.OnInteraction.next({event: event1, target: this});
       this.OnRequestRender.next();
     });
   }
@@ -80,7 +80,7 @@ export class PolyLine extends PolyBase implements IGeometry {
       this.refreshLines(this.info);
       this.Mover.recenter(this.GContainer.getBounds());
       this.OnRequestRender.next();
-      this.OnChange.next();
+      this.OnChange.next({sender: this, points: this.GetPoints()});
     });
   }
 
@@ -134,7 +134,7 @@ export class PolyLine extends PolyBase implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getBounds());
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   EnableControls(state: boolean) {
@@ -143,6 +143,14 @@ export class PolyLine extends PolyBase implements IGeometry {
       this.ClearSelection();
     }
     this.UpdatePoints(this.GetPoints());
+  }
+
+  ContainsPoint(point: PIXI.Point): boolean {
+    return this.MainDisObject.getBounds().contains(point.x, point.y);
+  }
+
+  SetSelection() {
+    this.Mover.SetVisibility(true);
   }
 
   // endregion

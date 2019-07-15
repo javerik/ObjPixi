@@ -21,19 +21,19 @@ export class WizardComponent implements OnInit, AfterViewInit {
   AvailableTypes: Array<GeometryType> = [GeometryType.Point];
   GeometryTypes = GeometryType;
   private ratio: number;
-  private winWidth = 800;
-  private winHeight = 600;
+  private winWidth = 640;
+  private winHeight = 512;
 
   constructor() { }
 
   ngOnInit() {
-    this.Renderer = PIXI.autoDetectRenderer({width: 800, height: 600, antialias: true});
-    this.ratio = 800 / 600;
+    this.Renderer = PIXI.autoDetectRenderer({width: this.winWidth, height: this.winHeight, antialias: true});
+    this.ratio = this.winWidth / this.winHeight;
     this.Stage = new PIXI.Container();
     this.Stage.x = 0;
     this.Stage.y = 0;
-    this.Stage.width = 800;
-    this.Stage.height = 600;
+    this.Stage.width = this.winWidth;
+    this.Stage.height = this.winHeight;
   }
 
   ngAfterViewInit(): void {

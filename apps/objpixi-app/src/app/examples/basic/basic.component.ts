@@ -37,8 +37,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
   dragPointFillColor = 0xf44336;
   defaultLineColor = 0x009688;
   changeEvents: Array<ChangeEvent> = [];
+  ClickedObjects: Array<IGeometry> = [];
   // region styles
-
   lineStyle: IStyleLine = {
     alpha: 1,
     color: this.defaultLineColor,
@@ -166,6 +166,11 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
   }
 
+
+  onObjectSelected(geo: IGeometry) {
+    this.Stage.setChildIndex(geo.GetObject(), this.Stage.children.length - 1);
+    this.ForceRender();
+  }
 
   onAddPoint() {
     const p = new Point({position: new PIXI.Point(400, 300)});
@@ -376,17 +381,29 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
 
   onObjectEvent(event: GeoEvent) {
-    console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);
-
+    // console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);
+    const newPos = event.event.data.getLocalPosition(event.event.currentTarget.parent);
+    this.ClickedObjects = this.getClicked(newPos);
+    this.ClickedObjects.forEach(value => value.SetSelection());
+    const ids = this.ClickedObjects.map(o => o.GetId());
     switch (event.event.type) {
       case 'click':
-        this.clearExcept(event.target.GetId());
+        this.clearExcept(ids);
         break;
     }
+    this.ForceRender();
   }
 
-  private clearExcept(id: string) {
-    this.Geometries.filter(value => value.GetId() !== id).forEach(value => {
+  private getClicked(pos: PIXI.Point): Array<IGeometry> {
+    const geos =  this.Geometries.filter(g => g.ContainsPoint(pos));
+    geos.forEach(g => {
+      console.log('[%s]- %s in position', g.GetId(), g.GetName());
+    });
+    return geos;
+  }
+
+  private clearExcept(id: string[]) {
+    this.Geometries.filter(value => id.indexOf(value.GetId()) === -1).forEach(value => {
       value.ClearSelection();
     });
   }

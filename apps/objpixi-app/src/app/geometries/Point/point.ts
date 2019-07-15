@@ -7,7 +7,7 @@ import {PointInfo} from './point-info';
 export class Point extends BaseGeo implements IGeometry {
 
   // region Statics
-  private static pointTexture: PIXI.Texture;
+  private static pointTexture: PIXI.Texture = null;
   // endregion
 
   // region Helper
@@ -39,8 +39,8 @@ export class Point extends BaseGeo implements IGeometry {
     if (!this.enableControl) {
       return;
     }
-    obj.addListener('click', () => {
-      this.OnInteraction.next();
+    obj.addListener('click', event1 => {
+      this.OnInteraction.next({event: event1, target: this});
     });
     obj.addListener('pointerdown', () => {
         this.dragState = true;
@@ -60,7 +60,7 @@ export class Point extends BaseGeo implements IGeometry {
       this.pointSprite.position.y = newPos.y;
       this.info.position = this.pointSprite.position;
       this.OnRequestRender.next();
-      this.OnChange.next();
+      this.OnChange.next({sender: this, points: this.GetPoints()});
     });
   }
   // endregion
@@ -68,7 +68,7 @@ export class Point extends BaseGeo implements IGeometry {
   // region IGeometry
 
   Init(): void {
-    if (Point.pointTexture === undefined) {
+    if (Point.pointTexture === null) {
       setTimeout(() => {
         this.Init();
       }, 100);
@@ -115,7 +115,7 @@ export class Point extends BaseGeo implements IGeometry {
     this.pointSprite.x = this.info.position.x;
     this.pointSprite.y = this.info.position.y;
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   EnableControls(state: boolean) {
@@ -124,6 +124,12 @@ export class Point extends BaseGeo implements IGeometry {
       this.ClearSelection();
     }
     this.UpdatePoints(this.GetPoints());
+  }
+
+  ContainsPoint(point: PIXI.Point): boolean {
+    return this.MainDisObject.getBounds().contains(point.x, point.y);
+  }
+  SetSelection() {
   }
 
   // endregion

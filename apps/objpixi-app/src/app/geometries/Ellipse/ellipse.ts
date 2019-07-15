@@ -99,7 +99,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   private handleMove(moveEvent: MoveDelta) {
@@ -108,7 +108,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   // endregion
@@ -123,15 +123,15 @@ export class Ellipse extends BaseGeo implements IGeometry {
     obj.interactive = true;
     obj.buttonMode = true;
     obj.addListener('pointerupoutside', event1 => {
-      this.OnInteraction.next();
+      this.OnInteraction.next({event: event1, target: this});
     });
     obj.addListener('click', event1 => {
-      this.OnInteraction.next();
+      this.OnInteraction.next({event: event1, target: this});
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
     obj.addListener('tap', event1 => {
-      this.OnInteraction.next();
+      this.OnInteraction.next({event: event1, target: this});
       this.Scaler.SetVisibility(true);
       this.Mover.SetVisibility(true);
     });
@@ -193,7 +193,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   EnableControls(state: boolean) {
@@ -202,6 +202,15 @@ export class Ellipse extends BaseGeo implements IGeometry {
       this.ClearSelection();
     }
     this.UpdatePoints(this.GetPoints());
+  }
+
+  ContainsPoint(point: PIXI.Point): boolean {
+    return this.MainDisObject.getBounds().contains(point.x, point.y);
+  }
+
+  SetSelection() {
+    this.Scaler.SetVisibility(true);
+    this.Mover.SetVisibility(true);
   }
 
   // endregion
