@@ -21,7 +21,7 @@ export class Mover {
   }
 
   public Generate(rect: PIXI.Rectangle) {
-    if (Mover.Texture === undefined) {
+    if (Mover.Texture === null) {
       Mover.Texture = PIXI.Texture.from(this.Icon);
     }
     this.Container = new PIXI.Container();
@@ -86,7 +86,7 @@ export class Mover {
       this.lastPosition = newPos;
       this.crossSprite.x += moveDelta.x;
       this.crossSprite.y += moveDelta.y;
-      this.OnMoved.next();
+      this.OnMoved.next(moveDelta);
     });
   }
 

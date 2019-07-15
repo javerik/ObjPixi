@@ -137,7 +137,7 @@ export class BasicScaler implements IScaler {
       const delta = this.getDeltePos(ScaleDirection.Right, newPos);
       this.reCalculatePositions();
       this.deltas[2].point = delta;
-      this.OnScaleEvent.next();
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Right, ArrowPositions: this.lastPositions});
     });
     this.Arrows.Bottom.DispObj.on('pointermove', event1 => {
       if (!this.DragStates.Bottom) {
@@ -148,7 +148,7 @@ export class BasicScaler implements IScaler {
       const delta = this.getDeltePos(ScaleDirection.Down, newPos);
       this.reCalculatePositions();
       this.deltas[3].point = delta;
-      this.OnScaleEvent.next();
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Down, ArrowPositions: this.lastPositions});
     });
     this.Arrows.Left.DispObj.on('pointermove', event1 => {
       if (!this.DragStates.Left) {
@@ -159,7 +159,7 @@ export class BasicScaler implements IScaler {
       const delta = this.getDeltePos(ScaleDirection.Left, newPos);
       this.reCalculatePositions();
       this.deltas[1].point = delta;
-      this.OnScaleEvent.next();
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Left, ArrowPositions: this.lastPositions});
     });
     this.Arrows.Top.DispObj.on('pointermove', event1 => {
       if (!this.DragStates.Top) {
@@ -170,7 +170,7 @@ export class BasicScaler implements IScaler {
       const delta = this.getDeltePos(ScaleDirection.Up, newPos);
       this.reCalculatePositions();
       this.deltas[0].point = delta;
-      this.OnScaleEvent.next();
+      this.OnScaleEvent.next({delta, direction: ScaleDirection.Up, ArrowPositions: this.lastPositions});
     });
     // endregion
 
