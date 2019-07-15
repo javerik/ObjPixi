@@ -208,6 +208,11 @@ export class Ellipse extends BaseGeo implements IGeometry {
     return this.MainDisObject.getBounds().contains(point.x, point.y);
   }
 
+  SetSelection() {
+    this.Scaler.SetVisibility(true);
+    this.Mover.SetVisibility(true);
+  }
+
   // endregion
 }
 

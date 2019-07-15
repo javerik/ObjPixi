@@ -152,6 +152,10 @@ export class PolyGon extends PolyBase implements IGeometry {
     return this.MainDisObject.getBounds().contains(point.x, point.y);
   }
 
+  SetSelection() {
+    this.Mover.SetVisibility(true);
+  }
+
   // endregion
 
 }

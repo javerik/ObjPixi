@@ -379,6 +379,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
     // console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);
     const newPos = event.event.data.getLocalPosition(event.event.currentTarget.parent);
     const objects = this.getClicked(newPos);
+    objects.forEach(value => value.SetSelection());
     const ids = objects.map(o => o.GetId());
     switch (event.event.type) {
       case 'click':
