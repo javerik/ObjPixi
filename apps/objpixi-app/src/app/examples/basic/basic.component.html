@@ -24,6 +24,24 @@
   <mat-grid-tile id="testDiv" #tilePixi colspan="5" rowspan="6" (window:resize)="onTileResize($event)">
     <div #pixiContainer></div>
   </mat-grid-tile>
+  <mat-grid-tile colspan="2" rowspan="1">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Id</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let o of ClickedObjects; let i = index" (click)="onObjectSelected(o)">
+        <td>{{i + 1}}</td>
+        <td>{{o.GetName()}}</td>
+        <td>{{o.GetId()}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </mat-grid-tile>
 </mat-grid-list>
 
 <mat-grid-list cols="10" rowHeight="50px">
