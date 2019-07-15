@@ -194,7 +194,7 @@ export class Line extends BaseGeo implements IGeometry {
     this.info.p2.x += moveEvent.x;
     this.info.p1.y += moveEvent.y;
     this.info.p2.y += moveEvent.y;
-    this.refreshGraphic( false);
+    this.refreshGraphic(false);
     this.OnRequestRender.next();
     this.OnChange.next();
   }
@@ -205,6 +205,7 @@ export class Line extends BaseGeo implements IGeometry {
     container.hitArea = container.getBounds();
     this.registerContainerEvents(container);
   }
+
   // endregion
 
   // region Calculations
@@ -226,6 +227,7 @@ export class Line extends BaseGeo implements IGeometry {
     this.lastPositions[pointName].y = newPos.y;
     return new PIXI.Point(x, y);
   }
+
   // endregion
 
   // region IGeometry
@@ -288,5 +290,8 @@ export class Line extends BaseGeo implements IGeometry {
     this.UpdatePoints(this.GetPoints());
   }
 
+  ContainsPoint(point: PIXI.Point): boolean {
+    return this.MainDisObject.getBounds().contains(point.x, point.y);
+  }
   // endregion
 }

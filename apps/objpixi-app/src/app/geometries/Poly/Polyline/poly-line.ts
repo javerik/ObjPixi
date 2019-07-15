@@ -145,5 +145,9 @@ export class PolyLine extends PolyBase implements IGeometry {
     this.UpdatePoints(this.GetPoints());
   }
 
+  ContainsPoint(point: PIXI.Point): boolean {
+    return this.MainDisObject.getBounds().contains(point.x, point.y);
+  }
+
   // endregion
 }

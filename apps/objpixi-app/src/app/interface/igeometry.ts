@@ -12,6 +12,7 @@ export interface IGeometry {
   OnInitialized: Subject<PIXI.DisplayObject>;
   OnInteraction: Subject<GeoEvent>;
   Init(): void;
+  ContainsPoint(point: PIXI.Point): boolean;
   GetPoints(): Array<PIXI.Point>;
   UpdatePoints(points: Array<PIXI.Point>);
   EnableControls(state: boolean);
