@@ -83,6 +83,7 @@ export class Point extends BaseGeo implements IGeometry {
     this.pointSprite.buttonMode = true;
     this.registerEvents(this.pointSprite);
     this.MainDisObject.addChild(this.pointSprite);
+    this.MainDisObject.addChild(this.LabelContainer);
     this.OnInitialized.next(this.MainDisObject);
   }
 
@@ -90,20 +91,8 @@ export class Point extends BaseGeo implements IGeometry {
     this.dragState = false;
   }
 
-  GetId(): string {
-    return this.Id;
-  }
-
-  GetName(): string {
-    return this.Name;
-  }
-
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
-  }
-
-  SetName(name: string) {
-    this.Name = name;
   }
 
   GetPoints(): Array<PIXI.Point> {
@@ -129,6 +118,7 @@ export class Point extends BaseGeo implements IGeometry {
   ContainsPoint(point: PIXI.Point): boolean {
     return this.MainDisObject.getBounds().contains(point.x, point.y);
   }
+
   SetSelection() {
   }
 

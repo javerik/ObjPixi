@@ -244,6 +244,8 @@ export class Line extends BaseGeo implements IGeometry {
     this.Mover.Generate(points.getBounds());
     container.addChild(this.GContainer);
     container.addChild(this.Mover.GetObject());
+    container.addChild(this.LabelContainer);
+    this.registerLabelEvents();
     this.MainDisObject = container;
     this.OnInitialized.next(this.MainDisObject);
   }
@@ -253,20 +255,8 @@ export class Line extends BaseGeo implements IGeometry {
     this.Mover.SetVisibility(false);
   }
 
-  GetId(): string {
-    return this.Id;
-  }
-
-  GetName(): string {
-    return this.Name;
-  }
-
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
-  }
-
-  SetName(name: string) {
-    this.Name = name;
   }
 
   GetPoints(): Array<PIXI.Point> {
@@ -297,5 +287,6 @@ export class Line extends BaseGeo implements IGeometry {
   SetSelection() {
     this.Mover.SetVisibility(true);
   }
+
   // endregion
 }

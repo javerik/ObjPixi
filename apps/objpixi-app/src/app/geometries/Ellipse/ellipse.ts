@@ -7,6 +7,7 @@ import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScalingEvent} from '../../interface/events/scaling-event';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
+import {ILabel} from '../../interface/info/ilabel';
 
 export class Ellipse extends BaseGeo implements IGeometry {
   Scaler: IScaler;
@@ -14,7 +15,6 @@ export class Ellipse extends BaseGeo implements IGeometry {
   private readonly Mover: Mover;
   private info: EllipseInfo;
   public MainDisObject: PIXI.Container;
-
 
   constructor(ellipseInfo: EllipseInfo, name?: string) {
     super(name);
@@ -152,6 +152,8 @@ export class Ellipse extends BaseGeo implements IGeometry {
     container.addChild(this.GContainer);
     container.addChild(this.Scaler.GetObject());
     container.addChild(this.Mover.GetObject());
+    container.addChild(this.LabelContainer);
+    this.registerLabelEvents();
     this.MainDisObject = container;
     this.registerEvents();
     this.OnInitialized.next(this.MainDisObject);
@@ -162,20 +164,8 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.Mover.SetVisibility(false);
   }
 
-  GetId(): string {
-    return this.Id;
-  }
-
-  GetName(): string {
-    return this.Name;
-  }
-
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
-  }
-
-  SetName(name: string) {
-    this.Name = name;
   }
 
   GetPoints(): Array<PIXI.Point> {

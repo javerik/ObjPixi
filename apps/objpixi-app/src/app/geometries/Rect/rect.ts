@@ -154,6 +154,8 @@ export class Rect extends BaseGeo implements IGeometry {
     container.addChild(this.GContainer);
     container.addChild(this.Scaler.GetObject());
     container.addChild(this.Mover.GetObject());
+    container.addChild(this.LabelContainer);
+    this.Label.Init();
     this.MainDisObject = container;
     this.registerEvents();
     this.OnInitialized.next(this.MainDisObject);
@@ -161,18 +163,6 @@ export class Rect extends BaseGeo implements IGeometry {
 
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
-  }
-
-  GetId(): string {
-    return this.Id;
-  }
-
-  GetName(): string {
-    return this.Name;
-  }
-
-  SetName(name: string) {
-    this.Name = name;
   }
 
   ClearSelection(): void {

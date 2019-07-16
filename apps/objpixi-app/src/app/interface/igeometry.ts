@@ -3,6 +3,7 @@ import {IScaler} from './iscaler';
 import {Subject} from 'rxjs';
 import {GeoEvent} from '../geometries/base-geo';
 import {ChangeEvent} from './events/change-event';
+import {ILabel} from './info/ilabel';
 
 
 export interface IGeometry {
@@ -12,6 +13,7 @@ export interface IGeometry {
   OnInitialized: Subject<PIXI.DisplayObject>;
   OnInteraction: Subject<GeoEvent>;
   Init(): void;
+  SetLabel(label: ILabel): void;
   ContainsPoint(point: PIXI.Point): boolean;
   GetPoints(): Array<PIXI.Point>;
   UpdatePoints(points: Array<PIXI.Point>);
