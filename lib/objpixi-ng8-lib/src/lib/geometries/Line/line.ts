@@ -288,5 +288,12 @@ export class Line extends BaseGeo implements IGeometry {
     this.UpdatePoints(this.GetPoints());
   }
 
+  ContainsPoint(point: PIXI.Point): boolean {
+    return this.MainDisObject.getBounds().contains(point.x, point.y);
+  }
+
+  SetSelection() {
+    this.Mover.SetVisibility(true);
+  }
   // endregion
 }

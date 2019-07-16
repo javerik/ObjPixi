@@ -12,6 +12,7 @@ import {DrawerPolyLine} from './Poly/drawer-poly-line';
 import {IPositionIndicator} from '../../interface/info/iposition-indicator';
 import {DefaultPositionIndicator} from '../info/default-position-indicator';
 import {PositionIndicatorInfo} from '../../interface/info/position-indicator-info';
+import {DrawerEllipse} from './Ellipse/drawer-ellipse';
 
 
 export class DrawWizard {
@@ -64,6 +65,7 @@ export class DrawWizard {
         this.drawer = new DrawerPoint();
         break;
       case GeometryType.Ellipse:
+        this.drawer = new DrawerEllipse();
         break;
       case GeometryType.Line:
         this.drawer = new DrawerLine();
