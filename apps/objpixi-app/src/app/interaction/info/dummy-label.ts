@@ -22,4 +22,10 @@ export class DummyLabel implements ILabel {
 
   SetVisible(state: boolean): void {
   }
+
+  ClearSelection() {
+  }
+
+  SetOriginPosition(point: PIXI.Point) {
+  }
 }

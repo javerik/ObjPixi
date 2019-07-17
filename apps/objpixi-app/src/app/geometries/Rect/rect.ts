@@ -85,15 +85,18 @@ export class Rect extends BaseGeo implements IGeometry {
       this.OnInteraction.next({event: event1, target: this});
     });
     obj.addListener('click', event1 => {
-      this.OnInteraction.next({event: event1, target: this});
-      this.Scaler.SetVisibility(true);
-      this.Mover.SetVisibility(true);
+        this.onClick(event1);
     });
     obj.addListener('tap', event1 => {
-      this.OnInteraction.next({event: event1, target: this});
-      this.Scaler.SetVisibility(true);
-      this.Mover.SetVisibility(true);
+      this.onClick(event1);
     });
+  }
+
+  private onClick(event: PIXI.interaction.InteractionEvent) {
+    this.OnInteraction.next({event, target: this});
+    this.Scaler.SetVisibility(true);
+    this.Mover.SetVisibility(true);
+    this.Label.ClearSelection();
   }
 
   // endregion

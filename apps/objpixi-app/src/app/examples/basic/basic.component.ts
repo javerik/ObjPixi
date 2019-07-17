@@ -17,6 +17,7 @@ import {IStyleEllipse} from '../../styles/istyle-ellipse';
 import {IStylePoly} from '../../styles/istyle-poly';
 import {IStyleRect} from '../../styles/istyle-rect';
 import {ChangeEvent} from '../../interface/events/change-event';
+import {ExampleLabel} from '../label/example-label';
 
 
 @Component({
@@ -38,6 +39,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
   defaultLineColor = 0x009688;
   changeEvents: Array<ChangeEvent> = [];
   ClickedObjects: Array<IGeometry> = [];
+  SelectedObject: IGeometry = null;
+  ChangedName = '';
   // region styles
   lineStyle: IStyleLine = {
     alpha: 1,
@@ -166,21 +169,29 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
   }
 
+  onChangeText(geo: IGeometry, text: string) {
+    geo.SetName(text);
+  }
 
   onObjectSelected(geo: IGeometry) {
+    this.SelectedObject = geo;
+    this.ChangedName = geo.GetName();
     this.Stage.setChildIndex(geo.GetObject(), this.Stage.children.length - 1);
     this.ForceRender();
   }
 
   onAddPoint() {
+    const label = new ExampleLabel();
     const p = new Point({position: new PIXI.Point(400, 300)});
     p.SetName('myPoint');
     this.registerGeoEvents(p);
     p.Init();
+    p.SetLabel(label);
     this.Geometries.push(p);
   }
 
   onAddRect() {
+    const label = new ExampleLabel();
     const newRect = new Rect({
       width: 100, height: 100, center: true,
       position: new PIXI.Point(400, 300), style: this.rectStyle
@@ -188,10 +199,13 @@ export class BasicComponent implements OnInit, AfterViewInit {
     newRect.SetName('myRect');
     this.registerGeoEvents(newRect);
     newRect.Init();
+    newRect.SetLabel(label);
+    label.Init('myRect');
     this.Geometries.push(newRect);
   }
 
   onAddEllipse() {
+    const label = new ExampleLabel();
     const newEllipse = new Ellipse({
       width: 100, height: 120, center: true, position: new PIXI.Point(400, 300),
       style: this.ellipseStyle
@@ -199,10 +213,13 @@ export class BasicComponent implements OnInit, AfterViewInit {
     newEllipse.SetName('myEllipse');
     this.registerGeoEvents(newEllipse);
     newEllipse.Init();
+    newEllipse.SetLabel(label);
+    label.Init('myEllipse');
     this.Geometries.push(newEllipse);
   }
 
   onAddLine() {
+    const label = new ExampleLabel();
     const line = new Line({
       p1: new PIXI.Point(200, 300),
       p2: new PIXI.Point(400, 300),
@@ -211,6 +228,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
     line.SetName('myLine');
     this.registerGeoEvents(line);
     line.Init();
+    line.SetLabel(label);
+    label.Init('myLine');
     this.Geometries.push(line);
   }
 
@@ -382,6 +401,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   onObjectEvent(event: GeoEvent) {
     // console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);
+    if (event === undefined) {
+      console.error('Undefined event');
+      return;
+    }
     const newPos = event.event.data.getLocalPosition(event.event.currentTarget.parent);
     this.ClickedObjects = this.getClicked(newPos);
     this.ClickedObjects.forEach(value => value.SetSelection());
