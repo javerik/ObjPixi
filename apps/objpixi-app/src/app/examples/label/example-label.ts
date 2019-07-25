@@ -16,7 +16,7 @@ export class ExampleLabel extends DummyLabel implements ILabel {
   private readonly widthOffset = 10;
   private initialized = false;
   private OriginPoint: PIXI.Point;
-  private Offset: PIXI.Point;
+  private Offset: PIXI.Point = new PIXI.Point(0, 0);
 
   constructor() {
     super();
@@ -47,12 +47,18 @@ export class ExampleLabel extends DummyLabel implements ILabel {
       this.OnRequestRender.next();
     });
     this.mover.OnMoved.subscribe(value => {
-      this.gContainer.x += value.x;
-      this.gContainer.y += value.y;
+      this.Offset.x += value.x;
+      this.Offset.y += value.y;
+      this.setPosition();
+      this.OnRequestRender.next();
+    });
+    this.mover.OnMoveEnd.subscribe(value => {
+      this.interActionContainer.visible = false;
       this.OnRequestRender.next();
     });
     this.registerContainerEvents(this.container);
   }
+
   private registerContainerEvents(container: PIXI.DisplayObject) {
     container.interactive = true;
     container.buttonMode = true;
@@ -65,6 +71,7 @@ export class ExampleLabel extends DummyLabel implements ILabel {
       this.OnRequestRender.next();
     });
   }
+
   // endregion
 
   // region Init
@@ -88,6 +95,7 @@ export class ExampleLabel extends DummyLabel implements ILabel {
     this.gContainer.x = x;
     this.gContainer.y = y;
   }
+
   // endregion
 
   // region ILabel
@@ -113,6 +121,7 @@ export class ExampleLabel extends DummyLabel implements ILabel {
     this.interActionContainer.visible = false;
     this.OnRequestRender.next();
   }
+
   SetText(text: string) {
     this.text = text;
     this.reInit();
@@ -127,6 +136,7 @@ export class ExampleLabel extends DummyLabel implements ILabel {
   SetOriginPosition(point: PIXI.Point) {
     this.OriginPoint = point;
     this.setPosition();
+    this.mover.recenter(this.gContainer.getBounds());
   }
 
   // endregion

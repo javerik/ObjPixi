@@ -7,6 +7,7 @@ import {ScalingEvent} from '../../interface/events/scaling-event';
 import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {RectInfo} from './rect-info';
+import {ILabel} from '../../interface/info/ilabel';
 
 export class Rect extends BaseGeo implements IGeometry {
 
@@ -133,8 +134,17 @@ export class Rect extends BaseGeo implements IGeometry {
     this.info.position.y += moveEvent.y;
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
+    this.setLabelPosition();
     this.OnRequestRender.next();
     this.OnChange.next({sender: this, points: this.GetPoints()});
+  }
+
+  protected setLabelPosition() {
+    const p = new PIXI.Point(this.info.position.x + (this.info.width / 4),
+      this.info.position.y - (this.info.height / 2));
+    p.x -= this.labelOffset.x;
+    p.y -= this.labelOffset.y;
+    this.Label.SetOriginPosition(p);
   }
 
   // endregion
@@ -158,7 +168,8 @@ export class Rect extends BaseGeo implements IGeometry {
     container.addChild(this.Scaler.GetObject());
     container.addChild(this.Mover.GetObject());
     container.addChild(this.LabelContainer);
-    this.Label.Init();
+    this.Label.Init(this.Name);
+    this.setLabelPosition();
     this.MainDisObject = container;
     this.registerEvents();
     this.OnInitialized.next(this.MainDisObject);
@@ -208,6 +219,6 @@ export class Rect extends BaseGeo implements IGeometry {
     this.Mover.SetVisibility(true);
   }
 
-  // endregion
+// endregion
 
 }

@@ -7,7 +7,6 @@ import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScalingEvent} from '../../interface/events/scaling-event';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
-import {ILabel} from '../../interface/info/ilabel';
 
 export class Ellipse extends BaseGeo implements IGeometry {
   Scaler: IScaler;
@@ -18,6 +17,8 @@ export class Ellipse extends BaseGeo implements IGeometry {
 
   constructor(ellipseInfo: EllipseInfo, name?: string) {
     super(name);
+    this.labelOffset = new PIXI.Point(12, 33);
+    this.labelOffset.set(12, 33);
     this.info = ellipseInfo;
     this.Scaler = new BasicScaler();
     this.Mover = new Mover();
@@ -98,6 +99,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
     }
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
+    this.setLabelPosition();
     this.OnRequestRender.next();
     this.OnChange.next({sender: this, points: this.GetPoints()});
   }
@@ -107,8 +109,17 @@ export class Ellipse extends BaseGeo implements IGeometry {
     this.info.position.y += moveEvent.y;
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
+    this.setLabelPosition();
     this.OnRequestRender.next();
     this.OnChange.next({sender: this, points: this.GetPoints()});
+  }
+
+  protected setLabelPosition() {
+    const p = new PIXI.Point(this.info.position.x - (this.info.width / 2),
+      this.info.position.y - (this.info.height / 2));
+    p.x -= this.labelOffset.x;
+    p.y -= this.labelOffset.y;
+    this.Label.SetOriginPosition(p);
   }
 
   // endregion

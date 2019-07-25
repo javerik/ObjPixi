@@ -33,6 +33,7 @@ export class Line extends BaseGeo implements IGeometry {
     super(name);
     this.info = lineInfo;
     this.Mover = new Mover();
+    this.labelOffset.set(50, 50);
     this.registerMoveEvents();
   }
 
@@ -162,8 +163,9 @@ export class Line extends BaseGeo implements IGeometry {
       this.lastPointsToInfo();
       this.refreshLines();
       this.Mover.recenter(this.GContainer.getBounds());
+      this.setLabelPosition();
       this.OnRequestRender.next();
-      this.OnChange.next();
+      this.OnChange.next({sender: this, points: this.GetPoints()});
     });
   }
 
@@ -196,6 +198,7 @@ export class Line extends BaseGeo implements IGeometry {
     this.info.p1.y += moveEvent.y;
     this.info.p2.y += moveEvent.y;
     this.refreshGraphic(false);
+    this.setLabelPosition();
     this.OnRequestRender.next();
     this.OnChange.next({sender: this, points: this.GetPoints()});
   }
@@ -206,7 +209,24 @@ export class Line extends BaseGeo implements IGeometry {
     container.hitArea = container.getBounds();
     this.registerContainerEvents(container);
   }
-
+  protected setLabelPosition() {
+    let x = 0;
+    if (this.info.p1.x > this.info.p2.x) {
+      x = this.info.p2.x + ((this.info.p1.x - this.info.p2.x) / 2);
+    } else {
+      x = this.info.p1.x + ((this.info.p2.x - this.info.p1.x) / 2);
+    }
+    let y = 0;
+    if (this.info.p1.y > this.info.p2.y) {
+      y = this.info.p2.y + ((this.info.p1.y - this.info.p2.y) / 2);
+    } else {
+      y = this.info.p1.y + ((this.info.p2.y - this.info.p1.y) / 2);
+    }
+    const p = new PIXI.Point(x, y);
+    p.x -= this.labelOffset.x;
+    p.y -= this.labelOffset.y;
+    this.Label.SetOriginPosition(p);
+  }
   // endregion
 
   // region Calculations

@@ -180,6 +180,11 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.ForceRender();
   }
 
+  onRemove() {
+    this.Stage.removeChild(this.SelectedObject.GetObject());
+    this.Geometries.slice(this.Geometries.indexOf(this.SelectedObject), 1);
+    this.ForceRender();
+  }
   onAddPoint() {
     const label = new ExampleLabel();
     const p = new Point({position: new PIXI.Point(400, 300)});
@@ -200,7 +205,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.registerGeoEvents(newRect);
     newRect.Init();
     newRect.SetLabel(label);
-    label.Init('myRect');
     this.Geometries.push(newRect);
   }
 

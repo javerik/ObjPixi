@@ -46,6 +46,7 @@
     <label>Change name:</label>
     <input [(ngModel)]="ChangedName">
     <button [disabled]="SelectedObject === null" (click)="onChangeText(SelectedObject, ChangedName)">Submit</button>
+    <button [disabled]="SelectedObject === null" (click)="onRemove()">Remove</button>
   </mat-grid-tile>
 </mat-grid-list>
 
