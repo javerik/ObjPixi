@@ -1,10 +1,8 @@
 import * as PIXI from 'pixi.js';
 import {IStyleRect} from '../../styles/istyle-rect';
+import {ICommonCoords} from '../../interface/info/icommon-coords';
 
 export interface RectInfo {
-  width: number;
-  height: number;
-  center: boolean;
-  position: PIXI.Point;
+  coords: ICommonCoords;
   style: IStyleRect;
 }

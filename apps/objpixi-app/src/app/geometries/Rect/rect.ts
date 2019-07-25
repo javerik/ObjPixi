@@ -40,7 +40,7 @@ export class Rect extends BaseGeo implements IGeometry {
 
   // region Graphics
   private getGraphicFromInfo(info: RectInfo): PIXI.DisplayObject {
-    return this.getGraphic(info.position.x, info.position.y, info.width, info.height);
+    return this.getGraphic(info.coords.position.x, info.coords.position.y, info.coords.width, info.coords.height);
   }
 
   private getGraphic(x, y, w, h): PIXI.DisplayObject {
@@ -106,32 +106,33 @@ export class Rect extends BaseGeo implements IGeometry {
   private handleScaling(event: ScalingEvent) {
     switch (event.direction) {
       case ScaleDirection.Up:
-        this.info.position.y += event.delta.y;
+        this.info.coords.position.y += event.delta.y;
         const dY = event.delta.y * -1;
-        this.info.height += dY;
+        this.info.coords.height += dY;
         break;
       case ScaleDirection.Down:
-        this.info.height += event.delta.y;
+        this.info.coords.height += event.delta.y;
         break;
       case ScaleDirection.Left:
-        this.info.position.x += event.delta.x;
+        this.info.coords.position.x += event.delta.x;
         const dX = event.delta.x * -1;
-        this.info.width += dX;
+        this.info.coords.width += dX;
         break;
       case ScaleDirection.Right:
-        this.info.width += event.delta.x;
+        this.info.coords.width += event.delta.x;
         break;
 
     }
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
+    this.setLabelPosition();
     this.OnRequestRender.next();
     this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   private handleMove(moveEvent: MoveDelta) {
-    this.info.position.x += moveEvent.x;
-    this.info.position.y += moveEvent.y;
+    this.info.coords.position.x += moveEvent.x;
+    this.info.coords.position.y += moveEvent.y;
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.setLabelPosition();
@@ -140,8 +141,8 @@ export class Rect extends BaseGeo implements IGeometry {
   }
 
   protected setLabelPosition() {
-    const p = new PIXI.Point(this.info.position.x + (this.info.width / 4),
-      this.info.position.y - (this.info.height / 2));
+    const p = new PIXI.Point(this.info.coords.position.x + (this.info.coords.width / 4),
+      this.info.coords.position.y - (this.info.coords.height / 2));
     p.x -= this.labelOffset.x;
     p.y -= this.labelOffset.y;
     this.Label.SetOriginPosition(p);
@@ -154,9 +155,9 @@ export class Rect extends BaseGeo implements IGeometry {
 
   public Init() {
     this.GContainer = new PIXI.Container();
-    if (this.info.center) {
-      this.info.position.x = this.info.position.x - (this.info.width / 2);
-      this.info.position.y = this.info.position.y - (this.info.height / 2);
+    if (this.info.coords.center) {
+      this.info.coords.position.x = this.info.coords.position.x - (this.info.coords.width / 2);
+      this.info.coords.position.y = this.info.coords.position.y - (this.info.coords.height / 2);
     }
     const rect = this.getGraphicFromInfo(this.info);
     rect.name = 'origin';
@@ -186,15 +187,15 @@ export class Rect extends BaseGeo implements IGeometry {
 
   GetPoints(): Array<PIXI.Point> {
     return [
-      this.info.position,
-      new PIXI.Point(this.info.width, this.info.height)
+      this.info.coords.position,
+      new PIXI.Point(this.info.coords.width, this.info.coords.height)
     ];
   }
 
   UpdatePoints(points: Array<PIXI.Point>) {
-    this.info.position = points[0];
-    this.info.width = points[1].x;
-    this.info.height = points[1].y;
+    this.info.coords.position = points[0];
+    this.info.coords.width = points[1].x;
+    this.info.coords.height = points[1].y;
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());

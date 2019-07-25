@@ -41,7 +41,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
   // region Graphics
 
   private getGraphicFromInfo(info: EllipseInfo): PIXI.DisplayObject {
-    return this.getGraphic(info.position.x, info.position.y, info.width, info.height);
+    return this.getGraphic(info.coords.position.x, info.coords.position.y, info.coords.width, info.coords.height);
   }
 
   private getGraphic(x, y, w, h): PIXI.DisplayObject {
@@ -87,13 +87,13 @@ export class Ellipse extends BaseGeo implements IGeometry {
     switch (event.direction) {
       case ScaleDirection.Up:
       case ScaleDirection.Down:
-        this.info.height = (h - (this.scalerOffset * 2));
-        this.info.position.y += event.delta.y / 2;
+        this.info.coords.height = (h - (this.scalerOffset * 2));
+        this.info.coords.position.y += event.delta.y / 2;
         break;
       case ScaleDirection.Left:
       case ScaleDirection.Right:
-        this.info.width = (w - (this.scalerOffset * 2));
-        this.info.position.x += event.delta.x / 2;
+        this.info.coords.width = (w - (this.scalerOffset * 2));
+        this.info.coords.position.x += event.delta.x / 2;
         break;
 
     }
@@ -105,8 +105,8 @@ export class Ellipse extends BaseGeo implements IGeometry {
   }
 
   private handleMove(moveEvent: MoveDelta) {
-    this.info.position.x += moveEvent.x;
-    this.info.position.y += moveEvent.y;
+    this.info.coords.position.x += moveEvent.x;
+    this.info.coords.position.y += moveEvent.y;
     this.refreshGraphic(this.info, false);
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
     this.setLabelPosition();
@@ -115,8 +115,8 @@ export class Ellipse extends BaseGeo implements IGeometry {
   }
 
   protected setLabelPosition() {
-    const p = new PIXI.Point(this.info.position.x - (this.info.width / 2),
-      this.info.position.y - (this.info.height / 2));
+    const p = new PIXI.Point(this.info.coords.position.x - (this.info.coords.width / 2),
+      this.info.coords.position.y - (this.info.coords.height / 2));
     p.x -= this.labelOffset.x;
     p.y -= this.labelOffset.y;
     this.Label.SetOriginPosition(p);
@@ -185,15 +185,15 @@ export class Ellipse extends BaseGeo implements IGeometry {
 
   GetPoints(): Array<PIXI.Point> {
     return [
-      this.info.position,
-      new PIXI.Point(this.info.width, this.info.height)
+      this.info.coords.position,
+      new PIXI.Point(this.info.coords.width, this.info.coords.height)
     ];
   }
 
   UpdatePoints(points: Array<PIXI.Point>) {
-    this.info.position = points[0];
-    this.info.width = points[1].x;
-    this.info.height = points[1].y;
+    this.info.coords.position = points[0];
+    this.info.coords.width = points[1].x;
+    this.info.coords.height = points[1].y;
     this.refreshGraphic(this.info);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
     this.Scaler.Regenerate({obj: this.GContainer.getChildByName('origin'), offset: this.scalerOffset});
