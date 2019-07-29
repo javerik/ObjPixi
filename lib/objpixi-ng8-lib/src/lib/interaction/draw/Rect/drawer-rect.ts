@@ -3,6 +3,7 @@ import {IDrawer} from '../../../interface/draw/idrawer';
 import {Subject} from 'rxjs';
 import {Rect} from '../../../geometries/Rect/rect';
 import {IStyleRect} from '../../../styles/istyle-rect';
+import {RectInfo} from '../../../geometries/Rect/rect-info';
 
 
 export class DrawerRect implements IDrawer {
@@ -32,7 +33,11 @@ export class DrawerRect implements IDrawer {
   }
 
   Init() {
-    this.rect = new Rect({position: new PIXI.Point(), height: 0, width: 0, style: this.rectStyle, center: false});
+    const info: RectInfo = {
+      coords: {position: new PIXI.Point(), height: 0, width: 0, center: false},
+      style: this.rectStyle
+    };
+    this.rect = new Rect(info);
     this.registerEvents();
     this.rect.Init();
   }
