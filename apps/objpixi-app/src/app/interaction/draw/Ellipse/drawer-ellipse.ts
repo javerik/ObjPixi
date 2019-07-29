@@ -3,6 +3,7 @@ import {IDrawer} from '../../../interface/draw/idrawer';
 import {Subject} from 'rxjs';
 import {IStyleEllipse} from '../../../styles/istyle-ellipse';
 import {Ellipse} from '../../../geometries/Ellipse/ellipse';
+import {EllipseInfo} from '../../../geometries/Ellipse/ellipse-info';
 
 export class DrawerEllipse implements IDrawer {
   OnInitialized: Subject<PIXI.DisplayObject>;
@@ -29,8 +30,12 @@ export class DrawerEllipse implements IDrawer {
   }
 
   Init() {
-    this.ellipse = new Ellipse({position: new PIXI.Point(),
-      width: 0, height: 0, style: this.ellipseStyle, center: true});
+    const info: EllipseInfo = {
+      coords: {position: new PIXI.Point(),
+        width: 0, height: 0, center: true},
+      style: this.ellipseStyle
+    };
+    this.ellipse = new Ellipse(info);
     this.registerEvents();
     this.ellipse.Init();
   }

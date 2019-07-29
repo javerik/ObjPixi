@@ -198,8 +198,9 @@ export class BasicComponent implements OnInit, AfterViewInit {
   onAddRect() {
     const label = new ExampleLabel();
     const newRect = new Rect({
+      coords: {
       width: 100, height: 100, center: true,
-      position: new PIXI.Point(400, 300), style: this.rectStyle
+      position: new PIXI.Point(400, 300)}, style: this.rectStyle
     });
     newRect.SetName('myRect');
     this.registerGeoEvents(newRect);
@@ -211,7 +212,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   onAddEllipse() {
     const label = new ExampleLabel();
     const newEllipse = new Ellipse({
-      width: 100, height: 120, center: true, position: new PIXI.Point(400, 300),
+      coords: {width: 100, height: 120, center: true, position: new PIXI.Point(400, 300)},
       style: this.ellipseStyle
     });
     newEllipse.SetName('myEllipse');
