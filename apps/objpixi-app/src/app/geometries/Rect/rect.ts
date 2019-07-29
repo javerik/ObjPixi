@@ -142,7 +142,7 @@ export class Rect extends BaseGeo implements IGeometry {
 
   protected setLabelPosition() {
     const p = new PIXI.Point(this.info.coords.position.x + (this.info.coords.width / 4),
-      this.info.coords.position.y - (this.info.coords.height / 2));
+      this.info.coords.position.y - (this.info.coords.height / 4));
     p.x -= this.labelOffset.x;
     p.y -= this.labelOffset.y;
     this.Label.SetOriginPosition(p);
