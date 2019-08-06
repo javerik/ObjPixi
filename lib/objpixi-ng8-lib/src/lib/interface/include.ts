@@ -17,4 +17,5 @@ export * from './events/scaling-event';
 
 // region info
 export * from './info/include';
+export * from './itex-id';
 // endregion

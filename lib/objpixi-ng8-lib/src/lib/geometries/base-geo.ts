@@ -5,6 +5,7 @@ import {UUID} from 'angular2-uuid';
 import {ChangeEvent} from '../interface/events/change-event';
 import {ILabel} from '../interface/info/ilabel';
 import {DummyLabel} from '../interaction/info/dummy-label';
+import {ITexId} from '../interface/itex-id';
 
 export class BaseGeo {
 
@@ -19,6 +20,7 @@ export class BaseGeo {
   protected enableControl = true;
   protected Label: ILabel;
   protected labelOffset: PIXI.Point = null;
+  public TextureIds: Array<ITexId> = [];
 
 
   constructor(name?: string) {
@@ -64,6 +66,10 @@ export class BaseGeo {
 
   public GetName(): string {
     return this.Name;
+  }
+
+  public GetTextureIds(): Array<ITexId> {
+    return [];
   }
 
   SetName(name: string) {

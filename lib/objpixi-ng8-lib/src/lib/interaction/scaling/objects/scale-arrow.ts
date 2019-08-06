@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
 import {ScaleDirection} from '../../../interface/enums/scale-direction.enum';
+import {TextureManager} from '../../../utils/texture-manager';
 
 
 export class ScaleArrow {
-  private static Texture: PIXI.Texture =  null;
+  public static TextureIds = [{id: '_INT_SCALER_ARROW_', url: 'assets/arrows/arrow_move.png'}];
   private readonly Icon = 'assets/arrows/arrow_down.png';
   private readonly direction: ScaleDirection;
 
@@ -14,10 +15,10 @@ export class ScaleArrow {
   }
 
   public Init(posX, posY) {
-    if (ScaleArrow.Texture === null) {
-      ScaleArrow.Texture = PIXI.Texture.from(this.Icon);
+    if (TextureManager.Retrieve(ScaleArrow.TextureIds[0].id)) {
+      return;
     }
-    const sp = new PIXI.Sprite(ScaleArrow.Texture);
+    const sp = new PIXI.Sprite(TextureManager.Retrieve(ScaleArrow.TextureIds[0].id));
     sp.anchor.set(0.5);
     sp.x = posX;
     sp.y = posY;

@@ -4,6 +4,7 @@ import {Subject} from 'rxjs';
 import {GeoEvent} from '../geometries/base-geo';
 import {ChangeEvent} from './events/change-event';
 import {ILabel} from './info/ilabel';
+import {ITexId} from './itex-id';
 
 
 export interface IGeometry {
@@ -15,13 +16,13 @@ export interface IGeometry {
   Init(): void;
   SetLabel(label: ILabel): void;
   ContainsPoint(point: PIXI.Point): boolean;
-  GetPoints(): Array<PIXI.Point>;
   UpdatePoints(points: Array<PIXI.Point>);
   EnableControls(state: boolean);
+  GetObject(): PIXI.DisplayObject;
+  GetPoints(): Array<PIXI.Point>;
   GetId(): string;
   GetName(): string;
   SetName(name: string);
-  GetObject(): PIXI.DisplayObject;
   SetSelection();
   ClearSelection(): void;
 }

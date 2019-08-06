@@ -185,6 +185,24 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Geometries.slice(this.Geometries.indexOf(this.SelectedObject), 1);
     this.ForceRender();
   }
+
+  onAddGradient() {
+    const canvas = document.createElement('canvas');
+    canvas.width  = 200;
+    canvas.height = 60;
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient﻿(0, 0, 0, 50);
+    gradient.addColorStop(0, 'rgb(0, 0, 36)');
+    gradient.addColorStop(1, '#CFB732');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0, 20, 50);
+    const sprite = new PIXI.Sprite(PIXI.Texture.from(canvas));
+    sprite.x = 0;
+    sprite.y = 0;
+    this.Stage.addChild(sprite);
+    this.ForceRender();
+  }
+
   onAddPoint() {
     const label = new ExampleLabel();
     const p = new Point({position: new PIXI.Point(400, 300)});
