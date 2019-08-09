@@ -3,7 +3,8 @@ import {Subject} from 'rxjs';
 import {TextureManager} from '../../utils/texture-manager';
 
 export class Mover {
-  public static TextureIds = [{id: '_INT_MOVER_ARROW_', url: 'assets/arrows/arrow_move.png'}];
+  private static Texture: PIXI.Texture = null;
+  private readonly Icon = 'assets/arrows/arrow_move.png';
   private Container: PIXI.Container;
   private originPoint: PIXI.Rectangle;
   private originPosition = new PIXI.Point();
@@ -21,14 +22,13 @@ export class Mover {
   }
 
   public Generate(rect: PIXI.Rectangle) {
-    const tex = TextureManager.Retrieve(Mover.TextureIds[0].id);
-    if (tex === null) {
-      return;
+    if (Mover.Texture === null) {
+      Mover.Texture = PIXI.Texture.from(this.Icon);
     }
     this.Container = new PIXI.Container();
     this.Container.visible = false;
     this.originPoint = rect;
-    const sprite = new PIXI.Sprite(tex);
+    const sprite = new PIXI.Sprite(Mover.Texture);
     sprite.anchor.set(0.5, 0.5);
     sprite.interactive = true;
     sprite.buttonMode = true;

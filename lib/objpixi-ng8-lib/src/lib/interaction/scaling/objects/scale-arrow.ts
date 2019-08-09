@@ -4,7 +4,7 @@ import {TextureManager} from '../../../utils/texture-manager';
 
 
 export class ScaleArrow {
-  public static TextureIds = [{id: '_INT_SCALER_ARROW_', url: 'assets/arrows/arrow_move.png'}];
+  private static Texture: PIXI.Texture =  null;
   private readonly Icon = 'assets/arrows/arrow_down.png';
   private readonly direction: ScaleDirection;
 
@@ -15,10 +15,10 @@ export class ScaleArrow {
   }
 
   public Init(posX, posY) {
-    if (TextureManager.Retrieve(ScaleArrow.TextureIds[0].id)) {
-      return;
+    if (ScaleArrow.Texture === null) {
+      ScaleArrow.Texture = PIXI.Texture.from(this.Icon);
     }
-    const sp = new PIXI.Sprite(TextureManager.Retrieve(ScaleArrow.TextureIds[0].id));
+    const sp = new PIXI.Sprite(ScaleArrow.Texture);
     sp.anchor.set(0.5);
     sp.x = posX;
     sp.y = posY;

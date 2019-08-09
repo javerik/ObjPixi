@@ -8,6 +8,10 @@ import {ITexId} from '../../interface/itex-id';
 
 export class Point extends BaseGeo implements IGeometry {
 
+  // region Statics
+  private static pointTexture: PIXI.Texture = null;
+  // endregion
+
   // region Helper
   Scaler: IScaler;
   // endregion
@@ -16,7 +20,10 @@ export class Point extends BaseGeo implements IGeometry {
   private MainDisObject: PIXI.Container;
   private pointSprite: PIXI.Sprite;
   private info: PointInfo;
-  public static TextureIds: Array<ITexId> = [{id: '_GEO_POINT_POINT_', url: 'assets/point/point_big.png'}];
+  // endregion
+
+  // region Read only variables
+  private readonly icon = 'assets/point/point_big.png';
   // endregion
 
   // region States
@@ -26,6 +33,7 @@ export class Point extends BaseGeo implements IGeometry {
 
   constructor(pointInfo: PointInfo, name?: string) {
     super(name);
+    Point.pointTexture = PIXI.Texture.from(this.icon);
     this.info = pointInfo;
   }
 
@@ -69,12 +77,14 @@ export class Point extends BaseGeo implements IGeometry {
   // region IGeometry
 
   Init(): void {
-    const tex = TextureManager.Retrieve(this.TextureIds[0].id);
-    if (tex === null) {
+    if (Point.pointTexture === null) {
+      setTimeout(() => {
+        this.Init();
+      }, 100);
       return;
     }
     this.MainDisObject = new PIXI.Container();
-    this.pointSprite = new PIXI.Sprite(tex);
+    this.pointSprite = new PIXI.Sprite(Point.pointTexture);
     this.pointSprite.anchor.set(0.5, 0.5);
     this.pointSprite.position.x = this.info.position.x;
     this.pointSprite.position.y = this.info.position.y;
