@@ -4,6 +4,7 @@ import {Subject} from 'rxjs';
 import {IStyleEllipse} from '../../../styles/istyle-ellipse';
 import {Ellipse} from '../../../geometries/Ellipse/ellipse';
 import {EllipseInfo} from '../../../geometries/Ellipse/ellipse-info';
+import {IGeometry} from '../../../interface/igeometry';
 
 export class DrawerEllipse implements IDrawer {
   OnInitialized: Subject<PIXI.DisplayObject>;
@@ -29,6 +30,8 @@ export class DrawerEllipse implements IDrawer {
     this.OnInitialized = new Subject();
   }
 
+  // region IDrawer
+
   Init() {
     const info: EllipseInfo = {
       coords: {position: new PIXI.Point(),
@@ -41,7 +44,6 @@ export class DrawerEllipse implements IDrawer {
   }
 
   OnEvent(event: PIXI.interaction.InteractionEvent) {
-
     if (event.type === 'pointerdown') {
       const newPos = event.data.getLocalPosition(event.currentTarget.parent);
       const points = this.ellipse.GetPoints();
@@ -70,6 +72,12 @@ export class DrawerEllipse implements IDrawer {
     return !(this.ellipse.GetPoints()[1].x === 0 || this.ellipse.GetPoints()[1].y === 0);
   }
 
+  GetGeometry(): IGeometry {
+    return this.ellipse;
+  }
+  // endregion
+  // region events
+
   private registerEvents() {
     this.ellipse.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
@@ -79,4 +87,6 @@ export class DrawerEllipse implements IDrawer {
       this.OnInitialized.next(value);
     });
   }
+
+  // endregion
 }

@@ -14,6 +14,7 @@ import {DefaultPositionIndicator} from '../info/default-position-indicator';
 import {PositionIndicatorInfo} from '../../interface/info/position-indicator-info';
 import {DrawerEllipse} from './Ellipse/drawer-ellipse';
 import {IDrawAcceptor} from '../../interface/draw/idraw-acceptor';
+import {validate} from 'codelyzer/walkerFactory/walkerFn';
 
 
 export class DrawWizard {
@@ -30,6 +31,7 @@ export class DrawWizard {
   private dragStart = false;
   private dragged = false;
   public OnRequestRender: Subject<null>;
+  public OnGeometryAccepted: Subject<IGeometry>;
   dragPointFillColor = 0xf44336;
   defaultLineColor = 0x009688;
   lineStyle: IStyleLine = {
@@ -58,7 +60,12 @@ export class DrawWizard {
       this.positionIndicator = new DefaultPositionIndicator();
     }
     this.acceptor = acceptor;
+    if (this.acceptor !== undefined) {
+      this.registerAcceptorEvents();
+    }
   }
+
+  // region public interface
 
   public SetGeometryType(type: GeometryType) {
     this.clear();
@@ -90,6 +97,9 @@ export class DrawWizard {
     this.drawer.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
     });
+    if (this.acceptor !== undefined) {
+      this.acceptor.SetGeometry(this.currentGeoType);
+    }
     this.drawer.Init();
   }
 
@@ -114,6 +124,30 @@ export class DrawWizard {
     this.positionIndicator.SetBorders(0, w, 0, h);
     this.positionIndicator.Init(this.indicatorInfo);
     callback(this.mainContainer);
+  }
+
+  // endregion
+
+  // region register events
+
+  private registerAcceptorEvents() {
+    this.acceptor.OnInitialized.subscribe(obj => {
+      this.mainContainer.addChild(obj);
+      this.OnRequestRender.next();
+    });
+    this.acceptor.OnRequestRender.subscribe(() => {
+      this.OnRequestRender.next();
+    });
+    this.acceptor.OnAccepted.subscribe( valid => {
+      if (!valid) {
+        this.drawer = null;
+        this.clear();
+      } else {
+        this.OnGeometryAccepted.next(this.drawer.GetGeometry());
+        this.drawer = null;
+        this.clear();
+      }
+    });
   }
 
   private registerIndicatorEvents() {
@@ -165,6 +199,8 @@ export class DrawWizard {
       this.drawer.OnEvent(event1);
     });
   }
+
+  // endregion
 
   private clear() {
     this.drawContainer.removeChildren();

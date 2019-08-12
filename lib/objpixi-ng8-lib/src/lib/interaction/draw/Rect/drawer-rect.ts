@@ -4,6 +4,7 @@ import {Subject} from 'rxjs';
 import {Rect} from '../../../geometries/Rect/rect';
 import {IStyleRect} from '../../../styles/istyle-rect';
 import {RectInfo} from '../../../geometries/Rect/rect-info';
+import {IGeometry} from '../../../interface/igeometry';
 
 
 export class DrawerRect implements IDrawer {
@@ -31,6 +32,8 @@ export class DrawerRect implements IDrawer {
     this.OnRequestRender = new Subject();
     this.OnInitialized = new Subject();
   }
+
+  // region IDrawer
 
   Init() {
     const info: RectInfo = {
@@ -71,6 +74,13 @@ export class DrawerRect implements IDrawer {
     return !(this.rect.GetPoints()[1].x === 0 || this.rect.GetPoints()[1].y === 0);
   }
 
+  GetGeometry(): IGeometry {
+    return this.rect;
+  }
+
+  // endregion
+
+  // region events
   private registerEvents() {
     this.rect.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
@@ -80,4 +90,5 @@ export class DrawerRect implements IDrawer {
       this.OnInitialized.next(value);
     });
   }
+  // endregion
 }

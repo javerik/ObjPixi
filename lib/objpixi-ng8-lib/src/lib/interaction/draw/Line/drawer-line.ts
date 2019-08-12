@@ -3,6 +3,7 @@ import {Subject} from 'rxjs';
 import {Line} from '../../../geometries/Line/line';
 import {IStyleLine} from '../../../styles/istyle-line';
 import * as PIXI from 'pixi.js';
+import {IGeometry} from '../../../interface/igeometry';
 
 
 export class DrawerLine implements IDrawer {
@@ -31,6 +32,8 @@ export class DrawerLine implements IDrawer {
     this.OnRequestRender = new Subject();
     this.OnInitialized = new Subject();
   }
+
+  // region IDrawer
 
   Init() {
     this.line = new Line({
@@ -68,6 +71,11 @@ export class DrawerLine implements IDrawer {
     const points = this.line.GetObject();
     return !(points[0].x == 0 && points[0].y == 0 && points[1].x == 0 && points[1].y == 0);
   }
+  GetGeometry(): IGeometry {
+    return this.line;
+  }
+  // endregion
+  // region events
 
   private registerEvents() {
     this.line.OnRequestRender.subscribe(value => {
@@ -78,4 +86,6 @@ export class DrawerLine implements IDrawer {
       this.OnInitialized.next(value);
     });
   }
+
+  // endregion
 }
