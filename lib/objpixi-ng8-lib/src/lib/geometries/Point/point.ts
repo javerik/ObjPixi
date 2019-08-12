@@ -72,7 +72,12 @@ export class Point extends BaseGeo implements IGeometry {
     this.Label.ClearSelection();
   }
 
-  // endregion
+
+  protected setLabelPosition() {
+    this.Label.SetOriginPosition(new PIXI.Point(this.info.position.x, this.info.position.y - 30));
+  }
+
+// endregion
 
   // region IGeometry
 

@@ -199,6 +199,18 @@ export class PolyBase extends BaseGeo {
     return new PIXI.Point(x, y);
   }
 
+  protected setLabelPosition() {
+    const g = new PIXI.Graphics();
+    g.drawPolygon(this.info.points);
+    const bounding = g.getBounds();
+    const x = bounding.x + (bounding.width / 2);
+    const y = bounding.y - 10;
+    const p = new PIXI.Point(x, y);
+    p.x -= this.labelOffset.x;
+    p.y -= this.labelOffset.y;
+    this.Label.SetOriginPosition(p);
+  }
+
   // endregion
 
 }

@@ -87,6 +87,7 @@ export class PolyGon extends PolyBase implements IGeometry {
 
   }
 
+
 // endregion
 
   // region IGeometry
@@ -104,7 +105,7 @@ export class PolyGon extends PolyBase implements IGeometry {
     container.addChild(this.GContainer);
     container.addChild(this.Mover.GetObject());
     container.addChild(this.LabelContainer);
-    this.Label.Init();
+    this.Label.Init(this.Name);
     this.MainDisObject = container;
     this.OnInitialized.next(this.MainDisObject);
   }
