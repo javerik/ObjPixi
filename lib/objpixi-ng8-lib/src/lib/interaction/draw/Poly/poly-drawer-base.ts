@@ -126,5 +126,8 @@ export class PolyDrawerBase implements IDrawer {
       this.object.UpdatePoints(this.points);
     }
   }
+  IsValid(): boolean {
+    return this.points.length > 2;
+  }
   // endregion
 }

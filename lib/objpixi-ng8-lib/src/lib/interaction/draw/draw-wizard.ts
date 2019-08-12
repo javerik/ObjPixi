@@ -13,6 +13,7 @@ import {IPositionIndicator} from '../../interface/info/iposition-indicator';
 import {DefaultPositionIndicator} from '../info/default-position-indicator';
 import {PositionIndicatorInfo} from '../../interface/info/position-indicator-info';
 import {DrawerEllipse} from './Ellipse/drawer-ellipse';
+import {IDrawAcceptor} from '../../interface/draw/idraw-acceptor';
 
 
 export class DrawWizard {
@@ -22,6 +23,7 @@ export class DrawWizard {
   // region Drawer
   private drawer: IDrawer;
   private positionIndicator: IPositionIndicator;
+  private acceptor: IDrawAcceptor;
   // endregion
   private editGeo: IGeometry;
   private clickPoint: PIXI.Point = new PIXI.Point();
@@ -50,11 +52,12 @@ export class DrawWizard {
     moveBox: false
   };
 
-  constructor(positionIndicator?: IPositionIndicator) {
+  constructor(positionIndicator?: IPositionIndicator, acceptor?: IDrawAcceptor) {
     this.OnRequestRender = new Subject();
     if (positionIndicator === undefined) {
       this.positionIndicator = new DefaultPositionIndicator();
     }
+    this.acceptor = acceptor;
   }
 
   public SetGeometryType(type: GeometryType) {

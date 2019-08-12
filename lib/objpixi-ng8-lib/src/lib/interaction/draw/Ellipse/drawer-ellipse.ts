@@ -66,6 +66,10 @@ export class DrawerEllipse implements IDrawer {
     }
   }
 
+  IsValid(): boolean {
+    return !(this.ellipse.GetPoints()[1].x === 0 || this.ellipse.GetPoints()[1].y === 0);
+  }
+
   private registerEvents() {
     this.ellipse.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();

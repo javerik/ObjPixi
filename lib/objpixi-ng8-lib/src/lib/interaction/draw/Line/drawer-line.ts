@@ -64,6 +64,11 @@ export class DrawerLine implements IDrawer {
     }
   }
 
+  IsValid(): boolean {
+    const points = this.line.GetObject();
+    return !(points[0].x == 0 && points[0].y == 0 && points[1].x == 0 && points[1].y == 0);
+  }
+
   private registerEvents() {
     this.line.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();

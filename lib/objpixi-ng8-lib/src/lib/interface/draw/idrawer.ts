@@ -7,4 +7,10 @@ export interface IDrawer {
   OnInitialized: Subject<PIXI.DisplayObject>;
   Init();
   OnEvent(event: PIXI.interaction.InteractionEvent);
+
+  /**
+   *
+   * @return true if points for geometry is valid
+   */
+  IsValid(): boolean;
 }

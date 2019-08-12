@@ -67,6 +67,10 @@ export class DrawerRect implements IDrawer {
     }
   }
 
+  IsValid(): boolean {
+    return !(this.rect.GetPoints()[1].x === 0 || this.rect.GetPoints()[1].y === 0);
+  }
+
   private registerEvents() {
     this.rect.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();

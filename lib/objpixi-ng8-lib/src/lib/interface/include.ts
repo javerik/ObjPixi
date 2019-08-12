@@ -2,7 +2,7 @@ export * from './igeometry';
 export * from './iscaler';
 
 // region draw
-export * from './draw/idrawer';
+export * from './draw/include';
 // endregion
 
 // region enums

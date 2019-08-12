@@ -27,6 +27,10 @@ export class DrawerPoint implements IDrawer {
     }
   }
 
+  IsValid(): boolean {
+    return true;
+  }
+
   private registerEvents() {
     this.point.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
