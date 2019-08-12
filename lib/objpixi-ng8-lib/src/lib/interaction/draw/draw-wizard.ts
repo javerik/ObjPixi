@@ -108,6 +108,7 @@ export class DrawWizard {
     this.mainContainer.addChild(this.drawContainer);
     this.registerEvents(this.drawContainer);
     this.registerIndicatorEvents();
+    this.positionIndicator.SetBorders(0, w, 0, h);
     this.positionIndicator.Init(this.indicatorInfo);
     callback(this.mainContainer);
   }
