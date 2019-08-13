@@ -40,7 +40,7 @@ export class DrawerRect implements IDrawer {
       coords: {position: new PIXI.Point(), height: 0, width: 0, center: false},
       style: this.rectStyle
     };
-    this.rect = new Rect(info);
+    this.rect = new Rect(info, 'Rect');
     this.registerEvents();
     this.rect.Init();
   }

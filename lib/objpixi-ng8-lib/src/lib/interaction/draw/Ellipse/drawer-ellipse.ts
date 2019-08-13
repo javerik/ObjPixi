@@ -38,7 +38,7 @@ export class DrawerEllipse implements IDrawer {
         width: 0, height: 0, center: true},
       style: this.ellipseStyle
     };
-    this.ellipse = new Ellipse(info);
+    this.ellipse = new Ellipse(info, 'Ellipse');
     this.registerEvents();
     this.ellipse.Init();
   }

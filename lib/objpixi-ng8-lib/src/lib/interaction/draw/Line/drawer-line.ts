@@ -40,7 +40,7 @@ export class DrawerLine implements IDrawer {
       style: this.lineStyle,
       p1: new PIXI.Point(),
       p2: new PIXI.Point()
-    });
+    }, 'Line');
     this.registerEvents();
     this.line.Init();
   }

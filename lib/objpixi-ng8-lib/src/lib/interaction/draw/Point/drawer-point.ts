@@ -17,7 +17,7 @@ export class DrawerPoint implements IDrawer {
 
   // region IDrawer
   Init() {
-    this.point = new Point({position: new PIXI.Point(0, 0)});
+    this.point = new Point({position: new PIXI.Point(0, 0)}, 'Point');
     this.registerEvents();
     this.point.Init();
   }
