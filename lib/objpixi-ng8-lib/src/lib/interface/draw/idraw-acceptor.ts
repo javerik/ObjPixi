@@ -10,7 +10,7 @@ export interface IDrawAcceptor {
    * Event which gets triggered when user accepts or cancels current Geometry
    */
   OnAccepted: Subject<boolean>;
-
+  Init(winSize: PIXI.Point);
   /***
    * If true, geometry is valid and can be accepted
    * @param valid

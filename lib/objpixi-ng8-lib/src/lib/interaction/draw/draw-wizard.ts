@@ -26,10 +26,7 @@ export class DrawWizard {
   private positionIndicator: IPositionIndicator;
   private acceptor: IDrawAcceptor;
   // endregion
-  private editGeo: IGeometry;
-  private clickPoint: PIXI.Point = new PIXI.Point();
-  private dragStart = false;
-  private dragged = false;
+  private winSize: PIXI.Point = new PIXI.Point();
   public OnRequestRender: Subject<null>;
   public OnGeometryAccepted: Subject<IGeometry>;
   dragPointFillColor = 0xf44336;
@@ -104,6 +101,7 @@ export class DrawWizard {
   }
 
   public Init(w, h, callback: (object: PIXI.DisplayObject) => void) {
+    this.winSize.set(w, h);
     this.drawContainer = new PIXI.Container();
     this.mainContainer = new PIXI.Container();
     this.mainContainer.x = 0;
@@ -123,6 +121,7 @@ export class DrawWizard {
     this.registerIndicatorEvents();
     this.positionIndicator.SetBorders(0, w, 0, h);
     this.positionIndicator.Init(this.indicatorInfo);
+    this.acceptor.Init(this.winSize);
     callback(this.mainContainer);
   }
 
@@ -132,6 +131,7 @@ export class DrawWizard {
 
   private registerAcceptorEvents() {
     this.acceptor.OnInitialized.subscribe(obj => {
+      obj.name = 'acceptor';
       this.mainContainer.addChild(obj);
       this.OnRequestRender.next();
     });
