@@ -101,7 +101,6 @@ export class Ellipse extends BaseGeo implements IGeometry {
     }
     this.refreshGraphic(this.info, false);
     this.Mover.recenter(this.GContainer.getChildByName('origin').getBounds());
-    this.setLabelPosition();
     this.OnRequestRender.next();
     this.OnChange.next({sender: this, points: this.GetPoints()});
   }
