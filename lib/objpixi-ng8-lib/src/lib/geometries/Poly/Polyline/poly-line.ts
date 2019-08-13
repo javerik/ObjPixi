@@ -3,11 +3,13 @@ import {IGeometry} from '../../../interface/igeometry';
 import {PolyInfo} from '../poly-info';
 import {PolyBase} from '../poly-base';
 import {MoveDelta} from '../../../interaction/moving/mover';
+import {GeometryType} from '../../../interface/enums/geometry-type.enum';
 
 export class PolyLine extends PolyBase implements IGeometry {
 
   constructor(polyInfo: PolyInfo, name?: string) {
     super(polyInfo, name);
+    this.Type = GeometryType.Polyline;
   }
 
   // region Graphics

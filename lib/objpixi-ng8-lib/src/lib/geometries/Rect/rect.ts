@@ -7,7 +7,7 @@ import {ScalingEvent} from '../../interface/events/scaling-event';
 import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
 import {RectInfo} from './rect-info';
-import {ILabel} from '../../interface/info/ilabel';
+import {GeometryType} from '../../interface/enums/geometry-type.enum';
 
 export class Rect extends BaseGeo implements IGeometry {
 
@@ -19,6 +19,7 @@ export class Rect extends BaseGeo implements IGeometry {
 
   constructor(info: RectInfo, name?: string) {
     super(name);
+    this.Type = GeometryType.Rect;
     this.info = info;
     this.Scaler = new BasicScaler();
     this.Mover = new Mover();

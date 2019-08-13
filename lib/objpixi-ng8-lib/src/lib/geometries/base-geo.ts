@@ -6,6 +6,7 @@ import {ChangeEvent} from '../interface/events/change-event';
 import {ILabel} from '../interface/info/ilabel';
 import {DummyLabel} from '../interaction/info/dummy-label';
 import {ITexId} from '../interface/itex-id';
+import {GeometryType} from '../interface/enums/geometry-type.enum';
 
 export class BaseGeo {
 
@@ -20,6 +21,7 @@ export class BaseGeo {
   protected enableControl = true;
   protected Label: ILabel;
   protected labelOffset: PIXI.Point = null;
+  protected Type: GeometryType = GeometryType.Point;
   public TextureIds: Array<ITexId> = [];
 
 
@@ -75,6 +77,10 @@ export class BaseGeo {
   SetName(name: string) {
     this.Name = name;
     this.Label.SetText(this.Name);
+  }
+
+  public GetType(): GeometryType {
+    return this.Type;
   }
 
   // endregion

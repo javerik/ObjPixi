@@ -7,6 +7,7 @@ import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import {BasicScaler} from '../../interaction/scaling/basic-scaler';
 import {ScalingEvent} from '../../interface/events/scaling-event';
 import {ScaleDirection} from '../../interface/enums/scale-direction.enum';
+import {GeometryType} from '../../interface/enums/geometry-type.enum';
 
 export class Ellipse extends BaseGeo implements IGeometry {
   Scaler: IScaler;
@@ -17,6 +18,7 @@ export class Ellipse extends BaseGeo implements IGeometry {
 
   constructor(ellipseInfo: EllipseInfo, name?: string) {
     super(name);
+    this.Type = GeometryType.Ellipse;
     this.labelOffset = new PIXI.Point(12, 33);
     this.labelOffset.set(12, 33);
     this.info = ellipseInfo;

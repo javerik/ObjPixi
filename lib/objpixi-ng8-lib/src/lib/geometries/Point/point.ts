@@ -3,8 +3,7 @@ import {IGeometry} from '../../interface/igeometry';
 import {IScaler} from '../../interface/iscaler';
 import * as PIXI from 'pixi.js';
 import {PointInfo} from './point-info';
-import {TextureManager} from '../../utils/texture-manager';
-import {ITexId} from '../../interface/itex-id';
+import {GeometryType} from '../../interface/enums/geometry-type.enum';
 
 export class Point extends BaseGeo implements IGeometry {
 
@@ -33,6 +32,7 @@ export class Point extends BaseGeo implements IGeometry {
 
   constructor(pointInfo: PointInfo, name?: string) {
     super(name);
+    this.Type = GeometryType.Point;
     Point.pointTexture = PIXI.Texture.from(this.icon);
     this.info = pointInfo;
   }

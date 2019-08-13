@@ -4,7 +4,7 @@ import {Subject} from 'rxjs';
 import {GeoEvent} from '../geometries/base-geo';
 import {ChangeEvent} from './events/change-event';
 import {ILabel} from './info/ilabel';
-import {ITexId} from './itex-id';
+import {GeometryType} from './enums/geometry-type.enum';
 
 
 export interface IGeometry {
@@ -21,6 +21,7 @@ export interface IGeometry {
   GetObject(): PIXI.DisplayObject;
   GetPoints(): Array<PIXI.Point>;
   GetId(): string;
+  GetType(): GeometryType;
   GetName(): string;
   SetName(name: string);
   SetSelection();

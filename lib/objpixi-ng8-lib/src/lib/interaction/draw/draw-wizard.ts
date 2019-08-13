@@ -53,6 +53,7 @@ export class DrawWizard {
 
   constructor(positionIndicator?: IPositionIndicator, acceptor?: IDrawAcceptor) {
     this.OnRequestRender = new Subject();
+    this.OnGeometryAccepted = new Subject<IGeometry>();
     if (positionIndicator === undefined) {
       this.positionIndicator = new DefaultPositionIndicator();
     }
@@ -144,7 +145,6 @@ export class DrawWizard {
         this.clear();
       } else {
         this.OnGeometryAccepted.next(this.drawer.GetGeometry());
-        this.drawer = null;
         this.clear();
       }
     });
@@ -204,6 +204,7 @@ export class DrawWizard {
 
   private clear() {
     this.drawContainer.removeChildren();
+    this.drawer = undefined;
   }
 
 }

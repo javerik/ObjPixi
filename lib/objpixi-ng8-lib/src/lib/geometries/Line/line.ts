@@ -4,6 +4,7 @@ import {IScaler} from '../../interface/iscaler';
 import {MoveDelta, Mover} from '../../interaction/moving/mover';
 import * as PIXI from 'pixi.js';
 import {LineInfo} from './line-info';
+import {GeometryType} from '../../interface/enums/geometry-type.enum';
 
 export class Line extends BaseGeo implements IGeometry {
   // region Helper
@@ -31,6 +32,7 @@ export class Line extends BaseGeo implements IGeometry {
 
   constructor(lineInfo: LineInfo, name?: string) {
     super(name);
+    this.Type = GeometryType.Line;
     this.info = lineInfo;
     this.Mover = new Mover();
     this.labelOffset.set(50, 50);
