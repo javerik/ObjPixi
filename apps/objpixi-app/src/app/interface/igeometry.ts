@@ -4,6 +4,7 @@ import {Subject} from 'rxjs';
 import {GeoEvent} from '../geometries/base-geo';
 import {ChangeEvent} from './events/change-event';
 import {ILabel} from './info/ilabel';
+import {GeometryType} from './enums/geometry-type.enum';
 
 
 export interface IGeometry {
