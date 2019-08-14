@@ -114,6 +114,7 @@ export class PolyGon extends PolyBase implements IGeometry {
 
   ClearSelection(): void {
     this.GContainer.getChildByName(this.cNamePoint).visible = false;
+    this.Label.ClearSelection();
     this.Mover.SetVisibility(false);
   }
 

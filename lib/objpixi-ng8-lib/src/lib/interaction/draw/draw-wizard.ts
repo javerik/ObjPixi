@@ -29,6 +29,7 @@ export class DrawWizard {
   private winSize: PIXI.Point = new PIXI.Point();
   public OnRequestRender: Subject<null>;
   public OnGeometryAccepted: Subject<IGeometry>;
+  public OnCancelDraw: Subject<any>;
   dragPointFillColor = 0xf44336;
   defaultLineColor = 0x009688;
   lineStyle: IStyleLine = {
@@ -54,6 +55,7 @@ export class DrawWizard {
   constructor(positionIndicator?: IPositionIndicator, acceptor?: IDrawAcceptor) {
     this.OnRequestRender = new Subject();
     this.OnGeometryAccepted = new Subject<IGeometry>();
+    this.OnCancelDraw = new Subject<any>();
     if (positionIndicator === undefined) {
       this.positionIndicator = new DefaultPositionIndicator();
     }
@@ -143,6 +145,7 @@ export class DrawWizard {
       if (!valid) {
         this.drawer = null;
         this.clear();
+        this.OnCancelDraw.next();
       } else {
         this.OnGeometryAccepted.next(this.drawer.GetGeometry());
         this.clear();
@@ -166,18 +169,21 @@ export class DrawWizard {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('click', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('pointerdown', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('pointermove', event1 => {
       this.positionIndicator.OnEvent(event1);
@@ -185,18 +191,21 @@ export class DrawWizard {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('pointerup', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('rightclick', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
   }
 

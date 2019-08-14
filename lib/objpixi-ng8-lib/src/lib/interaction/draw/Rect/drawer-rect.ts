@@ -50,6 +50,7 @@ export class DrawerRect implements IDrawer {
       const newPos = event.data.getLocalPosition(event.currentTarget.parent);
       const points = this.rect.GetPoints();
       points[0] = newPos;
+      points[1] = newPos;
       this.dragState = true;
       this.rect.UpdatePoints(points);
       this.startPoint = newPos;

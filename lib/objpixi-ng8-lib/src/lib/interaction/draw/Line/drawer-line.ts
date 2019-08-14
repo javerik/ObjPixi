@@ -50,6 +50,7 @@ export class DrawerLine implements IDrawer {
       const newPos = event.data.getLocalPosition(event.currentTarget.parent);
       const points = this.line.GetPoints();
       points[0] = newPos;
+      points[1] = newPos;
       this.dragState = true;
       this.line.UpdatePoints(points);
     }
@@ -68,7 +69,7 @@ export class DrawerLine implements IDrawer {
   }
 
   IsValid(): boolean {
-    const points = this.line.GetObject();
+    const points = this.line.GetPoints();
     return !(points[0].x == 0 && points[0].y == 0 && points[1].x == 0 && points[1].y == 0);
   }
   GetGeometry(): IGeometry {

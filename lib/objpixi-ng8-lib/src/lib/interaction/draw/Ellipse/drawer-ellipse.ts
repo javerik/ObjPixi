@@ -48,6 +48,7 @@ export class DrawerEllipse implements IDrawer {
       const newPos = event.data.getLocalPosition(event.currentTarget.parent);
       const points = this.ellipse.GetPoints();
       points[0] = newPos;
+      points[1] = newPos;
       this.dragState = true;
       this.ellipse.UpdatePoints(points);
       this.startPoint = newPos;
