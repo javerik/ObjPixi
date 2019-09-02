@@ -290,10 +290,6 @@ export class Line extends BaseGeo implements IGeometry {
     return this.MainDisObject;
   }
 
-  SetName(name: string) {
-    this.Name = name;
-  }
-
   GetPoints(): Array<PIXI.Point> {
     return [this.info.p1, this.info.p2];
   }

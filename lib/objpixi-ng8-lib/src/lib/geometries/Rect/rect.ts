@@ -188,10 +188,6 @@ export class Rect extends BaseGeo implements IGeometry {
     return this.Name;
   }
 
-  SetName(name: string) {
-    this.Name = name;
-  }
-
   ClearSelection(): void {
     this.Mover.SetVisibility(false);
     this.Scaler.SetVisibility(false);
