@@ -14,7 +14,6 @@ import {DefaultPositionIndicator} from '../info/default-position-indicator';
 import {PositionIndicatorInfo} from '../../interface/info/position-indicator-info';
 import {DrawerEllipse} from './Ellipse/drawer-ellipse';
 import {IDrawAcceptor} from '../../interface/draw/idraw-acceptor';
-import {validate} from 'codelyzer/walkerFactory/walkerFn';
 
 
 export class DrawWizard {
@@ -77,11 +76,17 @@ export class DrawWizard {
       case GeometryType.Ellipse:
         this.drawer = new DrawerEllipse();
         break;
+      case GeometryType.EllipseFill:
+        this.drawer = new DrawerEllipse(true);
+        break;
       case GeometryType.Line:
         this.drawer = new DrawerLine();
         break;
       case GeometryType.Rect:
         this.drawer = new DrawerRect();
+        break;
+      case GeometryType.RectFill:
+        this.drawer = new DrawerRect(true);
         break;
       case GeometryType.Polygon:
         this.drawer = new DrawerPolyGon();
@@ -141,7 +146,7 @@ export class DrawWizard {
     this.acceptor.OnRequestRender.subscribe(() => {
       this.OnRequestRender.next();
     });
-    this.acceptor.OnAccepted.subscribe( valid => {
+    this.acceptor.OnAccepted.subscribe(valid => {
       if (!valid) {
         this.drawer = null;
         this.clear();

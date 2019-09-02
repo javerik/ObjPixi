@@ -5,15 +5,17 @@ import {Rect} from '../../../geometries/Rect/rect';
 import {IStyleRect} from '../../../styles/istyle-rect';
 import {RectInfo} from '../../../geometries/Rect/rect-info';
 import {IGeometry} from '../../../interface/igeometry';
+import {RectFill} from '../../../geometries/Rect/rect-fill';
 
 
 export class DrawerRect implements IDrawer {
 
   OnInitialized: Subject<PIXI.DisplayObject>;
   OnRequestRender: Subject<null>;
-  private rect: Rect;
+  private rect: Rect  | RectFill;
   private dragState = false;
   private startPoint: PIXI.Point;
+  private isFill = false;
   defaultLineColor = 0x009688;
 
   rectStyle: IStyleRect = {
@@ -28,9 +30,10 @@ export class DrawerRect implements IDrawer {
     }
   };
 
-  constructor() {
+  constructor(isFill = false) {
     this.OnRequestRender = new Subject();
     this.OnInitialized = new Subject();
+    this.isFill = isFill;
   }
 
   // region IDrawer
@@ -40,7 +43,11 @@ export class DrawerRect implements IDrawer {
       coords: {position: new PIXI.Point(), height: 0, width: 0, center: false},
       style: this.rectStyle
     };
-    this.rect = new Rect(info, 'Rect');
+    if (this.isFill) {
+      this.rect = new RectFill(info, 'RectFill');
+    } else {
+      this.rect = new Rect(info, 'Rect');
+    }
     this.registerEvents();
     this.rect.Init();
   }

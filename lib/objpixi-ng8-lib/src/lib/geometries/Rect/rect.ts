@@ -50,11 +50,11 @@ export class Rect extends BaseGeo implements IGeometry {
     if (style.useLine) {
       g.lineStyle(style.lineWidth, style.lineColor, style.lineAlpha);
     }
-    if (style.useFill) {
+    if (this.Type === GeometryType.RectFill) {
       g.beginFill(style.fillColor, style.fillAlpha);
     }
     g.drawRect(x, y, w, h);
-    if (style.useFill) {
+    if (this.Type === GeometryType.RectFill) {
       g.endFill();
     }
     return g;

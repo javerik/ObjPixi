@@ -52,11 +52,11 @@ export class Ellipse extends BaseGeo implements IGeometry {
     if (style.fillStyle.useLine) {
       g.lineStyle(style.fillStyle.lineWidth, style.fillStyle.lineColor, style.fillStyle.lineAlpha);
     }
-    if (style.fillStyle.useFill) {
+    if (this.Type === GeometryType.EllipseFill) {
       g.beginFill(style.fillStyle.fillColor, style.fillStyle.fillAlpha);
     }
     g.drawEllipse(x, y, w / 2, h / 2);
-    if (style.fillStyle.useFill) {
+    if (this.Type === GeometryType.EllipseFill) {
       g.endFill();
     }
     return g;

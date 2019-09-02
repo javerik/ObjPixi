@@ -5,6 +5,7 @@ import {IStyleEllipse} from '../../../styles/istyle-ellipse';
 import {Ellipse} from '../../../geometries/Ellipse/ellipse';
 import {EllipseInfo} from '../../../geometries/Ellipse/ellipse-info';
 import {IGeometry} from '../../../interface/igeometry';
+import {EllipseFill} from '../../../geometries/Ellipse/ellipse-fill';
 
 export class DrawerEllipse implements IDrawer {
   OnInitialized: Subject<PIXI.DisplayObject>;
@@ -22,12 +23,14 @@ export class DrawerEllipse implements IDrawer {
     }
   };
   private startPoint: PIXI.Point;
-  private ellipse: Ellipse;
+  private ellipse: Ellipse | EllipseFill;
   private dragState = false;
+  private isFillType = false;
 
-  constructor() {
+  constructor(isFillType = false) {
     this.OnRequestRender = new Subject();
     this.OnInitialized = new Subject();
+    this.isFillType = isFillType;
   }
 
   // region IDrawer
@@ -38,7 +41,11 @@ export class DrawerEllipse implements IDrawer {
         width: 0, height: 0, center: true},
       style: this.ellipseStyle
     };
-    this.ellipse = new Ellipse(info, 'Ellipse');
+    if (this.isFillType) {
+      this.ellipse = new EllipseFill(info, 'EllipseFill');
+    } else {
+      this.ellipse = new Ellipse(info, 'Ellipse');
+    }
     this.registerEvents();
     this.ellipse.Init();
   }
