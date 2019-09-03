@@ -22,6 +22,7 @@ export interface IGeometry {
   GetPoints(): Array<PIXI.Point>;
   GetId(): string;
   GetType(): GeometryType;
+  GetLabel(): ILabel;
   GetName(): string;
   SetName(name: string);
   SetSelection();

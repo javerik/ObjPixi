@@ -6,6 +6,8 @@ export class DummyLabel implements ILabel {
   OnInitialized: Subject<PIXI.DisplayObject>;
   OnRequestRender: Subject<null>;
 
+  protected Offsets: PIXI.Point = new PIXI.Point(0, 0);
+
   constructor() {
     this.OnInitialized = new Subject();
     this.OnRequestRender = new Subject();
@@ -27,5 +29,13 @@ export class DummyLabel implements ILabel {
   }
 
   SetOriginPosition(point: PIXI.Point) {
+  }
+
+  SetOffsets(point: PIXI.Point) {
+    this.Offsets = point;
+  }
+
+  GetOffsets(): PIXI.Point {
+    return this.Offsets;
   }
 }

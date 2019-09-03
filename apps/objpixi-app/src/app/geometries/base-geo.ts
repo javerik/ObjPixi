@@ -71,6 +71,10 @@ export class BaseGeo {
     this.Label.SetText(this.Name);
   }
 
+  public GetLabel(): ILabel {
+    return this.Label;
+  }
+
   // endregion
 }
 

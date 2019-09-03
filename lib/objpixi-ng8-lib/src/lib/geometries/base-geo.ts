@@ -83,6 +83,10 @@ export class BaseGeo {
     return this.Type;
   }
 
+  public GetLabel(): ILabel {
+    return this.Label;
+  }
+
   // endregion
 }
 
