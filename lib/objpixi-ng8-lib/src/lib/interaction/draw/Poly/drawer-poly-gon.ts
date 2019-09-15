@@ -5,7 +5,7 @@ import {PolyGon} from '../../../geometries/Poly/Polygon/poly-gon';
 export class DrawerPolyGon extends PolyDrawerBase {
 
   Init() {
-    this.object = new PolyGon({style: this.polyGonStyle, points: [new PIXI.Point()]});
+    this.object = new PolyGon({style: this.polyGonStyle, points: [new PIXI.Point()]}, 'Polygon');
     super.Init();
   }
 }

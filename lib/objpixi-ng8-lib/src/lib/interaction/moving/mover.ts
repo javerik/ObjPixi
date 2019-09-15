@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import {Subject} from 'rxjs';
+import {TextureManager} from '../../utils/texture-manager';
 
 export class Mover {
   private static Texture: PIXI.Texture = null;
@@ -79,6 +80,9 @@ export class Mover {
         return;
       }
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      if (newPos.x < 0 || newPos.y < 0) {
+        return;
+      }
       const moveDelta: MoveDelta = {
         x: newPos.x - this.lastPosition.x,
         y: newPos.y - this.lastPosition.y

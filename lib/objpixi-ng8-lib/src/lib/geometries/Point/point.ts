@@ -3,6 +3,7 @@ import {IGeometry} from '../../interface/igeometry';
 import {IScaler} from '../../interface/iscaler';
 import * as PIXI from 'pixi.js';
 import {PointInfo} from './point-info';
+import {GeometryType} from '../../interface/enums/geometry-type.enum';
 
 export class Point extends BaseGeo implements IGeometry {
 
@@ -26,10 +27,12 @@ export class Point extends BaseGeo implements IGeometry {
 
   // region States
   private dragState = false;
+
   // endregion
 
   constructor(pointInfo: PointInfo, name?: string) {
     super(name);
+    this.Type = GeometryType.Point;
     Point.pointTexture = PIXI.Texture.from(this.icon);
     this.info = pointInfo;
   }
@@ -43,13 +46,13 @@ export class Point extends BaseGeo implements IGeometry {
       this.OnInteraction.next({event: event1, target: this});
     });
     obj.addListener('pointerdown', () => {
-        this.dragState = true;
+      this.dragState = true;
     });
     obj.addListener('pointerup', () => {
-        this.dragState = false;
+      this.onPointerUp();
     });
     obj.addListener('pointerupoutside', () => {
-      this.dragState = false;
+      this.onPointerUp();
     });
     obj.addListener('pointermove', event1 => {
       if (!this.dragState) {
@@ -63,7 +66,18 @@ export class Point extends BaseGeo implements IGeometry {
       this.OnChange.next({sender: this, points: this.GetPoints()});
     });
   }
-  // endregion
+
+  private onPointerUp() {
+    this.dragState = false;
+    this.Label.ClearSelection();
+  }
+
+
+  protected setLabelPosition() {
+    this.Label.SetOriginPosition(new PIXI.Point(this.info.position.x, this.info.position.y - 30));
+  }
+
+// endregion
 
   // region IGeometry
 
@@ -83,6 +97,7 @@ export class Point extends BaseGeo implements IGeometry {
     this.pointSprite.buttonMode = true;
     this.registerEvents(this.pointSprite);
     this.MainDisObject.addChild(this.pointSprite);
+    this.MainDisObject.addChild(this.LabelContainer);
     this.OnInitialized.next(this.MainDisObject);
   }
 
@@ -100,10 +115,6 @@ export class Point extends BaseGeo implements IGeometry {
 
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
-  }
-
-  SetName(name: string) {
-    this.Name = name;
   }
 
   GetPoints(): Array<PIXI.Point> {
@@ -129,6 +140,7 @@ export class Point extends BaseGeo implements IGeometry {
   ContainsPoint(point: PIXI.Point): boolean {
     return this.MainDisObject.getBounds().contains(point.x, point.y);
   }
+
   SetSelection() {
   }
 

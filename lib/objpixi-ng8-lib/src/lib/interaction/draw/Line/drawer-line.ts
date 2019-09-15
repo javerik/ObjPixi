@@ -3,6 +3,7 @@ import {Subject} from 'rxjs';
 import {Line} from '../../../geometries/Line/line';
 import {IStyleLine} from '../../../styles/istyle-line';
 import * as PIXI from 'pixi.js';
+import {IGeometry} from '../../../interface/igeometry';
 
 
 export class DrawerLine implements IDrawer {
@@ -32,12 +33,14 @@ export class DrawerLine implements IDrawer {
     this.OnInitialized = new Subject();
   }
 
+  // region IDrawer
+
   Init() {
     this.line = new Line({
       style: this.lineStyle,
       p1: new PIXI.Point(),
       p2: new PIXI.Point()
-    });
+    }, 'Line');
     this.registerEvents();
     this.line.Init();
   }
@@ -47,6 +50,7 @@ export class DrawerLine implements IDrawer {
       const newPos = event.data.getLocalPosition(event.currentTarget.parent);
       const points = this.line.GetPoints();
       points[0] = newPos;
+      points[1] = newPos;
       this.dragState = true;
       this.line.UpdatePoints(points);
     }
@@ -64,6 +68,16 @@ export class DrawerLine implements IDrawer {
     }
   }
 
+  IsValid(): boolean {
+    const points = this.line.GetPoints();
+    return !(points[0].x == 0 && points[0].y == 0 && points[1].x == 0 && points[1].y == 0);
+  }
+  GetGeometry(): IGeometry {
+    return this.line;
+  }
+  // endregion
+  // region events
+
   private registerEvents() {
     this.line.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
@@ -73,4 +87,6 @@ export class DrawerLine implements IDrawer {
       this.OnInitialized.next(value);
     });
   }
+
+  // endregion
 }

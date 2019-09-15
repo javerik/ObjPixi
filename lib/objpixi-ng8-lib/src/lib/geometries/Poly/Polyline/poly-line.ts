@@ -3,11 +3,13 @@ import {IGeometry} from '../../../interface/igeometry';
 import {PolyInfo} from '../poly-info';
 import {PolyBase} from '../poly-base';
 import {MoveDelta} from '../../../interaction/moving/mover';
+import {GeometryType} from '../../../interface/enums/geometry-type.enum';
 
 export class PolyLine extends PolyBase implements IGeometry {
 
   constructor(polyInfo: PolyInfo, name?: string) {
     super(polyInfo, name);
+    this.Type = GeometryType.Polyline;
   }
 
   // region Graphics
@@ -100,12 +102,15 @@ export class PolyLine extends PolyBase implements IGeometry {
     this.Mover.Generate(points.getBounds());
     container.addChild(this.GContainer);
     container.addChild(this.Mover.GetObject());
+    container.addChild(this.LabelContainer);
+    this.Label.Init();
     this.MainDisObject = container;
     this.OnInitialized.next(this.MainDisObject);
   }
 
   ClearSelection(): void {
     this.GContainer.getChildByName(this.cNamePoint).visible = false;
+    this.Label.ClearSelection();
     this.Mover.SetVisibility(false);
   }
 
@@ -121,9 +126,6 @@ export class PolyLine extends PolyBase implements IGeometry {
     return this.MainDisObject;
   }
 
-  SetName(name: string) {
-    this.Name = name;
-  }
 
   GetPoints(): Array<PIXI.Point> {
     return this.info.points;

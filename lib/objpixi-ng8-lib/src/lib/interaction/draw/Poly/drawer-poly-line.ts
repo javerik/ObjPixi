@@ -6,7 +6,7 @@ export class DrawerPolyLine extends PolyDrawerBase {
 
 
   Init() {
-    this.object = new PolyLine({style: this.polyLineStyle, points: [new PIXI.Point()]});
+    this.object = new PolyLine({style: this.polyLineStyle, points: [new PIXI.Point()]}, 'Polyline');
     super.Init();
   }
 }

@@ -8,4 +8,5 @@ export interface IPositionIndicator {
   Init(info?: PositionIndicatorInfo): void;
   Enable(state: boolean): void;
   OnEvent(event: PIXI.interaction.InteractionEvent);
+  SetBorders(minX: number, maxX: number, minY: number, maxY): void;
 }

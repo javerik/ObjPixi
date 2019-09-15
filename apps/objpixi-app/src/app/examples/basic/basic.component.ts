@@ -17,6 +17,7 @@ import {IStyleEllipse} from '../../styles/istyle-ellipse';
 import {IStylePoly} from '../../styles/istyle-poly';
 import {IStyleRect} from '../../styles/istyle-rect';
 import {ChangeEvent} from '../../interface/events/change-event';
+import {ExampleLabel} from '../label/example-label';
 
 
 @Component({
@@ -38,6 +39,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
   defaultLineColor = 0x009688;
   changeEvents: Array<ChangeEvent> = [];
   ClickedObjects: Array<IGeometry> = [];
+  SelectedObject: IGeometry = null;
+  ChangedName = '';
   // region styles
   lineStyle: IStyleLine = {
     alpha: 1,
@@ -166,43 +169,80 @@ export class BasicComponent implements OnInit, AfterViewInit {
     this.Renderer.render(this.Stage);
   }
 
+  onChangeText(geo: IGeometry, text: string) {
+    geo.SetName(text);
+  }
 
   onObjectSelected(geo: IGeometry) {
+    this.SelectedObject = geo;
+    this.ChangedName = geo.GetName();
     this.Stage.setChildIndex(geo.GetObject(), this.Stage.children.length - 1);
     this.ForceRender();
   }
 
+  onRemove() {
+    this.Stage.removeChild(this.SelectedObject.GetObject());
+    this.Geometries.slice(this.Geometries.indexOf(this.SelectedObject), 1);
+    this.ForceRender();
+  }
+
+  onAddGradient() {
+    const canvas = document.createElement('canvas');
+    canvas.width  = 200;
+    canvas.height = 60;
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient﻿(0, 0, 0, 50);
+    gradient.addColorStop(0, 'rgb(0, 0, 36)');
+    gradient.addColorStop(1, '#CFB732');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0, 20, 50);
+    const sprite = new PIXI.Sprite(PIXI.Texture.from(canvas));
+    sprite.x = 0;
+    sprite.y = 0;
+    this.Stage.addChild(sprite);
+    this.ForceRender();
+  }
+
   onAddPoint() {
+    const label = new ExampleLabel();
     const p = new Point({position: new PIXI.Point(400, 300)});
     p.SetName('myPoint');
     this.registerGeoEvents(p);
     p.Init();
+    p.SetLabel(label);
     this.Geometries.push(p);
   }
 
   onAddRect() {
+    const label = new ExampleLabel();
     const newRect = new Rect({
+      coords: {
       width: 100, height: 100, center: true,
-      position: new PIXI.Point(400, 300), style: this.rectStyle
+      position: new PIXI.Point(400, 300)}, style: this.rectStyle
     });
     newRect.SetName('myRect');
     this.registerGeoEvents(newRect);
     newRect.Init();
+    newRect.SetLabel(label);
     this.Geometries.push(newRect);
   }
 
   onAddEllipse() {
+    const label = new ExampleLabel();
     const newEllipse = new Ellipse({
-      width: 100, height: 120, center: true, position: new PIXI.Point(400, 300),
+      coords: {width: 100, height: 120, center: true, position: new PIXI.Point(400, 300)},
       style: this.ellipseStyle
     });
     newEllipse.SetName('myEllipse');
     this.registerGeoEvents(newEllipse);
     newEllipse.Init();
+    newEllipse.SetLabel(label);
+    label.Init('myEllipse');
     this.Geometries.push(newEllipse);
   }
 
   onAddLine() {
+    const label = new ExampleLabel();
     const line = new Line({
       p1: new PIXI.Point(200, 300),
       p2: new PIXI.Point(400, 300),
@@ -211,6 +251,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
     line.SetName('myLine');
     this.registerGeoEvents(line);
     line.Init();
+    line.SetLabel(label);
+    label.Init('myLine');
     this.Geometries.push(line);
   }
 
@@ -382,6 +424,10 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   onObjectEvent(event: GeoEvent) {
     // console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);
+    if (event === undefined) {
+      console.error('Undefined event');
+      return;
+    }
     const newPos = event.event.data.getLocalPosition(event.event.currentTarget.parent);
     this.ClickedObjects = this.getClicked(newPos);
     this.ClickedObjects.forEach(value => value.SetSelection());

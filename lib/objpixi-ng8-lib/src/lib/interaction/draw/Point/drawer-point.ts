@@ -2,6 +2,7 @@ import {IDrawer} from '../../../interface/draw/idrawer';
 import {Subject} from 'rxjs';
 import {Point} from '../../../geometries/Point/point';
 import * as PIXI from 'pixi.js';
+import {IGeometry} from '../../../interface/igeometry';
 
 
 export class DrawerPoint implements IDrawer {
@@ -14,8 +15,9 @@ export class DrawerPoint implements IDrawer {
     this.OnInitialized = new Subject();
   }
 
+  // region IDrawer
   Init() {
-    this.point = new Point({position: new PIXI.Point(0, 0)});
+    this.point = new Point({position: new PIXI.Point(0, 0)}, 'Point');
     this.registerEvents();
     this.point.Init();
   }
@@ -27,6 +29,17 @@ export class DrawerPoint implements IDrawer {
     }
   }
 
+  IsValid(): boolean {
+    return true;
+  }
+  GetGeometry(): IGeometry {
+    return this.point;
+  }
+
+  // endregion
+
+  // region events
+
   private registerEvents() {
     this.point.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
@@ -36,5 +49,5 @@ export class DrawerPoint implements IDrawer {
       this.OnInitialized.next(value);
     });
   }
-
+  // endregion
 }

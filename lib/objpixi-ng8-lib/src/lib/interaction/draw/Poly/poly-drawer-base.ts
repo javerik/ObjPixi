@@ -5,6 +5,7 @@ import {Subject} from 'rxjs';
 import {PolyGon} from '../../../geometries/Poly/Polygon/poly-gon';
 import {PolyLine} from '../../../geometries/Poly/Polyline/poly-line';
 import {Point} from '../../../geometries/Point/point';
+import {IGeometry} from '../../../interface/igeometry';
 
 export class PolyDrawerBase implements IDrawer {
 
@@ -125,6 +126,12 @@ export class PolyDrawerBase implements IDrawer {
       this.points.pop();
       this.object.UpdatePoints(this.points);
     }
+  }
+  IsValid(): boolean {
+    return this.points.length > 2;
+  }
+  GetGeometry(): IGeometry {
+    return this.object;
   }
   // endregion
 }

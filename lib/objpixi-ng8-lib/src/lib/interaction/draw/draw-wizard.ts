@@ -13,6 +13,7 @@ import {IPositionIndicator} from '../../interface/info/iposition-indicator';
 import {DefaultPositionIndicator} from '../info/default-position-indicator';
 import {PositionIndicatorInfo} from '../../interface/info/position-indicator-info';
 import {DrawerEllipse} from './Ellipse/drawer-ellipse';
+import {IDrawAcceptor} from '../../interface/draw/idraw-acceptor';
 
 
 export class DrawWizard {
@@ -22,12 +23,12 @@ export class DrawWizard {
   // region Drawer
   private drawer: IDrawer;
   private positionIndicator: IPositionIndicator;
+  private acceptor: IDrawAcceptor;
   // endregion
-  private editGeo: IGeometry;
-  private clickPoint: PIXI.Point = new PIXI.Point();
-  private dragStart = false;
-  private dragged = false;
+  private winSize: PIXI.Point = new PIXI.Point();
   public OnRequestRender: Subject<null>;
+  public OnGeometryAccepted: Subject<IGeometry>;
+  public OnCancelDraw: Subject<any>;
   dragPointFillColor = 0xf44336;
   defaultLineColor = 0x009688;
   lineStyle: IStyleLine = {
@@ -50,12 +51,20 @@ export class DrawWizard {
     moveBox: false
   };
 
-  constructor(positionIndicator?: IPositionIndicator) {
+  constructor(positionIndicator?: IPositionIndicator, acceptor?: IDrawAcceptor) {
     this.OnRequestRender = new Subject();
+    this.OnGeometryAccepted = new Subject<IGeometry>();
+    this.OnCancelDraw = new Subject<any>();
     if (positionIndicator === undefined) {
       this.positionIndicator = new DefaultPositionIndicator();
     }
+    this.acceptor = acceptor;
+    if (this.acceptor !== undefined) {
+      this.registerAcceptorEvents();
+    }
   }
+
+  // region public interface
 
   public SetGeometryType(type: GeometryType) {
     this.clear();
@@ -67,11 +76,17 @@ export class DrawWizard {
       case GeometryType.Ellipse:
         this.drawer = new DrawerEllipse();
         break;
+      case GeometryType.EllipseFill:
+        this.drawer = new DrawerEllipse(true);
+        break;
       case GeometryType.Line:
         this.drawer = new DrawerLine();
         break;
       case GeometryType.Rect:
         this.drawer = new DrawerRect();
+        break;
+      case GeometryType.RectFill:
+        this.drawer = new DrawerRect(true);
         break;
       case GeometryType.Polygon:
         this.drawer = new DrawerPolyGon();
@@ -87,10 +102,14 @@ export class DrawWizard {
     this.drawer.OnRequestRender.subscribe(value => {
       this.OnRequestRender.next();
     });
+    if (this.acceptor !== undefined) {
+      this.acceptor.SetGeometry(this.currentGeoType);
+    }
     this.drawer.Init();
   }
 
   public Init(w, h, callback: (object: PIXI.DisplayObject) => void) {
+    this.winSize.set(w, h);
     this.drawContainer = new PIXI.Container();
     this.mainContainer = new PIXI.Container();
     this.mainContainer.x = 0;
@@ -108,8 +127,35 @@ export class DrawWizard {
     this.mainContainer.addChild(this.drawContainer);
     this.registerEvents(this.drawContainer);
     this.registerIndicatorEvents();
+    this.positionIndicator.SetBorders(0, w, 0, h);
     this.positionIndicator.Init(this.indicatorInfo);
+    this.acceptor.Init(this.winSize);
     callback(this.mainContainer);
+  }
+
+  // endregion
+
+  // region register events
+
+  private registerAcceptorEvents() {
+    this.acceptor.OnInitialized.subscribe(obj => {
+      obj.name = 'acceptor';
+      this.mainContainer.addChild(obj);
+      this.OnRequestRender.next();
+    });
+    this.acceptor.OnRequestRender.subscribe(() => {
+      this.OnRequestRender.next();
+    });
+    this.acceptor.OnAccepted.subscribe(valid => {
+      if (!valid) {
+        this.drawer = null;
+        this.clear();
+        this.OnCancelDraw.next();
+      } else {
+        this.OnGeometryAccepted.next(this.drawer.GetGeometry());
+        this.clear();
+      }
+    });
   }
 
   private registerIndicatorEvents() {
@@ -128,18 +174,21 @@ export class DrawWizard {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('click', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('pointerdown', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('pointermove', event1 => {
       this.positionIndicator.OnEvent(event1);
@@ -147,23 +196,29 @@ export class DrawWizard {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('pointerup', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
     obj.addListener('rightclick', event1 => {
       if (this.drawer === undefined) {
         return;
       }
       this.drawer.OnEvent(event1);
+      this.acceptor.SetValidState(this.drawer.IsValid());
     });
   }
 
+  // endregion
+
   private clear() {
     this.drawContainer.removeChildren();
+    this.drawer = undefined;
   }
 
 }

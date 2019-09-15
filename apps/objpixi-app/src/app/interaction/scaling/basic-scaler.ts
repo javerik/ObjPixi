@@ -126,13 +126,18 @@ export class BasicScaler implements IScaler {
       this.DragStates.Top = false;
     });
     // endregion
+    this.registerMoveEvents();
+  }
 
-    // region Move
+  private registerMoveEvents() {
     this.Arrows.Right.DispObj.on('pointermove', event1 => {
       if (!this.DragStates.Right) {
         return;
       }
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      if (newPos.x < (this.Arrows.Left.DispObj.x + (2 * this.ScalingInfo.offset + 3))) {
+        newPos.x = (this.Arrows.Left.DispObj.x + (2 * this.ScalingInfo.offset + 3));
+      }
       this.Arrows.Right.DispObj.x = newPos.x;
       const delta = this.getDeltePos(ScaleDirection.Right, newPos);
       this.reCalculatePositions();
@@ -144,6 +149,9 @@ export class BasicScaler implements IScaler {
         return;
       }
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      if (newPos.y < (this.Arrows.Top.DispObj.y + (2 * this.ScalingInfo.offset + 3))) {
+        newPos.y = (this.Arrows.Top.DispObj.y + (2 * this.ScalingInfo.offset + 3));
+      }
       this.Arrows.Bottom.DispObj.y = newPos.y;
       const delta = this.getDeltePos(ScaleDirection.Down, newPos);
       this.reCalculatePositions();
@@ -155,6 +163,9 @@ export class BasicScaler implements IScaler {
         return;
       }
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      if (newPos.x > (this.Arrows.Right.DispObj.x - (2 * this.ScalingInfo.offset + 3))) {
+        newPos.x = (this.Arrows.Right.DispObj.x - (2 * this.ScalingInfo.offset + 3));
+      }
       this.Arrows.Left.DispObj.x = newPos.x;
       const delta = this.getDeltePos(ScaleDirection.Left, newPos);
       this.reCalculatePositions();
@@ -166,14 +177,15 @@ export class BasicScaler implements IScaler {
         return;
       }
       const newPos = event1.data.getLocalPosition(event1.currentTarget.parent);
+      if (newPos.y > (this.Arrows.Bottom.DispObj.y - (2 * this.ScalingInfo.offset + 3))) {
+        newPos.y = (this.Arrows.Bottom.DispObj.y - (2 * this.ScalingInfo.offset + 3));
+      }
       this.Arrows.Top.DispObj.y = newPos.y;
       const delta = this.getDeltePos(ScaleDirection.Up, newPos);
       this.reCalculatePositions();
       this.deltas[0].point = delta;
       this.OnScaleEvent.next({delta, direction: ScaleDirection.Up, ArrowPositions: this.lastPositions});
     });
-    // endregion
-
   }
 
   // endregion

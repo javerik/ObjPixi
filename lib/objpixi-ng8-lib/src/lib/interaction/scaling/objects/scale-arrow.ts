@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import {ScaleDirection} from '../../../interface/enums/scale-direction.enum';
+import {TextureManager} from '../../../utils/texture-manager';
 
 
 export class ScaleArrow {

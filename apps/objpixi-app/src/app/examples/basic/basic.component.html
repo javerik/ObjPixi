@@ -21,7 +21,7 @@
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-button-toggle (click)="onAddTest()">Test</mat-button-toggle>
   </mat-grid-tile>
-  <mat-grid-tile id="testDiv" #tilePixi colspan="5" rowspan="6" (window:resize)="onTileResize($event)">
+  <mat-grid-tile id="testDiv" #tilePixi colspan="4" rowspan="6" (window:resize)="onTileResize($event)">
     <div #pixiContainer></div>
   </mat-grid-tile>
   <mat-grid-tile colspan="2" rowspan="1">
@@ -41,6 +41,15 @@
       </tr>
       </tbody>
     </table>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="2" rowspan="1">
+    <label>Change name:</label>
+    <input [(ngModel)]="ChangedName">
+    <button [disabled]="SelectedObject === null" (click)="onChangeText(SelectedObject, ChangedName)">Submit</button>
+    <button [disabled]="SelectedObject === null" (click)="onRemove()">Remove</button>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1">
+    <mat-button-toggle (click)="onAddGradient()">Gradient</mat-button-toggle>
   </mat-grid-tile>
 </mat-grid-list>
 

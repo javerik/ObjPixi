@@ -2,7 +2,7 @@ export * from './igeometry';
 export * from './iscaler';
 
 // region draw
-export * from './draw/idrawer';
+export * from './draw/include';
 // endregion
 
 // region enums
@@ -16,6 +16,6 @@ export * from './events/scaling-event';
 // endregion
 
 // region info
-export * from './info/iposition-indicator';
-export * from './info/position-indicator-info';
+export * from './info/include';
+export * from './itex-id';
 // endregion

@@ -21,12 +21,29 @@ export class DefaultPositionIndicator implements IPositionIndicator {
     fill : 'white',
     align : 'right'
   };
+  private borders = {
+    x: {
+      min: 0,
+      max: 1980
+    },
+    y: {
+      min: 0,
+      max: 1980
+    },
+  };
   private yOffset = 35;
   // endregion
 
   constructor() {
     this.OnInitialized = new Subject();
     this.OnRequestRender = new Subject();
+  }
+
+  SetBorders(minX, maxX, minY, maxY) {
+    this.borders.x.min = minX;
+    this.borders.x.max = maxX;
+    this.borders.y.min = minY;
+    this.borders.y.max = maxY;
   }
 
   Enable(state: boolean): void {
@@ -58,7 +75,19 @@ export class DefaultPositionIndicator implements IPositionIndicator {
   OnEvent(event: PIXI.interaction.InteractionEvent) {
     if (event.type === 'pointermove') {
       const newPos = event.data.getLocalPosition(event.currentTarget.parent);
-      this.text.text = 'X: ' + newPos.x.toFixed() + ' Y: ' + newPos.y.toFixed();
+      let x = newPos.x;
+      let y = newPos.y;
+      if (x < this.borders.x.min) {
+        x = this.borders.x.min;
+      } else if(x > this.borders.x.max) {
+        x = this.borders.x.max;
+      }
+      if (y < this.borders.y.min) {
+        y = this.borders.y.min;
+      } else if(y > this.borders.y.max) {
+        y = this.borders.y.max;
+      }
+      this.text.text = 'X: ' + x.toFixed() + ' Y: ' + y.toFixed();
       if (this.info.moveBox) {
         this.calculatePos(newPos);
       }

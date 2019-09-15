@@ -1,10 +1,8 @@
 import * as PIXI from 'pixi.js';
 import {IStyleEllipse} from '../../styles/istyle-ellipse';
+import {ICommonCoords} from '../../interface/info/icommon-coords';
 
 export interface EllipseInfo {
-  width: number;
-  height: number;
-  center: boolean;
-  position: PIXI.Point;
+  coords: ICommonCoords;
   style: IStyleEllipse;
 }

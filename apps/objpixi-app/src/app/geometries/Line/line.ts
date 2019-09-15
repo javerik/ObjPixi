@@ -33,6 +33,7 @@ export class Line extends BaseGeo implements IGeometry {
     super(name);
     this.info = lineInfo;
     this.Mover = new Mover();
+    this.labelOffset.set(50, 50);
     this.registerMoveEvents();
   }
 
@@ -162,8 +163,9 @@ export class Line extends BaseGeo implements IGeometry {
       this.lastPointsToInfo();
       this.refreshLines();
       this.Mover.recenter(this.GContainer.getBounds());
+      this.setLabelPosition();
       this.OnRequestRender.next();
-      this.OnChange.next();
+      this.OnChange.next({sender: this, points: this.GetPoints()});
     });
   }
 
@@ -172,17 +174,18 @@ export class Line extends BaseGeo implements IGeometry {
       return;
     }
     container.addListener('click', event1 => {
-      this.GContainer.getChildByName(this.cNamePoint).visible = true;
-      this.Mover.SetVisibility(true);
-      this.OnInteraction.next();
-      this.OnRequestRender.next();
+      this.onClick(event1);
     });
     container.addListener('tap', event1 => {
-      this.OnInteraction.next();
-      this.GContainer.getChildByName(this.cNamePoint).visible = true;
-      this.Mover.SetVisibility(true);
-      this.OnRequestRender.next();
+      this.onClick(event1);
     });
+  }
+
+  private onClick(event: PIXI.interaction.InteractionEvent) {
+    this.GContainer.getChildByName(this.cNamePoint).visible = true;
+    this.Mover.SetVisibility(true);
+    this.Label.ClearSelection();
+    this.OnInteraction.next({event, target: this});
   }
 
   // endregion
@@ -195,8 +198,9 @@ export class Line extends BaseGeo implements IGeometry {
     this.info.p1.y += moveEvent.y;
     this.info.p2.y += moveEvent.y;
     this.refreshGraphic(false);
+    this.setLabelPosition();
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   private createHitArea(container: PIXI.Container) {
@@ -205,7 +209,24 @@ export class Line extends BaseGeo implements IGeometry {
     container.hitArea = container.getBounds();
     this.registerContainerEvents(container);
   }
-
+  protected setLabelPosition() {
+    let x = 0;
+    if (this.info.p1.x > this.info.p2.x) {
+      x = this.info.p2.x + ((this.info.p1.x - this.info.p2.x) / 2);
+    } else {
+      x = this.info.p1.x + ((this.info.p2.x - this.info.p1.x) / 2);
+    }
+    let y = 0;
+    if (this.info.p1.y > this.info.p2.y) {
+      y = this.info.p2.y + ((this.info.p1.y - this.info.p2.y) / 2);
+    } else {
+      y = this.info.p1.y + ((this.info.p2.y - this.info.p1.y) / 2);
+    }
+    const p = new PIXI.Point(x, y);
+    p.x -= this.labelOffset.x;
+    p.y -= this.labelOffset.y;
+    this.Label.SetOriginPosition(p);
+  }
   // endregion
 
   // region Calculations
@@ -244,6 +265,8 @@ export class Line extends BaseGeo implements IGeometry {
     this.Mover.Generate(points.getBounds());
     container.addChild(this.GContainer);
     container.addChild(this.Mover.GetObject());
+    container.addChild(this.LabelContainer);
+    this.registerLabelEvents();
     this.MainDisObject = container;
     this.OnInitialized.next(this.MainDisObject);
   }
@@ -253,20 +276,8 @@ export class Line extends BaseGeo implements IGeometry {
     this.Mover.SetVisibility(false);
   }
 
-  GetId(): string {
-    return this.Id;
-  }
-
-  GetName(): string {
-    return this.Name;
-  }
-
   GetObject(): PIXI.DisplayObject {
     return this.MainDisObject;
-  }
-
-  SetName(name: string) {
-    this.Name = name;
   }
 
   GetPoints(): Array<PIXI.Point> {
@@ -279,7 +290,7 @@ export class Line extends BaseGeo implements IGeometry {
     this.refreshGraphic(false);
     this.Mover.recenter(this.GContainer.getBounds());
     this.OnRequestRender.next();
-    this.OnChange.next();
+    this.OnChange.next({sender: this, points: this.GetPoints()});
   }
 
   EnableControls(state: boolean) {
@@ -297,5 +308,6 @@ export class Line extends BaseGeo implements IGeometry {
   SetSelection() {
     this.Mover.SetVisibility(true);
   }
+
   // endregion
 }
