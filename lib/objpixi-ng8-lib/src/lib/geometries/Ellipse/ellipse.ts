@@ -146,8 +146,10 @@ export class Ellipse extends BaseGeo implements IGeometry {
   }
 
   private onClick(event: PIXI.interaction.InteractionEvent) {
-    this.Scaler.SetVisibility(true);
-    this.Mover.SetVisibility(true);
+    this.CtrlVisibleStates.scaler = !this.CtrlVisibleStates.scaler;
+    this.CtrlVisibleStates.mover = !this.CtrlVisibleStates.mover;
+    this.Scaler.SetVisibility(this.CtrlVisibleStates.scaler);
+    this.Mover.SetVisibility(this.CtrlVisibleStates.mover);
     this.Label.ClearSelection();
     this.OnInteraction.next({event, target: this});
   }

@@ -9,6 +9,7 @@ import { EditFillStyleComponent } from './styling/edit-fill-style/edit-fill-styl
 import {FormsModule} from '@angular/forms';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ColorConverterPipe } from './pipes/color-converter.pipe';
+import { EditLabelStyleComponent } from './styling/edit-label-style/edit-label-style.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ColorConverterPipe } from './pipes/color-converter.pipe';
     BasicComponent,
     StylingComponent,
     EditFillStyleComponent,
-    ColorConverterPipe
+    ColorConverterPipe,
+    EditLabelStyleComponent
   ],
   imports: [
     BrowserModule,

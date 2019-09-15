@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IStyleFill} from 'objpixi-ng8-lib';
 import {ColorConverterPipe} from '../../pipes/color-converter.pipe';
 import {ColorPickerService} from 'ngx-color-picker';
+import {DefaultStyles} from '../default-styles';
 
 @Component({
   selector: 'app-edit-fill-style',
@@ -13,7 +14,7 @@ export class EditFillStyleComponent implements OnInit {
   @Input() Style: IStyleFill;
   public LineColor = '#0';
   public FillColor = '#0';
-
+  
   // region Events
   @Output() styleChanged: EventEmitter<[ColorDrawType, IStyleFill]> = new EventEmitter();
   // endregion
@@ -30,9 +31,19 @@ export class EditFillStyleComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.Style === undefined) {
+      this.Style = DefaultStyles.FillStyle;
+    }
     console.log(this.CPipe.transform(this.Style.lineColor));
+    console.log(this.CPipe.transform(this.Style.fillColor));
     this.LineColor = '#' + this.CPipe.transform(this.Style.lineColor);
     this.FillColor = '#' + this.CPipe.transform(this.Style.fillColor);
+  }
+
+  SetStyle(style: IStyleFill) {
+    this.Style = style;
+    console.log(style);
+    this.ngOnInit();
   }
 
   setColorPicker(event, type: ColorDrawType = ColorDrawType.Line) {

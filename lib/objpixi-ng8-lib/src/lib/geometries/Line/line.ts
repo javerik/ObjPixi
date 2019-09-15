@@ -184,8 +184,9 @@ export class Line extends BaseGeo implements IGeometry {
   }
 
   private onClick(event: PIXI.interaction.InteractionEvent) {
-    this.GContainer.getChildByName(this.cNamePoint).visible = true;
-    this.Mover.SetVisibility(true);
+    this.GContainer.getChildByName(this.cNamePoint).visible = this.CtrlVisibleStates.mover;
+    this.CtrlVisibleStates.mover = !this.CtrlVisibleStates.mover;
+    this.Mover.SetVisibility(this.CtrlVisibleStates.mover);
     this.Label.ClearSelection();
     this.OnInteraction.next({event, target: this});
   }

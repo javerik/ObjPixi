@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {BasicComponent} from '../basic/basic.component';
-import {IStyleFill} from 'objpixi-ng8-lib';
+import {IStyleFill, IStyleLabel} from 'objpixi-ng8-lib';
+import {DefaultStyles} from './default-styles';
 
 @Component({
   selector: 'app-styling',
@@ -12,23 +13,14 @@ export class StylingComponent extends BasicComponent implements OnInit {
   constructor() {
     super();
   }
-
-  FillStyle: IStyleFill = {
-    lineColor: 0xd81b60,
-    useFill: false,
-    useLine: true,
-    fillAlpha: 0,
-    fillColor: 0,
-    lineAlpha: 0,
-    lineWidth: 5
-  };
+  FillStyle = DefaultStyles.FillStyle;
+  LabelStyle = DefaultStyles.LabelStyle;
 
   ngOnInit() {
     super.ngOnInit();
   }
-  
+
   onStyleChanged(event) {
-    console.log(event);
   }
 
 }

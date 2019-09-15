@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
 import {Subject} from 'rxjs';
-import {TextureManager} from '../../utils/texture-manager';
 
 export class Mover {
   private static Texture: PIXI.Texture = null;
@@ -14,11 +13,15 @@ export class Mover {
   public OnRequestRender: Subject<null>;
   public OnMoved: Subject<MoveDelta>;
   public OnMoveEnd: Subject<null>;
+  private offsets: [number, number] = [0, 0];
 
-  constructor() {
+  constructor(offsets?: [number, number]) {
     this.OnRequestRender = new Subject();
     this.OnMoved = new Subject();
     this.OnMoveEnd = new Subject();
+    if (offsets !== undefined) {
+      this.offsets = offsets;
+    }
   }
 
   public Generate(rect: PIXI.Rectangle) {
@@ -44,6 +47,8 @@ export class Mover {
   private centerSprite() {
     this.crossSprite.x = this.originPoint.x + (this.originPoint.width / 2);
     this.crossSprite.y = this.originPoint.y + (this.originPoint.height / 2);
+    this.crossSprite.x += this.offsets[0];
+    this.crossSprite.y += this.offsets[1];
     this.originPosition.set(this.crossSprite.x, this.crossSprite.y);
     this.lastPosition = this.originPosition;
   }
@@ -93,10 +98,6 @@ export class Mover {
       this.OnMoved.next(moveDelta);
     });
   }
-
-  // endregion
-
-  // region Point calculations
 
   // endregion
 

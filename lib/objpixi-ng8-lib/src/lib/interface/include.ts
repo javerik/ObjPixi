@@ -8,6 +8,7 @@ export * from './draw/include';
 // region enums
 export * from './enums/geometry-type.enum';
 export * from './enums/scale-direction.enum';
+export * from './enums/font/include';
 // endregion
 
 // region events

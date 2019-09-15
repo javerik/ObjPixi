@@ -57,17 +57,19 @@ export class PolyGon extends PolyBase implements IGeometry {
   protected registerContainerEvents(container: PIXI.DisplayObject) {
     super.registerContainerEvents(container);
     container.addListener('click', event1 => {
-      this.GContainer.getChildByName(this.cNamePoint).visible = true;
-      this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
-      this.OnRequestRender.next();
+      this.clickEvent(event1);
     });
     container.addListener('tap', event1 => {
-      this.GContainer.getChildByName(this.cNamePoint).visible = true;
-      this.Mover.SetVisibility(true);
-      this.OnInteraction.next({event: event1, target: this});
-      this.OnRequestRender.next();
+      this.clickEvent(event1);
     });
+  }
+
+  private clickEvent(event1: any) {
+    this.CtrlVisibleStates.mover = !this.CtrlVisibleStates.mover;
+    this.Mover.SetVisibility(this.CtrlVisibleStates.mover);
+    this.GContainer.getChildByName(this.cNamePoint).visible = true;
+    this.OnInteraction.next({event: event1, target: this});
+    this.OnRequestRender.next();
   }
 
   protected registerPointEvents(point: PIXI.DisplayObject) {

@@ -4,3 +4,6 @@ export * from './istyle-fill';
 export * from './istyle-line';
 export * from './istyle-poly';
 export * from './istyle-rect';
+export * from './istyle-label';
+export * from './itext-style';
+export * from './istyle-rect-round';

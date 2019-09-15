@@ -1,0 +1,84 @@
+<div class="container-fluid">
+  <ng-container *ngTemplateOutlet="font"></ng-container>
+  <ng-container *ngTemplateOutlet="banner"></ng-container>
+</div>
+<ng-template #banner>
+  <div class="row">
+    <div class="col">
+      <mat-slide-toggle [(ngModel)]="BackgroundEnable" (change)="onBgEnable()">Background</mat-slide-toggle>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+       <mat-slide-toggle [(ngModel)]="RoundCorner">Round corner</mat-slide-toggle>
+    </div>
+    <div class="col" *ngIf="Style.styleRectRound !== undefined">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Corner radius</span>
+        </div>
+        <input [disabled]="!RoundCorner" type="number" class="form-control" placeholder="5" aria-label="Corner radius"
+               [(ngModel)]="Style.styleRectRound.cornerRadius"
+               aria-describedby="basic-addon1">
+      </div>
+    </div>
+  </div>
+  <div class="row row-margin-top" *ngIf="BackgroundEnable">
+     <div class="col">
+        <app-edit-fill-style [Style]="Style.styleRect.fillStyle"></app-edit-fill-style>
+     </div>
+  </div>
+</ng-template>
+
+<ng-template #font>
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="cmbFntFamliy">Fontfamily</label>
+        </div>
+        <select id="cmbFntFamliy" class="custom-select" [(ngModel)]="Style.textStyle.fontFamily"
+                (ngModelChange)="onChanged($event)">
+          <option *ngFor="let k of FontKeys" [ngValue]="k">
+            {{Fonts[k]}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Size</span>
+        </div>
+        <input type="number" [(ngModel)]="Style.textStyle.fontSize" class="form-control" placeholder="26"
+               aria-label="Size" aria-describedby="basic-addon1">
+      </div>
+    </div>
+  </div>
+  <div class="row row-margin-top">
+    <div class="col">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="cmbFntStyle">Style</label>
+        </div>
+        <select id="cmbFntStyle" class="custom-select" [(ngModel)]="Style.textStyle.fontStyle">
+          <option *ngFor="let k of StyleKeys" [ngValue]="k">
+            {{Styles[k]}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="cmbFntWeight">Weight</label>
+        </div>
+        <select id="cmbFntWeight" class="custom-select" [(ngModel)]="Style.textStyle.fontWeight">
+          <option *ngFor="let k of WeightKeys" [ngValue]="k">
+            {{Weights[k]}}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+</ng-template>

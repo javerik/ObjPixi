@@ -22,7 +22,9 @@ export class BaseGeo {
   protected Label: ILabel;
   protected labelOffset: PIXI.Point = null;
   protected Type: GeometryType = GeometryType.Point;
+  protected CtrlVisibleStates = {mover: false, scaler: false};
   public TextureIds: Array<ITexId> = [];
+
 
 
   constructor(name?: string) {

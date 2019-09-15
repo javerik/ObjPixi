@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/
 import * as PIXI from 'pixi.js';
 import {
   BasicScaler,
-  ChangeEvent, Ellipse, EllipseFill,
+  ChangeEvent, DefaultLabel, Ellipse, EllipseFill,
   GeoEvent,
   IGeometry,
   IStyleEllipse,
@@ -243,6 +243,8 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   private registerGeoEvents(geo: IGeometry) {
+    const nLabel = new DefaultLabel();
+    geo.SetLabel(nLabel);
     geo.OnRequestRender.subscribe({
       next: () => {
         this.ForceRender();
