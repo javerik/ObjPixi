@@ -318,5 +318,15 @@ export class Line extends BaseGeo implements IGeometry {
   SetSelection() {
     this.Mover.SetVisibility(true);
   }
+
+  GetStyle(): any {
+    return this.info.style;
+  }
+
+  SetStyle(style: any) {
+    this.info.style = style;
+    this.refreshGraphic();
+  }
+
   // endregion
 }

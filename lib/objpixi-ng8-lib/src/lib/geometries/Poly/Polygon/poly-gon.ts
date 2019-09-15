@@ -158,6 +158,15 @@ export class PolyGon extends PolyBase implements IGeometry {
     this.Mover.SetVisibility(true);
   }
 
+  GetStyle(): any {
+    return this.info.style;
+  }
+
+  SetStyle(style: any) {
+    this.info.style = style;
+    this.refreshGraphic(this.info, true);
+  }
+
   // endregion
 
 }

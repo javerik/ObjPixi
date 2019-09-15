@@ -54,11 +54,11 @@ export class Ellipse extends BaseGeo implements IGeometry {
     }
     if (this.Type === GeometryType.EllipseFill) {
       g.beginFill(style.fillStyle.fillColor, style.fillStyle.fillAlpha);
+    } else {
+      g.beginFill(0xd81b60, 0.01);
     }
     g.drawEllipse(x, y, w / 2, h / 2);
-    if (this.Type === GeometryType.EllipseFill) {
-      g.endFill();
-    }
+    g.endFill();
     return g;
   }
 
@@ -217,6 +217,15 @@ export class Ellipse extends BaseGeo implements IGeometry {
   SetSelection() {
     this.Scaler.SetVisibility(true);
     this.Mover.SetVisibility(true);
+  }
+
+  GetStyle(): any {
+    return this.info.style;
+  }
+
+  SetStyle(style: any) {
+    this.info.style = style;
+    this.refreshGraphic(this.info, true);
   }
 
   // endregion

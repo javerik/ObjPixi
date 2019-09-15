@@ -144,5 +144,13 @@ export class Point extends BaseGeo implements IGeometry {
   SetSelection() {
   }
 
+  GetStyle(): any {
+    return null;
+  }
+
+  SetStyle(style: any) {
+    // TODO to be implemented
+  }
+
   // endregion
 }
