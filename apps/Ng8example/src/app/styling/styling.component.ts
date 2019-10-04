@@ -14,7 +14,7 @@ export class StylingComponent extends BasicComponent implements OnInit {
     super();
   }
   FillStyle = DefaultStyles.FillStyle;
-  LabelStyle = DefaultStyles.LabelStyle;
+  LabelStyle = null;
   CurrentGeoType: GeometryType = null;
   GeoTypes = GeometryType;
   CurrentStyle: any = null;
@@ -31,9 +31,15 @@ export class StylingComponent extends BasicComponent implements OnInit {
     this.CurrentGeo.SetStyle(this.CurrentStyle);
   }
 
+  onLabelStyleChanged(event: IStyleLabel) {
+    this.CurrentGeo.GetLabel().SetStyle(event);
+    this.ForceRender();
+  }
+
   private parseStyle(geo: IGeometry) {
     this.CurrentGeo = geo;
     this.CurrentGeoType = geo.GetType();
+    this.LabelStyle = geo.GetLabel().GetStyle();
     switch (geo.GetType()) {
       case GeometryType.Point:
         break;

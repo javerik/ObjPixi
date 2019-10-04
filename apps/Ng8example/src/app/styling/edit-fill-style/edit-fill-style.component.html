@@ -2,7 +2,7 @@
   <div class="row" style="margin-bottom: 10px">
     <div class="col">Drawstyle:</div>
     <div class="col">
-      <mat-slide-toggle [(ngModel)]="Style.useLine">Line</mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="Style.useLine" (ngModelChange)="OnLineStyleToggle()">Line</mat-slide-toggle>
     </div>
     <div class="col">
       <mat-slide-toggle [(ngModel)]="Style.useFill">Fill</mat-slide-toggle>

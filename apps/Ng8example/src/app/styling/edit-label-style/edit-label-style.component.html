@@ -2,6 +2,7 @@
   <ng-container *ngTemplateOutlet="font"></ng-container>
   <ng-container *ngTemplateOutlet="banner"></ng-container>
 </div>
+
 <ng-template #banner>
   <div class="row">
     <div class="col">
@@ -10,7 +11,7 @@
   </div>
   <div class="row">
     <div class="col">
-       <mat-slide-toggle [(ngModel)]="RoundCorner">Round corner</mat-slide-toggle>
+       <mat-slide-toggle [(ngModel)]="RoundCorner" (ngModelChange)="onRoundStyleToggle()">Round corner</mat-slide-toggle>
     </div>
     <div class="col" *ngIf="Style.styleRectRound !== undefined">
       <div class="input-group mb-3">
@@ -18,6 +19,7 @@
           <span class="input-group-text">Corner radius</span>
         </div>
         <input [disabled]="!RoundCorner" type="number" class="form-control" placeholder="5" aria-label="Corner radius"
+               (change)="onChangeAny()"
                [(ngModel)]="Style.styleRectRound.cornerRadius"
                aria-describedby="basic-addon1">
       </div>
@@ -25,7 +27,7 @@
   </div>
   <div class="row row-margin-top" *ngIf="BackgroundEnable">
      <div class="col">
-        <app-edit-fill-style [Style]="Style.styleRect.fillStyle"></app-edit-fill-style>
+        <app-edit-fill-style [Style]="Style.styleRect.fillStyle" (styleChanged)="onChangeAny()"></app-edit-fill-style>
      </div>
   </div>
 </ng-template>
@@ -51,6 +53,7 @@
           <span class="input-group-text">Size</span>
         </div>
         <input type="number" [(ngModel)]="Style.textStyle.fontSize" class="form-control" placeholder="26"
+               (change)="onChangeAny()"
                aria-label="Size" aria-describedby="basic-addon1">
       </div>
     </div>
@@ -61,7 +64,8 @@
         <div class="input-group-prepend">
           <label class="input-group-text" for="cmbFntStyle">Style</label>
         </div>
-        <select id="cmbFntStyle" class="custom-select" [(ngModel)]="Style.textStyle.fontStyle">
+        <select id="cmbFntStyle" class="custom-select" [(ngModel)]="Style.textStyle.fontStyle"
+                (ngModelChange)="onChangeAny()">
           <option *ngFor="let k of StyleKeys" [ngValue]="k">
             {{Styles[k]}}
           </option>
@@ -73,7 +77,8 @@
         <div class="input-group-prepend">
           <label class="input-group-text" for="cmbFntWeight">Weight</label>
         </div>
-        <select id="cmbFntWeight" class="custom-select" [(ngModel)]="Style.textStyle.fontWeight">
+        <select id="cmbFntWeight" class="custom-select" [(ngModel)]="Style.textStyle.fontWeight"
+                (ngModelChange)="onChangeAny()">
           <option *ngFor="let k of WeightKeys" [ngValue]="k">
             {{Weights[k]}}
           </option>

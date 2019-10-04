@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FontFamilies, FontStyles, FontWeights, IStyleLabel} from 'objpixi-ng8-lib';
 import {EditFillStyleComponent} from '../edit-fill-style/edit-fill-style.component';
 import {connectableObservableDescriptor} from 'rxjs/internal/observable/ConnectableObservable';
@@ -11,6 +11,7 @@ import {connectableObservableDescriptor} from 'rxjs/internal/observable/Connecta
 export class EditLabelStyleComponent implements OnInit, AfterViewInit {
 
   @Input() Style: IStyleLabel;
+  @Output() TextStyleChanged: EventEmitter<IStyleLabel> = new EventEmitter<IStyleLabel>();
   @ViewChild(EditFillStyleComponent, {static: false}) fsComp: EditFillStyleComponent;
 
   BackgroundEnable = false;
@@ -30,18 +31,34 @@ export class EditLabelStyleComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     console.log(this.Style.textStyle.fontWeight);
-
   }
 
   onChanged(event) {
-    console.log(event);
+    this.onChangeAny();
+  }
+
+  onChangeAny() {
+    console.log(this.Style);
+    this.TextStyleChanged.emit(this.Style);
+  }
+
+  onRoundStyleToggle() {
+    if (this.RoundCorner) {
+      this.Style.styleRectRound = {
+        cornerRadius: 5,
+        rectStyle: this.Style.styleRect
+      };
+    } else {
+      this.Style.styleRectRound = undefined;
+    }
+    this.TextStyleChanged.emit(this.Style);
   }
 
   ngAfterViewInit(): void {
     if (this.fsComp === undefined) {
       console.error('SHIT');
     }
-    // this.fsComp.SetStyle(this.Style.styleRect.fillStyle);
+    console.log(this.Style);
   }
 
   onBgEnable() {

@@ -55,6 +55,12 @@ export class EditFillStyleComponent implements OnInit {
     this.styleChanged.emit([type, this.Style]);
   }
 
+  OnLineStyleToggle() {
+    if (this.Style.useLine && !this.Style.lineWidth) {
+      this.Style.lineWidth = 1;
+    }
+  }
+
   public OnColorChanged(color: string, type: ColorDrawType = ColorDrawType.Line): string {
     const numColor = parseInt(('0x' + color.slice(1, color.length - 2)), 16);
     const fAlpha = parseInt(('0x' + color.slice(color.length - 2, color.length)), 16) / (255 / 100) / 100;

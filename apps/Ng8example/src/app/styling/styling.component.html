@@ -45,21 +45,21 @@
         Currently Edit: {{(CurrentGeoType !== null) ? CurrentGeoType : 'None'}}
      </div>
   </div>
-  <ng-container *ngIf="CurrentGeoType === GeoTypes.Rect">
-    <ng-container *ngTemplateOutlet="rect"></ng-container>
-  </ng-container>
-  <ng-container *ngIf="CurrentGeoType === GeoTypes.RectFill">
-    <ng-container *ngTemplateOutlet="rectFill"></ng-container>
-  </ng-container>
-  <!--
-  <div class="row row-margin-top">
-    <div class="col-sm-6">
-      <app-edit-fill-style [Style]="FillStyle" (styleChanged)="onStyleChanged($event)" ></app-edit-fill-style>
+  <div class="row">
+     <div class="col">
+       <ng-container *ngIf="CurrentGeoType === GeoTypes.Rect">
+         <ng-container *ngTemplateOutlet="rect"></ng-container>
+       </ng-container>
+       <ng-container *ngIf="CurrentGeoType === GeoTypes.RectFill">
+         <ng-container *ngTemplateOutlet="rectFill"></ng-container>
+       </ng-container>
+     </div>
+    <div class="col">
+      <ng-container *ngIf="LabelStyle !== null">
+        <app-edit-label-style [Style]="LabelStyle" (TextStyleChanged)="onLabelStyleChanged($event)"></app-edit-label-style>
+      </ng-container>
     </div>
-    <div class="col-sm-6">
-      <app-edit-label-style [Style]="LabelStyle"></app-edit-label-style>
-    </div>
-  </div>-->
+  </div>
 </div>
 
 <ng-template #rect>
