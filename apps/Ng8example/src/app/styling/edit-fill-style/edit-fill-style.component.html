@@ -14,24 +14,18 @@
         <div class="input-group-prepend">
           <span class="input-group-text inp-len">Line</span>
         </div>
-        <div class="input-group-prepend">
-          <input style="max-width: 10px"
-                 [disabled]="!Style.useLine"
-                 [(colorPicker)]="LineColor"
-                 [cpToggle]="ToggleLineColor"
-                 [style.background]="LineColor"
-                 [cpAlphaChannel]="'always'"
-                 [cpOutputFormat]="'hex'"
-                 (colorPickerChange)="OnColorChanged($event)"
-          />
-        </div>
-        <input type="text" class="form-control" placeholder="0xFFFFFF" [ngModel]="Style.lineColor | colorConverter"
-               aria-label="Line" [disabled]="!Style.useLine"
-               aria-describedby="basic-addon1" (change)="setColorPicker($event)">
-        <div class="input-group-append">
-          <button [ngClass]="BtnCss" [disabled]="!Style.useLine" (click)="ToggleLineColor = !ToggleLineColor">Color</button>
-        </div>
+        <ng-container *ngTemplateOutlet="cLine"></ng-container>
       </div>
+    </div>
+    <div class="col">
+       <div class="input-group mb-3">
+         <div class="input-group-prepend">
+           <span class="input-group-text">Width</span>
+         </div>
+         <input [(ngModel)]="Style.lineWidth" type="number" class="form-control" placeholder="2"
+                (ngModelChange)="onLineWidthChanged()"
+                aria-label="Width" aria-describedby="basic-addon1">
+       </div>
     </div>
   </div>
 
@@ -41,26 +35,48 @@
         <div class="input-group-prepend">
           <span class="input-group-text inp-len">Fill</span>
         </div>
-        <div class="input-group-prepend">
-          <input style="max-width: 10px"
-                 [disabled]="!Style.useLine"
-                 [(colorPicker)]="FillColor"
-                 [cpToggle]="ToggleFillColor"
-                 [style.background]="FillColor"
-                 [cpAlphaChannel]="'always'"
-                 [cpOutputFormat]="'hex'"
-                 (colorPickerChange)="OnColorChanged($event, CDT.Fill)"
-          />
-        </div>
-
-        <input type="text" class="form-control" placeholder="0xFFFFFF" [ngModel]="Style.fillColor | colorConverter"
-               aria-label="Fill" [disabled]="!Style.useFill"
-               aria-describedby="basic-addon1" (change)="setColorPicker($event, CDT.Fill)">
-        <div class="input-group-append">
-          <button [disabled]="!Style.useFill" [ngClass]="BtnCss" (click)="ToggleFillColor = !ToggleFillColor">Color</button>
-        </div>
+        <ng-container *ngTemplateOutlet="cFill"></ng-container>
       </div>
     </div>
   </div>
-
 </div>
+
+<ng-template #cLine>
+  <div class="input-group-prepend">
+    <input style="max-width: 10px"
+           [disabled]="!Style.useLine"
+           [(colorPicker)]="LineColor"
+           [cpToggle]="ToggleLineColor"
+           [style.background]="LineColor"
+           [cpAlphaChannel]="'always'"
+           [cpOutputFormat]="'hex'"
+           (colorPickerChange)="OnColorChanged($event)"
+    />
+  </div>
+  <input type="text" class="form-control" placeholder="0xFFFFFF" [ngModel]="Style.lineColor | colorConverter"
+         aria-label="Line" [disabled]="!Style.useLine"
+         aria-describedby="basic-addon1" (change)="setColorPicker($event)">
+  <div class="input-group-append">
+    <button [ngClass]="BtnCss" [disabled]="!Style.useLine" (click)="ToggleLineColor = !ToggleLineColor">Color</button>
+  </div>
+</ng-template>
+
+<ng-template #cFill>
+  <div class="input-group-prepend">
+    <input style="max-width: 10px"
+           [disabled]="!Style.useLine"
+           [(colorPicker)]="FillColor"
+           [cpToggle]="ToggleFillColor"
+           [style.background]="FillColor"
+           [cpAlphaChannel]="'always'"
+           [cpOutputFormat]="'hex'"
+           (colorPickerChange)="OnColorChanged($event, CDT.Fill)"
+    />
+  </div>
+  <input type="text" class="form-control" placeholder="0xFFFFFF" [ngModel]="Style.fillColor | colorConverter"
+         aria-label="Fill" [disabled]="!Style.useFill"
+         aria-describedby="basic-addon1" (change)="setColorPicker($event, CDT.Fill)">
+  <div class="input-group-append">
+    <button [disabled]="!Style.useFill" [ngClass]="BtnCss" (click)="ToggleFillColor = !ToggleFillColor">Color</button>
+  </div>
+</ng-template>

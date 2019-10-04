@@ -8,10 +8,11 @@ import {
   IStyleEllipse,
   IStyleLine,
   IStylePoly,
-  IStyleRect, Line, Point, PolyGon, PolyLine, Rect,
+  IStyleRect, Line, Point, PolyGon, PolyLine, Rect, RectFill,
   ScaleArrow, ScaleDirection
 } from 'objpixi-ng8-lib';
 import {MatGridTile} from '@angular/material';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-basic',
@@ -31,6 +32,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   dragPointFillColor = 0xf44336;
   defaultLineColor = 0x009688;
   changeEvents: Array<ChangeEvent> = [];
+  protected OnGeoAdded: Subject<IGeometry> = new Subject<IGeometry>();
   // region styles
 
   lineStyle: IStyleLine = {
@@ -170,7 +172,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
   }
 
   onAddRect() {
-    const newRect = new Rect({
+    const newRect = new RectFill({
       coords: {width: 100, height: 100, center: true, position: new PIXI.Point(400, 300)},
       style: this.rectStyle
     });
@@ -268,6 +270,7 @@ export class BasicComponent implements OnInit, AfterViewInit {
         }
       }
     });
+    this.OnGeoAdded.next(geo);
   }
 
   onAddArrow() {
@@ -374,7 +377,6 @@ export class BasicComponent implements OnInit, AfterViewInit {
 
   onObjectEvent(event: GeoEvent) {
     console.log('Event from [%s]- %s type: %s', event.target.GetId(), event.target.GetName(), event.event.type);
-
     switch (event.event.type) {
       case 'click':
         this.clearExcept(event.target.GetId());

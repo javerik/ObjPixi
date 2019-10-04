@@ -10,11 +10,11 @@ import {DefaultStyles} from '../default-styles';
   styleUrls: ['./edit-fill-style.component.css']
 })
 export class EditFillStyleComponent implements OnInit {
-  
+
   @Input() Style: IStyleFill;
   public LineColor = '#0';
   public FillColor = '#0';
-  
+
   // region Events
   @Output() styleChanged: EventEmitter<[ColorDrawType, IStyleFill]> = new EventEmitter();
   // endregion
@@ -67,6 +67,10 @@ export class EditFillStyleComponent implements OnInit {
     }
     this.styleChanged.emit([type, this.Style]);
     return '';
+  }
+
+  onLineWidthChanged() {
+    this.styleChanged.emit([ColorDrawType.Line, this.Style]);
   }
 
 }

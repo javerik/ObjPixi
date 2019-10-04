@@ -41,11 +41,49 @@
 
 <div class="container-fluid">
   <div class="row">
+     <div class="col">
+        Currently Edit: {{(CurrentGeoType !== null) ? CurrentGeoType : 'None'}}
+     </div>
+  </div>
+  <ng-container *ngIf="CurrentGeoType === GeoTypes.Rect">
+    <ng-container *ngTemplateOutlet="rect"></ng-container>
+  </ng-container>
+  <ng-container *ngIf="CurrentGeoType === GeoTypes.RectFill">
+    <ng-container *ngTemplateOutlet="rectFill"></ng-container>
+  </ng-container>
+  <!--
+  <div class="row row-margin-top">
     <div class="col-sm-6">
       <app-edit-fill-style [Style]="FillStyle" (styleChanged)="onStyleChanged($event)" ></app-edit-fill-style>
     </div>
     <div class="col-sm-6">
       <app-edit-label-style [Style]="LabelStyle"></app-edit-label-style>
     </div>
-  </div>
+  </div>-->
 </div>
+
+<ng-template #rect>
+  <div class="row">
+     <div class="col">
+        Style of a rect-line geometry
+     </div>
+  </div>
+  <ng-container *ngTemplateOutlet="defFill"></ng-container>
+</ng-template>
+
+<ng-template #rectFill>
+  <div class="row">
+    <div class="col">
+      Style of a rect-fill geometry
+    </div>
+  </div>
+  <ng-container *ngTemplateOutlet="defFill"></ng-container>
+</ng-template>
+
+<ng-template #defFill>
+  <div class="row row-margin-top">
+    <div class="col">
+      <app-edit-fill-style [Style]="FillStyle" (styleChanged)="onStyleChanged($event)" ></app-edit-fill-style>
+    </div>
+  </div>
+</ng-template>
